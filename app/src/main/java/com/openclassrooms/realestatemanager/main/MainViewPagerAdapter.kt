@@ -1,13 +1,21 @@
 package com.openclassrooms.realestatemanager.main
 
-import android.view.View
-import androidx.viewpager.widget.PagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.openclassrooms.realestatemanager.mapview.MapViewFragment
+import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
 
-class MainViewPagerAdapter : PagerAdapter() {
+class MainViewPagerAdapter(fragmentActivity: FragmentActivity)
+    : FragmentStateAdapter(fragmentActivity) {
 
-    override fun getCount(): Int = 2
+    override fun getItemCount(): Int = 2
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        TODO("Not yet implemented")
+    override fun createFragment(position: Int): Fragment {
+        return if (position == 0)
+            PropertiesListFragment.newInstance()
+        else
+            MapViewFragment.newInstance()
     }
+
 }

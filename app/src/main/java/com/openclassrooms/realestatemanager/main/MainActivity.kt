@@ -1,10 +1,12 @@
 package com.openclassrooms.realestatemanager.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 
@@ -12,17 +14,18 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 
 /**
  *  This [AppCompatActivity] handles the main view, with 2 tabs : a list of properties, and a map.
- *  It links a [ViewPager] with a [TabLayout].
+ *  It links a [ViewPager] with a [TabLayout] : Every time we swipe the [ViewPager], it also changes
+ *  the tab name on [TabLayout], and reciprocally.
  *  TODO : Add a fragment for each tab
  */
 class MainActivity : AppCompatActivity() {
 
     // Helper classes
-    private var mainViewPagerAdapter = MainViewPagerAdapter()
+    private var mainViewPagerAdapter = MainViewPagerAdapter(this)
 
     // Layout variables
     private var tabLayout : TabLayout? = null
-    private var viewPager : ViewPager? = null
+    private var viewPager : ViewPager2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,40 +37,16 @@ class MainActivity : AppCompatActivity() {
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
 
-        // Configure [TabLayout]
-        tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
         // Configure [ViewPager]
         viewPager?.adapter = mainViewPagerAdapter
-        viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                TODO("Not yet implemented")
-            }
 
-            override fun onPageSelected(position: Int) {
-                TODO("Not yet implemented")
+        // Configure [TabLayout]
+        TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
+            if (position == 0) {
+                // TODO : Set icon for properties list here
+            } else {
+                // TODO : Set icon for map view list here
             }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                TODO("Not yet implemented")
-            }
-        })
+        }.attach()
     }
 }
