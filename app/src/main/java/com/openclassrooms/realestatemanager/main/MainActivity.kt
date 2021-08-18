@@ -16,7 +16,6 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
  *  This [AppCompatActivity] handles the main view, with 2 tabs : a list of properties, and a map.
  *  It links a [ViewPager] with a [TabLayout] : Every time we swipe the [ViewPager], it also changes
  *  the tab name on [TabLayout], and reciprocally.
- *  TODO : Add a fragment for each tab
  */
 class MainActivity : AppCompatActivity() {
 
