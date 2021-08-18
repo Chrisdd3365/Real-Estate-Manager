@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
@@ -41,11 +42,10 @@ class MainActivity : AppCompatActivity() {
 
         // Configure [TabLayout]
         TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
-            if (position == 0) {
-                // TODO : Set icon for properties list here
-            } else {
-                // TODO : Set icon for map view list here
-            }
+            if (position == 0)
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
+            else
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
     }
 }
