@@ -10,6 +10,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
+import com.openclassrooms.realestatemanager.model.Estate
 
 // TODO : Add a splash screen before this activity
 
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     // Layout variables
     private var tabLayout : TabLayout? = null
     private var viewPager : ViewPager2? = null
+
+    var estateList = ArrayList<Estate>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,5 +50,23 @@ class MainActivity : AppCompatActivity() {
             else
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
+
+        // Setup estate list
+        estateList = createStaticEstateList()
+    }
+
+    fun createStaticEstateList() : ArrayList<Estate> {
+        val result = ArrayList<Estate>()
+
+        for (i in 0..15) {
+            result.add(
+                Estate().apply {
+                    this.address = "Test address $i"
+                    this.type = "Duplex"
+                }
+            )
+        }
+
+        return result
     }
 }
