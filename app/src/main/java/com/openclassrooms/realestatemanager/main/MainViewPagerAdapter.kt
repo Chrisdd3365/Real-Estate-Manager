@@ -9,6 +9,8 @@ import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragme
 class MainViewPagerAdapter(fragmentActivity: FragmentActivity)
     : FragmentStateAdapter(fragmentActivity) {
 
+    // TODO : Set a list of fragments here, created from MainActivity
+
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {

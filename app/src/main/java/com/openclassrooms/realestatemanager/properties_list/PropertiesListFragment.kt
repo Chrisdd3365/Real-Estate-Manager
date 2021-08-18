@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
+import com.openclassrooms.realestatemanager.model.Estate
 
 class PropertiesListFragment : Fragment() {
 
     // Helper classes
     private val viewModel = PropertiesListFragmentViewModel()
+
+    var estatesList = ArrayList<Estate>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -35,8 +38,11 @@ class PropertiesListFragment : Fragment() {
          *
          * @return A new instance of fragment PropertiesListFragment.
          */
-        fun newInstance() : Fragment {
-            return PropertiesListFragment()
+        fun newInstance(estateList : ArrayList<Estate>) : Fragment {
+            val fragment = PropertiesListFragment()
+            fragment.estatesList = estateList
+
+            return fragment
         }
     }
 }
