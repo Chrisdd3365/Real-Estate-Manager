@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.PropertiesListItemBinding
@@ -48,7 +47,8 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 
-    inner class PropertiesListItemViewHolder(val binding : PropertiesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PropertiesListItemViewHolder(private val binding : PropertiesListItemBinding)
+        : RecyclerView.ViewHolder(binding.root) {
 
         fun setData(estate: Estate) {
             binding.viewModel = PropertiesListItemViewModel()
@@ -57,7 +57,7 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    inner class PropertiesListItemViewModel : ViewModel() {
+    inner class PropertiesListItemViewModel {
 
         val type = ObservableField("")
         val city = ObservableField("")
