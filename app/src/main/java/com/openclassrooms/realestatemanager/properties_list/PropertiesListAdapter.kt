@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.properties_list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
@@ -50,6 +51,7 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class PropertiesListItemViewHolder(val binding : PropertiesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun setData(estate: Estate) {
+            binding.viewModel = PropertiesListItemViewModel()
             binding.viewModel?.setData(estate)
         }
 
@@ -57,7 +59,14 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class PropertiesListItemViewModel : ViewModel() {
 
+        val type = ObservableField("")
+        val city = ObservableField("")
+        val price = ObservableField("")
+
         fun setData(estate: Estate) {
+            type.set(estate.type)
+            city.set(estate.address)
+            price.set("${estate.price} $")
         }
 
     }
