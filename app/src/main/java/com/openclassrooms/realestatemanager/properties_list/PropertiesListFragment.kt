@@ -1,11 +1,14 @@
 package com.openclassrooms.realestatemanager.properties_list
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.model.Estate
@@ -14,6 +17,10 @@ class PropertiesListFragment : Fragment() {
 
     // Helper classes
     private val viewModel = PropertiesListFragmentViewModel()
+    private val propertiesListAdapter = PropertiesListAdapter()
+
+    // Layout variables
+    private var propertiesListRv : RecyclerView? = null
 
     var estatesList = ArrayList<Estate>()
 
@@ -27,6 +34,17 @@ class PropertiesListFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        if (estatesList.isEmpty()) viewModel.setNoProperties() else viewModel.setLoading()
+
+        propertiesListRv = binding.propertiesListRv
+        propertiesListRv?.layoutManager = LinearLayoutManager(context)
+        propertiesListRv?.adapter = propertiesListAdapter
+
+        propertiesListRv?.post {
+            propertiesListAdapter.setData(estatesList)
+            viewModel.setPropertiesList()
+        }
+
         return binding.root
     }
 
@@ -38,7 +56,7 @@ class PropertiesListFragment : Fragment() {
          *
          * @return A new instance of fragment PropertiesListFragment.
          */
-        fun newInstance(estateList : ArrayList<Estate>) : Fragment {
+        fun newInstance(estateList : ArrayList<Estate>) : PropertiesListFragment {
             val fragment = PropertiesListFragment()
             fragment.estatesList = estateList
 

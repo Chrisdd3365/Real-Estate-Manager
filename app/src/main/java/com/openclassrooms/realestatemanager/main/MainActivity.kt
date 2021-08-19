@@ -10,7 +10,9 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
+import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
 
 // TODO : Add a splash screen before this activity
 
@@ -22,7 +24,11 @@ import com.openclassrooms.realestatemanager.model.Estate
 class MainActivity : AppCompatActivity() {
 
     // Helper classes
-    private var mainViewPagerAdapter = MainViewPagerAdapter(this)
+    private var mainViewPagerAdapter : MainViewPagerAdapter? = null
+
+    // Child fragments
+    private var propertiesListFragment : PropertiesListFragment? = null
+    private var mapViewFragment : MapViewFragment? = null
 
     // Layout variables
     private var tabLayout : TabLayout? = null
@@ -40,6 +46,17 @@ class MainActivity : AppCompatActivity() {
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
 
+        // Setup estate list
+        estateList = createStaticEstateList()
+
+        // Init child fragments
+        propertiesListFragment = PropertiesListFragment.newInstance(estateList)
+        mapViewFragment = MapViewFragment.newInstance()
+
+        // Create adapter
+        mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
+            mapViewFragment!!)
+
         // Configure [ViewPager]
         viewPager?.adapter = mainViewPagerAdapter
 
@@ -50,12 +67,9 @@ class MainActivity : AppCompatActivity() {
             else
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
-
-        // Setup estate list
-        estateList = createStaticEstateList()
     }
 
-    fun createStaticEstateList() : ArrayList<Estate> {
+    private fun createStaticEstateList() : ArrayList<Estate> {
         val result = ArrayList<Estate>()
 
         for (i in 0..15) {

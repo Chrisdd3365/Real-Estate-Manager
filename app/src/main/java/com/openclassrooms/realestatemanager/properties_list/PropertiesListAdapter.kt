@@ -50,7 +50,7 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class PropertiesListItemViewHolder(val binding : PropertiesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun setData(estate: Estate) {
-
+            binding.viewModel?.setData(estate)
         }
 
     }
@@ -58,7 +58,6 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class PropertiesListItemViewModel : ViewModel() {
 
         fun setData(estate: Estate) {
-
         }
 
     }

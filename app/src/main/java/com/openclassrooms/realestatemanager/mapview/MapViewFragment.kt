@@ -24,7 +24,7 @@ class MapViewFragment : Fragment() {
          *
          * @return A new instance of fragment MapViewFragment.
          */
-        fun newInstance() : Fragment {
+        fun newInstance() : MapViewFragment {
             return MapViewFragment()
         }
     }
