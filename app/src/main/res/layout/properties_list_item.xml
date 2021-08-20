@@ -18,16 +18,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/cardview_dark_background"
             app:cardCornerRadius="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -37,36 +38,42 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@+id/imageView"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@id/imageView"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="@{viewModel.type}"
-                        tools:text="TEST"/>
+                        android:textSize="20sp"
+                        tools:text="TEST" />
 
                     <TextView
                         android:id="@+id/city"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="@{viewModel.city}"
+                        android:textColor="@android:color/darker_gray"
                         tools:text="POSITION" />
 
                     <TextView
                         android:id="@+id/price"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="@{viewModel.price}"
+                        android:textColor="@color/teal_700"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
                         tools:text="PRICE" />
 
                 </LinearLayout>
+
 
             </RelativeLayout>
 
