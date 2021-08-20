@@ -78,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
+                    android:rotation="@{viewModel.mainFabTranslation}"
                     app:srcCompat="@android:drawable/ic_input_add" />
 
             </LinearLayout>

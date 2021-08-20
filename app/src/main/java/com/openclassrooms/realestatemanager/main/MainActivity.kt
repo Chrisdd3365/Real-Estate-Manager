@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     // Helper classes
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
+    private var viewModel = MainActivityViewModel()
 
     // Child fragments
     private var propertiesListFragment : PropertiesListFragment? = null
@@ -39,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private var addPropertyFab : FloatingActionButton? = null
     private var addAgentFab : FloatingActionButton? = null
 
+    private var areMiniFabEnabled = false
+
     var estateList = ArrayList<Estate>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(
             this, R.layout.activity_main
         )
+        binding.viewModel = viewModel
 
         // Init layout variables
         tabLayout = binding.tabLayout
@@ -76,6 +81,17 @@ class MainActivity : AppCompatActivity() {
             else
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
+
+        // Setup buttons
+        mainFab?.setOnClickListener {
+            if (areMiniFabEnabled) {
+                viewModel.setMiniFabVisibility(false)
+                areMiniFabEnabled = false
+            } else {
+                viewModel.setMiniFabVisibility(true)
+                areMiniFabEnabled = true
+            }
+        }
     }
 
     private fun getStaticEstateList() : ArrayList<Estate> {
