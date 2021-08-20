@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.model
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 class Estate {
 

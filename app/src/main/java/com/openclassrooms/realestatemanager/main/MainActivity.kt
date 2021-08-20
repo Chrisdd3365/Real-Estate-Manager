@@ -13,6 +13,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
+import com.openclassrooms.realestatemanager.utils.StaticData
 
 // TODO : Add a splash screen before this activity
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         viewPager = binding.viewPager
 
         // Setup estate list
-        estateList = createStaticEstateList()
+        estateList = getStaticEstateList()
 
         // Init child fragments
         propertiesListFragment = PropertiesListFragment.newInstance(estateList)
@@ -69,18 +70,7 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
-    private fun createStaticEstateList() : ArrayList<Estate> {
-        val result = ArrayList<Estate>()
-
-        for (i in 0..15) {
-            result.add(
-                Estate().apply {
-                    this.address = "Test address $i"
-                    this.type = "Duplex"
-                }
-            )
-        }
-
-        return result
+    private fun getStaticEstateList() : ArrayList<Estate> {
+        return StaticData.staticEstatesList
     }
 }
