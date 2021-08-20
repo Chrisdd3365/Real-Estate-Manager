@@ -2,4 +2,7 @@
     <string name="app_name">RealEstateManager</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="no_properties">No properties were found !</string>
+
 </resources>
