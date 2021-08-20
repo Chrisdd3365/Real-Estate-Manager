@@ -6,6 +6,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.R
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity() {
     // Layout variables
     private var tabLayout : TabLayout? = null
     private var viewPager : ViewPager2? = null
+    private var mainFab : FloatingActionButton? = null
+    private var addPropertyFab : FloatingActionButton? = null
+    private var addAgentFab : FloatingActionButton? = null
 
     var estateList = ArrayList<Estate>()
 
@@ -44,8 +48,12 @@ class MainActivity : AppCompatActivity() {
             this, R.layout.activity_main
         )
 
+        // Init layout variables
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
+        mainFab = binding.mainFab
+        addPropertyFab = binding.addPropertyFab
+        addAgentFab = binding.addAgentFab
 
         // Setup estate list
         estateList = getStaticEstateList()
