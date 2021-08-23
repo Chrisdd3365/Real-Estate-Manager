@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
+import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
@@ -91,6 +92,10 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setMiniFabVisibility(true)
                 areMiniFabEnabled = true
             }
+        }
+
+        addPropertyFab?.setOnClickListener {
+            startActivity(EstateCreationActivity.newInstance(this))
         }
     }
 
