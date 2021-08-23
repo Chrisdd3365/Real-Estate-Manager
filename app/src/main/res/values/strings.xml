@@ -5,4 +5,6 @@
 
     <string name="no_properties">No properties were found !</string>
 
+    <string name="skip">Skip</string>
+
 </resources>
