@@ -6,5 +6,21 @@
     <string name="no_properties">No properties were found !</string>
 
     <string name="skip">Skip</string>
+    <string name="button_next">Next</string>
+
+    <string name="type_title">Type :</string>
+    <string name="address_hint">Address</string>
+    <string name="price_hint">Price</string>
+    <string name="surface_hint">Surface</string>
+    <string name="description_hint">Description</string>
+    
+    <!-- Estate types -->
+    <string-array name="estate_types">
+        <item name="type_flat">Flat</item>
+        <item name="type_townhouse">Townhouse</item>
+        <item name="type_penthouse">Penthouse</item>
+        <item name="type_house">House</item>
+        <item name="type_duplex">Duplex</item>
+    </string-array>
 
 </resources>

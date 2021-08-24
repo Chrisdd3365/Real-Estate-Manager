@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
+import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -19,6 +20,9 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Helper classes
     private val viewModel = EstateCreationActivityViewModel()
+
+    // Fragments
+    private val basicDetailsFragment = BasicDetailsFragment.newInstance()
 
     // Layout variables
     private var fragmentRoot : ConstraintLayout? = null
@@ -33,6 +37,15 @@ class EstateCreationActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         fragmentRoot = binding.fragmentRoot
+
+        showFirstFragment()
+    }
+
+    private fun showFirstFragment() {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_root, basicDetailsFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {

@@ -26,4 +26,13 @@
     <style name="AppTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabBackground">@color/defaultElevatedBackground</item>
     </style>
+
+    <style name="RealEstateManagerEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RealEstateManagerSpinner" parent="Widget.AppCompat.Spinner">
+
+    </style>
 </resources>
