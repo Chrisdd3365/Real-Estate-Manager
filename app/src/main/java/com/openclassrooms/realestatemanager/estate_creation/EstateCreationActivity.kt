@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
+import com.openclassrooms.realestatemanager.model.Estate
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -26,6 +27,8 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Layout variables
     private var fragmentRoot : ConstraintLayout? = null
+
+    var estate : Estate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,21 @@ class EstateCreationActivity : AppCompatActivity() {
             .add(R.id.fragment_root, basicDetailsFragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    fun goToOptionalDetails() {
+        
+    }
+
+    fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,
+                    description : String) {
+        estate = Estate().apply {
+            this.typeIndex = typeIndex
+            this.address = address
+            this.price = price
+            this.surface = surface
+            this.description = description
+        }
     }
 
     companion object {

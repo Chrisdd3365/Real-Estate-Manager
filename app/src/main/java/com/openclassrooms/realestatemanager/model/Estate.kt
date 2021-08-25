@@ -5,7 +5,8 @@ import kotlin.collections.ArrayList
 
 class Estate {
 
-    var type = ""
+    var type = ""   // TODO : Remove
+    var typeIndex = 0
     var description = ""
     var address = ""
     var onMarketSince = Date()

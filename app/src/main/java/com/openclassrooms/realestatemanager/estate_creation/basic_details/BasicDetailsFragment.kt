@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.estate_creation.basic_details
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentBasicDetailsBinding
+import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.utils.TextValidator
 
 class BasicDetailsFragment : Fragment() {
@@ -117,7 +116,14 @@ class BasicDetailsFragment : Fragment() {
 
         // Setup nextButton
         nextButton?.setOnClickListener {
-            Log.d(TAG, "Should go next")
+            (activity as EstateCreationActivity).setupEstate(
+                typeIndex = typeSpinner?.selectedItemPosition!!,
+                address = addressEditText?.text.toString(),
+                price = priceEditText?.text.toString().toFloat(),
+                surface = surfaceEditText?.text.toString().toFloat(),
+                description = descriptionEditText?.text.toString()
+            )
+            (activity as EstateCreationActivity).goToOptionalDetails()
         }
 
         return binding.root
