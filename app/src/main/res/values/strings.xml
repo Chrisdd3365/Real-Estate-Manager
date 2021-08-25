@@ -13,7 +13,11 @@
     <string name="price_hint">Price</string>
     <string name="surface_hint">Surface</string>
     <string name="description_hint">Description</string>
-    
+
+    <!-- Validators -->
+    <string name="mandatory_field">This field is mandatory</string>
+    <string name="incorrect_format">Incorrect format</string>
+
     <!-- Estate types -->
     <string-array name="estate_types">
         <item name="type_flat">Flat</item>
