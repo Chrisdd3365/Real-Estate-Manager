@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
@@ -26,12 +27,13 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Fragments
     private val basicDetailsFragment = BasicDetailsFragment.newInstance()
-    private val optionalDetailsFragment = OptionalDetailsFragment.newInstance()
+    private val optionalDetailsFragmentList : ArrayList<OptionalDetailsFragment> = ArrayList()
 
     // Layout variables
     private var fragmentRoot : ConstraintLayout? = null
 
-    private var estate : Estate? = null
+    private var estate = Estate()
+    private var optionalDetailsFragmentPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,65 @@ class EstateCreationActivity : AppCompatActivity() {
         fragmentRoot = binding.fragmentRoot
 
         showFirstFragment()
+
+        setupOptionalDetailsFragmentList()
+    }
+
+    private fun setupOptionalDetailsFragmentList() {
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.roomCount,
+                getString(R.string.rooms_count_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.bathroomsCount,
+                getString(R.string.bathrooms_count_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.bedroomsCount,
+                getString(R.string.bedrooms_count_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.school,
+                getString(R.string.school_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.playground,
+                getString(R.string.playground_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.shop,
+                getString(R.string.shop_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.park,
+                getString(R.string.park_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.buses,
+                getString(R.string.buses_question)
+            )
+        )
+        optionalDetailsFragmentList.add(
+            OptionalDetailsFragment.newInstance(
+                estate.subway,
+                getString(R.string.subway_question)
+            )
+        )
     }
 
     private fun showFirstFragment() {
@@ -55,16 +116,27 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     fun goToOptionalDetails() {
+        viewModel.setSkipTextVisibility(View.VISIBLE)
+        viewModel.setNavigationButtonVisibility(View.VISIBLE)
         Log.d(TAG, "Should go to optional details")
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_root, optionalDetailsFragment)
+            .replace(
+                R.id.fragment_root,
+                optionalDetailsFragmentList[optionalDetailsFragmentPosition]
+            )
             .addToBackStack(null)
             .commit()
     }
 
+    fun goToNextOptionalDetails() {
+        Log.d(TAG, "Current roomCount = ${estate.roomCount}")
+        optionalDetailsFragmentPosition++
+        goToOptionalDetails()
+    }
+
     fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,
                     description : String) {
-        estate = Estate().apply {
+        estate.apply {
             this.typeIndex = typeIndex
             this.address = address
             this.price = price

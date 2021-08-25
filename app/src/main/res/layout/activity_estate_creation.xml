@@ -2,6 +2,7 @@
 
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".estate_creation.EstateCreationActivity">
 
@@ -11,28 +12,65 @@
             type="com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivityViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/skip_tv"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_weight="10"
             android:text="@string/skip"
-            android:visibility="@{viewModel.skipTextViewVisibility}" />
+            android:visibility="@{viewModel.skipTextViewVisibility}"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_root"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_root"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/skip_tv">
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navigation_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="@{viewModel.navigationButtonVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/previous_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_button"
+                android:enabled="@{viewModel.buttonPreviousEnabled}"
+                android:text="@string/button_previous" />
+
+            <Button
+                android:id="@+id/next_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_button"
+                android:enabled="@{viewModel.buttonNextEnabled}"
+                android:text="@string/button_next" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

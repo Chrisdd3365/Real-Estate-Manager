@@ -5,13 +5,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentOptionalDetailsBinding
+import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 
-class OptionalDetailsFragment : Fragment() {
+class OptionalDetailsFragment(var variableToEdit: Any, var question: String) : Fragment() {
 
+    // Helper classes
     private val viewModel = OptionalDetailsFragmentViewModel()
+
+    // Layout variables
+    private var countEditText : EditText? = null
+    private var minusTextView : TextView? = null
+    private var plusTextView : TextView? = null
+
+    private var countValue = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -25,12 +36,37 @@ class OptionalDetailsFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        // Init layout variables
+        countEditText = binding.countEditText
+        minusTextView = binding.minusTextView
+        plusTextView = binding.plusTextView
+
+        minusTextView?.setOnClickListener {
+            if (countValue > 0) {
+                countValue--
+                updateCountText()
+            }
+        }
+        plusTextView?.setOnClickListener {
+            countValue++
+            updateCountText()
+        }
+
+        viewModel.setQuestion(question)
+        countEditText?.setText(countValue.toString())
+
         return binding.root
     }
 
+    private fun updateCountText() {
+        countEditText?.setText(countValue.toString())
+        variableToEdit = countValue
+        (activity as EstateCreationActivity).goToNextOptionalDetails()
+    }
+
     companion object {
-        fun newInstance() : OptionalDetailsFragment {
-            return OptionalDetailsFragment()
+        fun newInstance(variableToEdit : Any, question : String) : OptionalDetailsFragment {
+            return OptionalDetailsFragment(variableToEdit, question)
         }
     }
 }
