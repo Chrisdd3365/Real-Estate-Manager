@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
+import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
 
 /**
@@ -24,11 +26,12 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Fragments
     private val basicDetailsFragment = BasicDetailsFragment.newInstance()
+    private val optionalDetailsFragment = OptionalDetailsFragment.newInstance()
 
     // Layout variables
     private var fragmentRoot : ConstraintLayout? = null
 
-    var estate : Estate? = null
+    private var estate : Estate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +55,11 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     fun goToOptionalDetails() {
-        
+        Log.d(TAG, "Should go to optional details")
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_root, optionalDetailsFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,
@@ -67,6 +74,8 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     companion object {
+
+        private const val TAG = "EstateCreationActivity"
 
         fun newInstance(context: Context) : Intent =
             Intent(context, EstateCreationActivity::class.java)
