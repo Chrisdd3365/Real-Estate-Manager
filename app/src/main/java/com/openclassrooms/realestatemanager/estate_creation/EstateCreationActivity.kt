@@ -13,6 +13,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBi
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
+import java.lang.Exception
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -53,58 +54,67 @@ class EstateCreationActivity : AppCompatActivity() {
 
     private fun setupOptionalDetailsFragmentList() {
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.roomCount,
-                getString(R.string.rooms_count_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.rooms_count_question)) { result: Any ->
+                    try { estate.roomCount = result as Int } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.bathroomsCount,
-                getString(R.string.bathrooms_count_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.bathrooms_count_question)) { result : Any ->
+                    try { estate.bathroomsCount = result as Int } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.bedroomsCount,
-                getString(R.string.bedrooms_count_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.bedrooms_count_question)) { result : Any ->
+                    try { estate.bedroomsCount = result as Int } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.school,
-                getString(R.string.school_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.school_question)) { result : Any ->
+                    try { estate.school = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.playground,
-                getString(R.string.playground_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.playground_question)) { result : Any ->
+                    try { estate.playground = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.shop,
-                getString(R.string.shop_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.shop_question)) { result : Any ->
+                    try { estate.shop = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.park,
-                getString(R.string.park_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.park_question)) { result : Any ->
+                    try { estate.park = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.buses,
-                getString(R.string.buses_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.buses_question)) { result : Any ->
+                    try { estate.buses = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment.newInstance(
-                estate.subway,
-                getString(R.string.subway_question)
-            )
+            OptionalDetailsFragment
+                .newInstance(getString(R.string.subway_question)) { result : Any ->
+                    try { estate.subway = result as Boolean } catch (ignored : Exception) {}
+                    goToNextOptionalDetails()
+                }
         )
     }
 
@@ -128,10 +138,11 @@ class EstateCreationActivity : AppCompatActivity() {
             .commit()
     }
 
-    fun goToNextOptionalDetails() {
+    private fun goToNextOptionalDetails() {
         Log.d(TAG, "Current roomCount = ${estate.roomCount}")
         optionalDetailsFragmentPosition++
-        goToOptionalDetails()
+        if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
+            goToOptionalDetails()
     }
 
     fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,

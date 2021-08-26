@@ -10,9 +10,9 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentOptionalDetailsBinding
-import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 
-class OptionalDetailsFragment(var variableToEdit: Any, var question: String) : Fragment() {
+class OptionalDetailsFragment(private var question: String,
+                              private val callback : (Any) -> Unit) : Fragment() {
 
     // Helper classes
     private val viewModel = OptionalDetailsFragmentViewModel()
@@ -60,13 +60,12 @@ class OptionalDetailsFragment(var variableToEdit: Any, var question: String) : F
 
     private fun updateCountText() {
         countEditText?.setText(countValue.toString())
-        variableToEdit = countValue
-        (activity as EstateCreationActivity).goToNextOptionalDetails()
+        callback.invoke(countValue)
     }
 
     companion object {
-        fun newInstance(variableToEdit : Any, question : String) : OptionalDetailsFragment {
-            return OptionalDetailsFragment(variableToEdit, question)
+        fun newInstance(question : String, callback: (Any) -> Unit) : OptionalDetailsFragment {
+            return OptionalDetailsFragment(question, callback)
         }
     }
 }
