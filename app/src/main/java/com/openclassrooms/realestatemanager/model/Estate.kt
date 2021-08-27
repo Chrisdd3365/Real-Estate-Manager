@@ -5,24 +5,24 @@ import kotlin.collections.ArrayList
 
 class Estate {
 
-    var type = ""   // TODO : Remove
-    var typeIndex = 0
-    var description = ""
-    var address = ""
-    var onMarketSince = Date()
+    var type : String? = null   // TODO : Remove
+    var typeIndex : Int? = null
+    var description : String? = null
+    var address : String? = null
+    var onMarketSince : Date? = null
 
-    var price = 0f
-    var surface = 0f
-    var roomCount = 0
-    var bathroomsCount = 0
-    var bedroomsCount = 0
+    var price : Float? = null
+    var surface : Float? = null
+    var roomCount : Int? = null
+    var bathroomsCount : Int? = null
+    var bedroomsCount : Int? = null
 
-    var school = false
-    var playground = false
-    var shop = false
-    var buses = false
-    var subway = false
-    var park = false
+    var school : Boolean? = null
+    var playground : Boolean? = null
+    var shop : Boolean? = null
+    var buses : Boolean? = null
+    var subway : Boolean? = null
+    var park : Boolean? = null
 
     var picturesUris = ArrayList<String>()
 }
