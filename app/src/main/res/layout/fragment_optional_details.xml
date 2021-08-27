@@ -43,7 +43,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/minus" />
+                android:text="@{viewModel.minusText}" />
 
             <EditText
                 android:id="@+id/count_edit_text"
@@ -54,6 +54,7 @@
                 android:autofillHints=""
                 android:gravity="center"
                 android:hint="@string/empty_hint"
+                android:visibility="@{viewModel.editTextVisibility}"
                 android:inputType="number" />
 
             <TextView
@@ -63,7 +64,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/plus" />
+                android:text="@{viewModel.plusText}" />
 
         </LinearLayout>
 

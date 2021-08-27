@@ -1,4 +1,9 @@
 package com.openclassrooms.realestatemanager.utils
 
-object enums {
+object Enums {
+
+    enum class OptionalDetailType {
+        CLOSED,
+        COUNT
+    }
 }

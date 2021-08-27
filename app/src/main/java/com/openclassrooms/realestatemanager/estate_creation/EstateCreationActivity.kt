@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBi
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.utils.Enums
 import java.lang.Exception
 
 /**
@@ -67,7 +68,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun setupOptionalDetailsFragmentList() {
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.rooms_count_question)) { result: Any ->
+                .newInstance(getString(R.string.rooms_count_question), Enums.OptionalDetailType.COUNT) { result: Any ->
                     try {
                         estate.roomCount = result as Int
                         viewModel.setButtonNextEnabled(true)
@@ -76,7 +77,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.bathrooms_count_question)) { result : Any ->
+                .newInstance(getString(R.string.bathrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
                     try {
                         estate.bathroomsCount = result as Int
                         viewModel.setButtonNextEnabled(true)
@@ -85,7 +86,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.bedrooms_count_question)) { result : Any ->
+                .newInstance(getString(R.string.bedrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
                     try {
                         estate.bedroomsCount = result as Int
                         viewModel.setButtonNextEnabled(true)
@@ -94,7 +95,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.school_question)) { result : Any ->
+                .newInstance(getString(R.string.school_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.school = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -103,7 +104,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.playground_question)) { result : Any ->
+                .newInstance(getString(R.string.playground_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.playground = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -112,7 +113,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.shop_question)) { result : Any ->
+                .newInstance(getString(R.string.shop_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.shop = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -121,7 +122,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.park_question)) { result : Any ->
+                .newInstance(getString(R.string.park_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.park = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -130,7 +131,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.buses_question)) { result : Any ->
+                .newInstance(getString(R.string.buses_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.buses = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -139,7 +140,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
-                .newInstance(getString(R.string.subway_question)) { result : Any ->
+                .newInstance(getString(R.string.subway_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.subway = result as Boolean
                         viewModel.setButtonNextEnabled(true)
@@ -176,6 +177,8 @@ class EstateCreationActivity : AppCompatActivity() {
         viewModel.setButtonNextEnabled(false)
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
+        else
+            completeEstateCreation()
     }
 
     private fun goToPreviousOptionalDetails() {
@@ -193,6 +196,11 @@ class EstateCreationActivity : AppCompatActivity() {
             this.surface = surface
             this.description = description
         }
+    }
+
+    private fun completeEstateCreation() {
+        // TODO : Here, we display the activity EstateDetailsActivity to ask if it is correct, then
+        //  save the result in the database.
     }
 
     companion object {

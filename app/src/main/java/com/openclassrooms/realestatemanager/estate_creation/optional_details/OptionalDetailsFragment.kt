@@ -10,8 +10,10 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentOptionalDetailsBinding
+import com.openclassrooms.realestatemanager.utils.Enums
 
 class OptionalDetailsFragment(private var question: String,
+                              private var questionType : Enums.OptionalDetailType,
                               private val callback : (Any) -> Unit) : Fragment() {
 
     // Helper classes
@@ -23,6 +25,7 @@ class OptionalDetailsFragment(private var question: String,
     private var plusTextView : TextView? = null
 
     private var countValue = 0
+    private var closedAnswer = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -36,20 +39,27 @@ class OptionalDetailsFragment(private var question: String,
 
         binding.viewModel = viewModel
 
+        // Setup question type
+        viewModel.setQuestionType(context, questionType)
+
         // Init layout variables
         countEditText = binding.countEditText
         minusTextView = binding.minusTextView
         plusTextView = binding.plusTextView
 
         minusTextView?.setOnClickListener {
-            if (countValue > 0) {
-                countValue--
-                updateCountText()
+            when (questionType) {
+                Enums.OptionalDetailType.CLOSED -> closedAnswer = false
+                Enums.OptionalDetailType.COUNT -> if (countValue > 0) countValue--
             }
+            updateDetailAnswer()
         }
         plusTextView?.setOnClickListener {
-            countValue++
-            updateCountText()
+            when (questionType) {
+                Enums.OptionalDetailType.CLOSED -> closedAnswer = true
+                Enums.OptionalDetailType.COUNT -> countValue++
+            }
+            updateDetailAnswer()
         }
 
         viewModel.setQuestion(question)
@@ -58,14 +68,25 @@ class OptionalDetailsFragment(private var question: String,
         return binding.root
     }
 
-    private fun updateCountText() {
-        countEditText?.setText(countValue.toString())
-        callback.invoke(countValue)
+    private fun updateDetailAnswer() {
+        when (questionType) {
+            Enums.OptionalDetailType.CLOSED -> {
+                callback.invoke(closedAnswer)
+            }
+            Enums.OptionalDetailType.COUNT -> {
+                countEditText?.setText(countValue.toString())
+                callback.invoke(countValue)
+            }
+        }
     }
 
     companion object {
-        fun newInstance(question : String, callback: (Any) -> Unit) : OptionalDetailsFragment {
-            return OptionalDetailsFragment(question, callback)
+        fun newInstance(
+            question : String,
+            questionType : Enums.OptionalDetailType,
+            callback: (Any) -> Unit
+        ) : OptionalDetailsFragment {
+            return OptionalDetailsFragment(question, questionType, callback)
         }
     }
 }

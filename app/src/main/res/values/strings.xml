@@ -41,6 +41,8 @@
 
     <string name="minus">-</string>
     <string name="plus">+</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
     <string name="empty_hint"> </string>
 
 </resources>
