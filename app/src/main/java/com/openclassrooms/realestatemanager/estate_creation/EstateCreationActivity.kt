@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
@@ -32,6 +33,8 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Layout variables
     private var fragmentRoot : ConstraintLayout? = null
+    private var previousButton : Button? = null
+    private var nextButton : Button? = null
 
     private var estate = Estate()
     private var optionalDetailsFragmentPosition = 0
@@ -45,75 +48,102 @@ class EstateCreationActivity : AppCompatActivity() {
 
         binding.viewModel = viewModel
 
+        // Init layout variables
         fragmentRoot = binding.fragmentRoot
+        previousButton = binding.previousButton
+        nextButton = binding.nextButton
 
         showFirstFragment()
 
         setupOptionalDetailsFragmentList()
+
+        nextButton?.setOnClickListener {
+            Log.d(TAG, "nextButton clicked !")
+            goToNextOptionalDetails()
+        }
+        previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
     }
 
     private fun setupOptionalDetailsFragmentList() {
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.rooms_count_question)) { result: Any ->
-                    try { estate.roomCount = result as Int } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.roomCount = result as Int
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
             }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.bathrooms_count_question)) { result : Any ->
-                    try { estate.bathroomsCount = result as Int } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.bathroomsCount = result as Int
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.bedrooms_count_question)) { result : Any ->
-                    try { estate.bedroomsCount = result as Int } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.bedroomsCount = result as Int
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.school_question)) { result : Any ->
-                    try { estate.school = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.school = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.playground_question)) { result : Any ->
-                    try { estate.playground = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.playground = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.shop_question)) { result : Any ->
-                    try { estate.shop = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.shop = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.park_question)) { result : Any ->
-                    try { estate.park = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.park = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.buses_question)) { result : Any ->
-                    try { estate.buses = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.buses = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment
                 .newInstance(getString(R.string.subway_question)) { result : Any ->
-                    try { estate.subway = result as Boolean } catch (ignored : Exception) {}
-                    goToNextOptionalDetails()
+                    try {
+                        estate.subway = result as Boolean
+                        viewModel.setButtonNextEnabled(true)
+                    } catch (ignored : Exception) {}
                 }
         )
     }
@@ -141,7 +171,16 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun goToNextOptionalDetails() {
         Log.d(TAG, "Current roomCount = ${estate.roomCount}")
         optionalDetailsFragmentPosition++
+        if (optionalDetailsFragmentPosition > 0)
+            viewModel.setButtonPreviousEnabled(true)
+        viewModel.setButtonNextEnabled(false)
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
+            goToOptionalDetails()
+    }
+
+    private fun goToPreviousOptionalDetails() {
+        optionalDetailsFragmentPosition--
+        if (optionalDetailsFragmentPosition > 0)
             goToOptionalDetails()
     }
 

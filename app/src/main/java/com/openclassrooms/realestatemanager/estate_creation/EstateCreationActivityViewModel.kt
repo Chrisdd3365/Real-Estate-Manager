@@ -20,4 +20,11 @@ class EstateCreationActivityViewModel : ViewModel() {
         navigationButtonVisibility.set(visibility)
     }
 
+    fun setButtonPreviousEnabled(enabled : Boolean) {
+        buttonPreviousEnabled.set(enabled)
+    }
+
+    fun setButtonNextEnabled(enabled : Boolean) {
+        buttonNextEnabled.set(enabled)
+    }
 }
