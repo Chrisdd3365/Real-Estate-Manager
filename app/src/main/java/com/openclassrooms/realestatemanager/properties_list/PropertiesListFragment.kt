@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.show_estate.ShowEstateActivity
 
 class PropertiesListFragment : Fragment() {
 
     // Helper classes
     private val viewModel = PropertiesListFragmentViewModel()
-    private val propertiesListAdapter = PropertiesListAdapter()
+    private val propertiesListAdapter = PropertiesListAdapter {
+        startActivity(ShowEstateActivity.newInstance(context, it))
+    }
 
     // Layout variables
     private var propertiesListRv : RecyclerView? = null

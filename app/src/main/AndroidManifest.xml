@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RealEstateManager">
-        <activity android:name=".estate_creation.EstateCreationActivity"></activity>
+        <activity
+            android:name=".show_estate.ShowEstateActivity"
+            android:exported="true" />
+        <activity android:name=".estate_creation.EstateCreationActivity" />
         <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

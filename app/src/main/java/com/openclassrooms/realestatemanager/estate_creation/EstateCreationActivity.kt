@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
@@ -14,6 +16,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBi
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.show_estate.ShowEstateActivity
 import com.openclassrooms.realestatemanager.utils.Enums
 import java.lang.Exception
 
@@ -39,6 +42,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
     private var estate = Estate()
     private var optionalDetailsFragmentPosition = 0
+    private var resultLauncher : ActivityResultLauncher<Intent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +52,12 @@ class EstateCreationActivity : AppCompatActivity() {
         )
 
         binding.viewModel = viewModel
+
+        resultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            Log.d(TAG, "Result = $result")
+        }
 
         // Init layout variables
         fragmentRoot = binding.fragmentRoot
@@ -201,6 +211,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun completeEstateCreation() {
         // TODO : Here, we display the activity EstateDetailsActivity to ask if it is correct, then
         //  save the result in the database.
+        resultLauncher?.launch(ShowEstateActivity.newInstance(this, estate))
     }
 
     companion object {

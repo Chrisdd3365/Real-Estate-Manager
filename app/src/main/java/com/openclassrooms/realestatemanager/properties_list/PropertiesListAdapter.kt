@@ -9,7 +9,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.PropertiesListItemBinding
 import com.openclassrooms.realestatemanager.model.Estate
 
-class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items = ArrayList<Estate>()
 
@@ -53,6 +53,7 @@ class PropertiesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setData(estate: Estate) {
             binding.viewModel = PropertiesListItemViewModel()
             binding.viewModel?.setData(estate)
+            binding.itemRoot.setOnClickListener { clicked.invoke(estate) }
         }
 
     }

@@ -1,9 +1,10 @@
 package com.openclassrooms.realestatemanager.model
 
+import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
-class Estate {
+class Estate : Serializable {
 
     var type : String? = null   // TODO : Remove
     var typeIndex : Int? = null
