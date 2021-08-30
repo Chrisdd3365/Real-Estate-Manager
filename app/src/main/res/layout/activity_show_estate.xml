@@ -43,35 +43,152 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:text="Test description"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Test description" />
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/textView"
-                    android:layout_alignParentBottom="true">
+                    android:orientation="horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:baselineAligned="false">
 
                     <LinearLayout
                         android:id="@+id/details_layout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="0dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/surface_icon"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:srcCompat="@drawable/ic_surface_size"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.surfaceSize}"
+                                android:layout_centerVertical="true"
+                                tools:text="25 m2"
+                                android:layout_toEndOf="@+id/surface_icon"
+                                android:layout_marginStart="10dp"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
+
+                            <ImageView
+                                android:id="@+id/rooms_icon"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:srcCompat="@drawable/ic_room"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_toEndOf="@+id/rooms_icon"
+                                android:text="@{viewModel.roomsCount}"
+                                tools:text="4 rooms" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
+
+                            <ImageView
+                                android:id="@+id/bedrooms_icon"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:srcCompat="@drawable/ic_bedroom"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.bedroomsCount}"
+                                android:layout_centerVertical="true"
+                                tools:text="3 bedrooms"
+                                android:layout_toEndOf="@+id/bedrooms_icon"
+                                android:layout_marginStart="10dp"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
+
+                            <ImageView
+                                android:id="@+id/bathrooms_icon"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                app:srcCompat="@drawable/ic_bathroom"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.bathroomsCount}"
+                                android:layout_centerVertical="true"
+                                tools:text="2 bathrooms"
+                                android:layout_toEndOf="@+id/bathrooms_icon"
+                                android:layout_marginStart="10dp"/>
+                        </RelativeLayout>
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/details_layout_2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <!-- TODO : Change icon to dollar when needed -->
+
+                            <ImageView
+                                android:id="@+id/price_icon"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:maxWidth="25dp"
+                                android:maxHeight="25dp"
+                                app:srcCompat="@drawable/ic_euro"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.price}"
+                                android:layout_toEndOf="@+id/price_icon"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="10dp"
+                                tools:text="230 000 $"/>
+                        </RelativeLayout>
 
                     </LinearLayout>
 
-                </RelativeLayout>
+                </LinearLayout>
 
             </RelativeLayout>
 
