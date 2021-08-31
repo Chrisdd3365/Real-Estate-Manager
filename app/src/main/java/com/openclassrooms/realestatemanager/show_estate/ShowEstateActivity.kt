@@ -92,6 +92,9 @@ class ShowEstateActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *  Shows or hide "Nearby:" icons, given the [estate] data.
+     */
     private fun setNearbyData() {
         if (estate!!.school == null && estate!!.playground == null && estate!!.shop == null
             && estate!!.buses == null && estate!!.subway == null && estate!!.park == null) {
@@ -106,78 +109,39 @@ class ShowEstateActivity : AppCompatActivity() {
             return
         }
 
-        if (estate!!.school != null && estate!!.school == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_school)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
+        // Setting "Nearby:" icons given [estate] data
+        if (estate!!.school != null && estate!!.school == true)
+            addNearbyIconInFlexbox(R.drawable.ic_school)
+        if (estate!!.playground != null && estate!!.playground == true)
+            addNearbyIconInFlexbox(R.drawable.ic_playground)
+        if (estate!!.shop != null && estate!!.shop == true)
+            addNearbyIconInFlexbox(R.drawable.ic_shop)
+        if (estate!!.buses != null && estate!!.buses == true)
+            addNearbyIconInFlexbox(R.drawable.ic_bus_station)
+        if (estate!!.subway != null && estate!!.subway == true)
+            addNearbyIconInFlexbox(R.drawable.ic_subway_station)
+        if (estate!!.park != null && estate!!.park == true)
+            addNearbyIconInFlexbox(R.drawable.ic_park)
 
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-            imageViewLayoutParams.marginEnd = 25
-        }
-        if (estate!!.playground != null && estate!!.playground == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_playground)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
-
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-            imageViewLayoutParams.marginEnd = 25
-        }
-        if (estate!!.shop != null && estate!!.shop == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_shop)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
-
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-            imageViewLayoutParams.marginEnd = 25
-        }
-        if (estate!!.buses != null && estate!!.buses == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_bus_station)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
-
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-            imageViewLayoutParams.marginEnd = 25
-        }
-        if (estate!!.subway != null && estate!!.subway == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_subway_station)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
-
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-            imageViewLayoutParams.marginEnd = 25
-        }
-        if (estate!!.park != null && estate!!.park == true) {
-            val imageView = ImageView(this)
-            imageView.setImageResource(R.drawable.ic_park)
-            imageView.id = 0
-            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesFlexbox?.addView(imageView)
-
-            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
-            imageViewLayoutParams.width = 100
-            imageViewLayoutParams.height = 100
-        }
         viewModel.showNearbyLayout()
+    }
+
+    /**
+     *  Creates an [ImageView] with the drawable given in parameters, and adds it in the
+     *  [FlexboxLayout].
+     *  @param iconId [Int] - ID of the drawable resource.
+     */
+    private fun addNearbyIconInFlexbox(iconId : Int) {
+        val imageView = ImageView(this)
+        imageView.setImageResource(iconId)
+        imageView.id = 0
+        imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+        nearbyImagesFlexbox?.addView(imageView)
+
+        val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
+        imageViewLayoutParams.width = 100
+        imageViewLayoutParams.height = 100
+        imageViewLayoutParams.marginEnd = 25
     }
 
     companion object {
