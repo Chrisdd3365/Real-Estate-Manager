@@ -153,7 +153,6 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun showFirstFragment() {
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_root, basicDetailsFragment)
-            .addToBackStack(null)
             .commit()
     }
 
@@ -166,7 +165,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 R.id.fragment_root,
                 optionalDetailsFragmentList[optionalDetailsFragmentPosition]
             )
-            .addToBackStack(null)
             .commit()
     }
 
