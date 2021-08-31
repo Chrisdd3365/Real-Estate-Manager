@@ -12,6 +12,7 @@
     <string name="button_edit">Edit</string>
 
     <string name="type_title">Type :</string>
+    <string name="nearby_title">Nearby :</string>
     <string name="address_hint">Address</string>
     <string name="price_hint">Price</string>
     <string name="surface_hint">Surface</string>
