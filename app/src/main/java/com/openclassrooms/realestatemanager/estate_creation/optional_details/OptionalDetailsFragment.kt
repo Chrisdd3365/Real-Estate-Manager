@@ -65,6 +65,13 @@ class OptionalDetailsFragment(private var question: String,
         viewModel.setQuestion(question)
         countEditText?.setText(countValue.toString())
 
+
+        if (questionType == Enums.OptionalDetailType.COUNT) {
+            // By default, count values get 0
+            // TODO : Check onResume behaviors
+            callback.invoke(0)
+        }
+
         return binding.root
     }
 

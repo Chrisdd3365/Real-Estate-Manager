@@ -10,7 +10,6 @@ class EstateCreationActivityViewModel : ViewModel() {
     val skipTextViewVisibility = ObservableInt(View.GONE)
     val navigationButtonVisibility = ObservableInt(View.GONE)
     val buttonPreviousEnabled = ObservableField(false)
-    val buttonNextEnabled = ObservableField(false)
 
     fun setSkipTextVisibility(visibility : Int) {
         skipTextViewVisibility.set(visibility)
@@ -22,9 +21,5 @@ class EstateCreationActivityViewModel : ViewModel() {
 
     fun setButtonPreviousEnabled(enabled : Boolean) {
         buttonPreviousEnabled.set(enabled)
-    }
-
-    fun setButtonNextEnabled(enabled : Boolean) {
-        buttonNextEnabled.set(enabled)
     }
 }

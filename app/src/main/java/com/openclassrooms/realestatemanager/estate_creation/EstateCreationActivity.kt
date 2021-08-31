@@ -81,7 +81,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.rooms_count_question), Enums.OptionalDetailType.COUNT) { result: Any ->
                     try {
                         estate.roomCount = result as Int
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
             }
         )
@@ -90,7 +89,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.bathrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
                     try {
                         estate.bathroomsCount = result as Int
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -99,7 +97,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.bedrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
                     try {
                         estate.bedroomsCount = result as Int
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -108,7 +105,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.school_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.school = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -117,7 +113,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.playground_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.playground = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -126,7 +121,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.shop_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.shop = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -135,7 +129,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.park_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.park = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -144,7 +137,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.buses_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.buses = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -153,7 +145,6 @@ class EstateCreationActivity : AppCompatActivity() {
                 .newInstance(getString(R.string.subway_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
                     try {
                         estate.subway = result as Boolean
-                        viewModel.setButtonNextEnabled(true)
                     } catch (ignored : Exception) {}
                 }
         )
@@ -180,11 +171,9 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     private fun goToNextOptionalDetails() {
-        Log.d(TAG, "Current roomCount = ${estate.roomCount}")
         optionalDetailsFragmentPosition++
         if (optionalDetailsFragmentPosition > 0)
             viewModel.setButtonPreviousEnabled(true)
-        viewModel.setButtonNextEnabled(false)
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
         else
@@ -193,8 +182,10 @@ class EstateCreationActivity : AppCompatActivity() {
 
     private fun goToPreviousOptionalDetails() {
         optionalDetailsFragmentPosition--
-        if (optionalDetailsFragmentPosition > 0)
+        if (optionalDetailsFragmentPosition >= 0)
             goToOptionalDetails()
+        if (optionalDetailsFragmentPosition == 0)
+            viewModel.setButtonPreviousEnabled(false)
     }
 
     fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,
