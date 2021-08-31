@@ -2,11 +2,13 @@ package com.openclassrooms.realestatemanager.show_estate
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.PorterDuff
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
+import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityShowEstateBinding
@@ -22,6 +24,7 @@ class ShowEstateActivity : AppCompatActivity() {
     private var typeIcon : ImageView? = null
     private var leftButton : Button? = null
     private var rightButton : Button? = null
+    private var nearbyImagesLayout : LinearLayout? = null
 
     private var type : Enums.ShowEstateType? = null
     private var estate : Estate? = null
@@ -43,13 +46,16 @@ class ShowEstateActivity : AppCompatActivity() {
         typeIcon = binding.typeIcon
         leftButton = binding.leftButton
         rightButton = binding.rightButton
+        nearbyImagesLayout = binding.nearbyImagesLayout
 
-        viewModel.setButtons(this, type!!)
+        viewModel.setButtonsText(this, type!!)
         viewModel.setData(this, estate!!)
 
         setImageType()
 
         setButtonsBehaviors()
+
+        setNearbyData()
     }
 
     private fun setImageType() {
@@ -83,6 +89,95 @@ class ShowEstateActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun setNearbyData() {
+        if (estate!!.school == null && estate!!.playground == null && estate!!.shop == null
+            && estate!!.buses == null && estate!!.subway == null && estate!!.park == null) {
+            // The user did not provide data, hide the "Nearby:" layout
+            viewModel.hideNearbyLayout()
+            return
+        }
+        if (!estate!!.school!! && !estate!!.playground!! && !estate!!.shop!! && !estate!!.buses!!
+            && !estate!!.subway!! && !estate!!.park!!) {
+            // If there are nothing nearby, hide the "Nearby:" layout
+            viewModel.hideNearbyLayout()
+            return
+        }
+
+        if (estate!!.school != null && estate!!.school == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_school)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        if (estate!!.playground != null && estate!!.playground == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_playground)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        if (estate!!.shop != null && estate!!.shop == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_shop)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        if (estate!!.buses != null && estate!!.buses == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_bus_station)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        if (estate!!.subway != null && estate!!.subway == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_subway_station)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        if (estate!!.park != null && estate!!.park == true) {
+            val imageView = ImageView(this)
+            imageView.setImageResource(R.drawable.ic_park)
+            imageView.id = 0
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+            nearbyImagesLayout?.addView(imageView)
+
+            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
+//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            imageViewLayoutParams.width = 100
+            imageViewLayoutParams.height = 100
+        }
+        viewModel.showNearbyLayout()
     }
 
     companion object {

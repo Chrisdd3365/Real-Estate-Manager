@@ -1,13 +1,17 @@
 package com.openclassrooms.realestatemanager.show_estate
 
 import android.content.Context
+import android.view.View
 import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
 class ShowEstateActivityViewModel : ViewModel() {
+
+    val nearbyLayoutVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -28,10 +32,10 @@ class ShowEstateActivityViewModel : ViewModel() {
         bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context.getString(R.string.bedrooms)}")
         bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context.getString(R.string.bathrooms)}")
         price.set(estate.price?.toString() + "$") // TODO : Get price from utils
-        type.set(estate.type)
+        type.set(context.resources.getStringArray(R.array.estate_types)[estate.typeIndex!!])
     }
 
-    fun setButtons(context: Context, showEstateType: Enums.ShowEstateType) {
+    fun setButtonsText(context: Context, showEstateType: Enums.ShowEstateType) {
         when (showEstateType) {
             Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
                 buttonLeftString.set(context.getString(R.string.button_cancel))
@@ -42,5 +46,13 @@ class ShowEstateActivityViewModel : ViewModel() {
                 buttonRightString.set(context.getString(R.string.button_edit))
             }
         }
+    }
+
+    fun hideNearbyLayout() {
+        nearbyLayoutVisibility.set(View.GONE)
+    }
+
+    fun showNearbyLayout() {
+        nearbyLayoutVisibility.set(View.VISIBLE)
     }
 }

@@ -42,9 +42,9 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:layout_margin="25dp"
                     android:text="@{viewModel.description}"
-                    android:layout_margin="15dp"
+                    android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -205,10 +205,10 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@{viewModel.type}"
-                                android:layout_toEndOf="@+id/type_icon"
                                 android:layout_centerVertical="true"
                                 android:layout_marginStart="10dp"
+                                android:layout_toEndOf="@+id/type_icon"
+                                android:text="@{viewModel.type}"
                                 tools:text="Flathouse" />
 
                         </RelativeLayout>
@@ -217,6 +217,7 @@
                             android:id="@+id/nearby_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:visibility="@{viewModel.nearbyLayoutVisibility}"
                             android:layout_marginTop="15dp">
 
                             <TextView
@@ -226,7 +227,12 @@
                                 android:text="@string/nearby_title"
                                 android:layout_centerHorizontal="true"/>
 
-
+                            <LinearLayout
+                                android:id="@+id/nearby_images_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_below="@+id/nearby_title"/>
 
                         </RelativeLayout>
 

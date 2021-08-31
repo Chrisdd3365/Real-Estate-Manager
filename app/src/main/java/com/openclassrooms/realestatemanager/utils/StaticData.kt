@@ -23,8 +23,8 @@ object StaticData {
                     "very long description " ;
             address = "456 rue Cerise"
             onMarketSince = Date() ; price = 110000f ; surface = 400f ; roomCount = 3
-            bathroomsCount = 2 ; bedroomsCount = 4 ; school = true ; playground = false
-            shop = true ; buses = true ; subway = true ; park = false ; picturesUris = ArrayList()
+            bathroomsCount = 2 ; bedroomsCount = 4 ; school = true ; playground = true
+            shop = true ; buses = true ; subway = true ; park = true ; picturesUris = ArrayList()
         })
 
         add(Estate().apply {
