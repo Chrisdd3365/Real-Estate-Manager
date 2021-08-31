@@ -12,13 +12,14 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateActivity
+import com.openclassrooms.realestatemanager.utils.Enums
 
 class PropertiesListFragment : Fragment() {
 
     // Helper classes
     private val viewModel = PropertiesListFragmentViewModel()
     private val propertiesListAdapter = PropertiesListAdapter {
-        startActivity(ShowEstateActivity.newInstance(context, it))
+        startActivity(ShowEstateActivity.newInstance(context, it, Enums.ShowEstateType.SHOW_ESTATE))
     }
 
     // Layout variables

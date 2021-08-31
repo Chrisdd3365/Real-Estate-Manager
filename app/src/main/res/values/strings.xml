@@ -10,6 +10,8 @@
     <string name="button_next">Next</string>
     <string name="button_delete">Delete</string>
     <string name="button_edit">Edit</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_confirm">Confirm</string>
 
     <string name="type_title">Type :</string>
     <string name="nearby_title">Nearby :</string>
@@ -47,5 +49,12 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="empty_hint"> </string>
+
+    <!-- Show estate display -->
+    <string name="square_meters">m²</string>
+    <string name="square_feet">ft²</string>
+    <string name="rooms">rooms</string>
+    <string name="bathrooms">bathrooms</string>
+    <string name="bedrooms">bedrooms</string>
 
 </resources>

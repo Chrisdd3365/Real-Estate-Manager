@@ -43,6 +43,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
+                    android:text="@{viewModel.description}"
+                    android:layout_margin="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -188,7 +190,8 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
 
                             <ImageView
                                 android:id="@+id/type_icon"
@@ -213,7 +216,8 @@
                         <RelativeLayout
                             android:id="@+id/nearby_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp">
 
                             <TextView
                                 android:id="@+id/nearby_title"
@@ -244,22 +248,22 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <Button
-                android:id="@+id/delete_button"
+                android:id="@+id/left_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/round_shape_button"
-                android:text="@string/button_delete" />
+                android:text="@{viewModel.buttonLeftString}" />
 
             <Button
-                android:id="@+id/edit_button"
+                android:id="@+id/right_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/round_shape_button"
-                android:text="@string/button_edit" />
+                android:text="@{viewModel.buttonRightString}" />
 
         </LinearLayout>
 

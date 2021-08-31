@@ -211,7 +211,8 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun completeEstateCreation() {
         // TODO : Here, we display the activity EstateDetailsActivity to ask if it is correct, then
         //  save the result in the database.
-        resultLauncher?.launch(ShowEstateActivity.newInstance(this, estate))
+        resultLauncher?.launch(ShowEstateActivity.newInstance(
+            this, estate, Enums.ShowEstateType.ASK_FOR_CONFIRMATION))
     }
 
     companion object {

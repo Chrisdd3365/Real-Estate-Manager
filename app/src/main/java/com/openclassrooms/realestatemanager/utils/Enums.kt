@@ -6,4 +6,9 @@ object Enums {
         CLOSED,
         COUNT
     }
+
+    enum class ShowEstateType {
+        ASK_FOR_CONFIRMATION,
+        SHOW_ESTATE
+    }
 }
