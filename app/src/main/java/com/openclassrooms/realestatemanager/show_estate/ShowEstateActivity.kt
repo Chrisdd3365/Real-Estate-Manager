@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
+import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityShowEstateBinding
 import com.openclassrooms.realestatemanager.model.Estate
@@ -24,7 +25,7 @@ class ShowEstateActivity : AppCompatActivity() {
     private var typeIcon : ImageView? = null
     private var leftButton : Button? = null
     private var rightButton : Button? = null
-    private var nearbyImagesLayout : LinearLayout? = null
+    private var nearbyImagesFlexbox : FlexboxLayout? = null
 
     private var type : Enums.ShowEstateType? = null
     private var estate : Estate? = null
@@ -46,7 +47,7 @@ class ShowEstateActivity : AppCompatActivity() {
         typeIcon = binding.typeIcon
         leftButton = binding.leftButton
         rightButton = binding.rightButton
-        nearbyImagesLayout = binding.nearbyImagesLayout
+        nearbyImagesFlexbox = binding.nearbyImagesFlexbox
 
         viewModel.setButtonsText(this, type!!)
         viewModel.setData(this, estate!!)
@@ -110,70 +111,69 @@ class ShowEstateActivity : AppCompatActivity() {
             imageView.setImageResource(R.drawable.ic_school)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
+            imageViewLayoutParams.marginEnd = 25
         }
         if (estate!!.playground != null && estate!!.playground == true) {
             val imageView = ImageView(this)
             imageView.setImageResource(R.drawable.ic_playground)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
+            imageViewLayoutParams.marginEnd = 25
         }
         if (estate!!.shop != null && estate!!.shop == true) {
             val imageView = ImageView(this)
             imageView.setImageResource(R.drawable.ic_shop)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
+            imageViewLayoutParams.marginEnd = 25
         }
         if (estate!!.buses != null && estate!!.buses == true) {
             val imageView = ImageView(this)
             imageView.setImageResource(R.drawable.ic_bus_station)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
+            imageViewLayoutParams.marginEnd = 25
         }
         if (estate!!.subway != null && estate!!.subway == true) {
             val imageView = ImageView(this)
             imageView.setImageResource(R.drawable.ic_subway_station)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
+            imageViewLayoutParams.marginEnd = 25
         }
         if (estate!!.park != null && estate!!.park == true) {
             val imageView = ImageView(this)
             imageView.setImageResource(R.drawable.ic_park)
             imageView.id = 0
             imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
-            nearbyImagesLayout?.addView(imageView)
+            nearbyImagesFlexbox?.addView(imageView)
 
-            val imageViewLayoutParams = (imageView.layoutParams as LinearLayout.LayoutParams)
-//            imageViewLayoutParams.addRule(RelativeLayout.BELOW, R.id.nearby_title)
+            val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
             imageViewLayoutParams.width = 100
             imageViewLayoutParams.height = 100
         }

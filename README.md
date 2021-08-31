@@ -22,6 +22,11 @@
 
 - :o: Online / Offline mode
 
+
+## Libraries used :
+
+- Flexbox from https://github.com/google/flexbox-layout
+
 ## Thanks
 
 <div>Icons made by <a href="https://www.flaticon.com/authors/kiranshastry" title="Kiranshastry">Kiranshastry</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

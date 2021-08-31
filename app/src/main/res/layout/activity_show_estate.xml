@@ -227,12 +227,16 @@
                                 android:text="@string/nearby_title"
                                 android:layout_centerHorizontal="true"/>
 
-                            <LinearLayout
-                                android:id="@+id/nearby_images_layout"
+                            <com.google.android.flexbox.FlexboxLayout
+                                android:id="@+id/nearby_images_flexbox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_below="@+id/nearby_title"/>
+                                android:layout_below="@+id/nearby_title"
+                                android:layout_marginTop="15dp"
+                                app:flexWrap="wrap">
+
+
+                            </com.google.android.flexbox.FlexboxLayout>
 
                         </RelativeLayout>
 
