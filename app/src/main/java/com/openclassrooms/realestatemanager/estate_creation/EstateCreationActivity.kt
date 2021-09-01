@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
@@ -267,8 +268,19 @@ class EstateCreationActivity : AppCompatActivity() {
      */
     private fun handleCompleteEstateCreationConfirmed(resultIntent: Intent?) {
         if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
-            // TODO : Save this estate in the database
-            Log.d(TAG, "Should save estate")
+            val estateToSave : Estate = resultIntent.extras!!.get(TAG_ESTATE) as Estate
+            DatabaseManager(this).saveEstate(
+                estateToSave,
+                onSuccess = { insertedId ->
+                    Log.d(TAG, "Estate saved with id $insertedId")
+                    finish()
+                    // TODO : Finish with result, in order to insert the new estate in the list
+                },
+                onFailure = {
+                    Log.e(TAG, "An error occurred with the database.")
+                    // TODO : Show error toast
+                }
+            )
         } else {
             // TODO : Display error
             Log.d(TAG, "Error")
