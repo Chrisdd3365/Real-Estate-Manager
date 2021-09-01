@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentBasicDetailsBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
+import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.TextValidator
 
 class BasicDetailsFragment : Fragment() {
@@ -18,15 +19,6 @@ class BasicDetailsFragment : Fragment() {
     // Helper classes
     private val viewModel = BasicDetailsFragmentViewModel()
     private var typeSpinnerAdapter : ArrayAdapter<String>? = null
-/*    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            checkIfAllFieldsAreFilled()
-        }
-
-        override fun afterTextChanged(s: Editable?) {}
-    }*/
 
     // Layout variables
     private var typeSpinner : Spinner? = null
@@ -34,7 +26,6 @@ class BasicDetailsFragment : Fragment() {
     private var priceEditText : EditText? = null
     private var surfaceEditText : EditText? = null
     private var descriptionEditText : EditText? = null
-    private var nextButton : Button? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -54,7 +45,6 @@ class BasicDetailsFragment : Fragment() {
         priceEditText = binding.priceEditText
         surfaceEditText = binding.surfaceEditText
         descriptionEditText = binding.descriptionEditText
-        nextButton = binding.nextButton
 
         // Setup spinner
         typeSpinnerAdapter = ArrayAdapter<String>(
@@ -63,14 +53,6 @@ class BasicDetailsFragment : Fragment() {
             resources.getStringArray(R.array.estate_types)
         )
         typeSpinner?.adapter = typeSpinnerAdapter
-        typeSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int,
-                                        id: Long) {
-                Log.d("OK", "OK")
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
 
         // Setup text validators
         // TODO : Put this in common, set auto validate() function in TextValidator
@@ -113,32 +95,41 @@ class BasicDetailsFragment : Fragment() {
                 }
             }
         )
-
-        // Setup nextButton
-        nextButton?.setOnClickListener {
-            (activity as EstateCreationActivity).setupEstate(
-                typeIndex = typeSpinner?.selectedItemPosition!!,
-                address = addressEditText?.text.toString(),
-                price = priceEditText?.text.toString().toFloat(),
-                surface = surfaceEditText?.text.toString().toFloat(),
-                description = descriptionEditText?.text.toString()
-            )
-            (activity as EstateCreationActivity).goToOptionalDetails()
-        }
-
         return binding.root
     }
 
+    /**
+     *  This function calls [EstateCreationActivity.setNextButtonAbility] to enable or disable the
+     *  "Next" button, given if all the mandatory fields (address, price and surface) are filled.
+     */
     private fun checkIfAllFieldsAreFilled() {
-        viewModel.setButtonEnabled(
+        (activity as EstateCreationActivity).setNextButtonAbility(
             !addressEditText?.text.isNullOrBlank() && addressEditText?.error == null
                     && !priceEditText?.text.isNullOrBlank() && priceEditText?.error == null
                     && !surfaceEditText?.text.isNullOrBlank() && surfaceEditText?.error == null
         )
     }
 
+    /**
+     *  This function is only called by [EstateCreationActivity], when the user presses "Next"
+     *  button for the first time. It is used to save the data provided in the current [Fragment],
+     *  in an [Estate] instance in [EstateCreationActivity].
+     *  @return ([Estate]) An [Estate] instance, pre-filled with data filled in this
+     *  [BasicDetailsFragment].
+     */
+    fun getEstate() : Estate {
+        return Estate().apply {
+            typeIndex = typeSpinner?.selectedItemPosition!!
+            address = addressEditText?.text.toString()
+            price = priceEditText?.text.toString().toFloat()
+            surface = surfaceEditText?.text.toString().toFloat()
+            description = descriptionEditText?.text.toString()
+        }
+    }
+
     companion object {
 
+        @Suppress("unused")
         private const val TAG = "BasicDetailsFragment"
 
         fun newInstance() : Fragment {

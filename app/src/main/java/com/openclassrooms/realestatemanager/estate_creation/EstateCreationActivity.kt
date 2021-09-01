@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.estate_creation
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +42,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var nextButton : Button? = null
 
     private var estate = Estate()
-    private var optionalDetailsFragmentPosition = 0
+    private var optionalDetailsFragmentPosition = -1
     private var resultLauncher : ActivityResultLauncher<Intent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +58,10 @@ class EstateCreationActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             Log.d(TAG, "Result = $result")
+            if (result.resultCode == Activity.RESULT_CANCELED)
+                handleCompleteEstateCreationCancelled(result.data)
+            else if (result.resultCode == Activity.RESULT_OK)
+                handleCompleteEstateCreationConfirmed(result.data)
         }
 
         // Init layout variables
@@ -69,7 +74,11 @@ class EstateCreationActivity : AppCompatActivity() {
         setupOptionalDetailsFragmentList()
 
         nextButton?.setOnClickListener {
-            Log.d(TAG, "nextButton clicked !")
+
+            if (optionalDetailsFragmentPosition == -1)
+                // If we are on the basicDetailsFragment, setup the Estate with the data from it.
+                estate = (basicDetailsFragment as BasicDetailsFragment).getEstate()
+
             goToNextOptionalDetails()
         }
         previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
@@ -150,16 +159,26 @@ class EstateCreationActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     *  Shows the first fragment, with the type, address, price, surface, and description.
+     *  The "Previous" button is hidden, as there is no fragment before this one.
+     *  We use `.replace` instead of `.add`, as we can have another fragment if the user clicks on
+     *  "Cancel" button in [ShowEstateActivity].
+     */
     private fun showFirstFragment() {
+        viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_root, basicDetailsFragment)
+            .replace(R.id.fragment_root, basicDetailsFragment)
             .commit()
     }
 
-    fun goToOptionalDetails() {
+    /**
+     *  Replace the current fragment with an [OptionalDetailsFragment] instance, given the index
+     *  [optionalDetailsFragmentPosition] ; and enable "Previous" and "Next" buttons.
+     */
+    private fun goToOptionalDetails() {
         viewModel.setSkipTextVisibility(View.VISIBLE)
-        viewModel.setNavigationButtonVisibility(View.VISIBLE)
-        Log.d(TAG, "Should go to optional details")
+        viewModel.setNavigationButtonVisibility(View.VISIBLE, View.VISIBLE)
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
@@ -168,9 +187,14 @@ class EstateCreationActivity : AppCompatActivity() {
             .commit()
     }
 
+    /**
+     *  Increment [optionalDetailsFragmentPosition]. If there is more [OptionalDetailsFragment] to
+     *  display, we call [goToOptionalDetails]. In the other case, we show the [Estate] result with
+     *  [completeEstateCreation].
+     */
     private fun goToNextOptionalDetails() {
         optionalDetailsFragmentPosition++
-        if (optionalDetailsFragmentPosition > 0)
+        if (optionalDetailsFragmentPosition >= 0)
             viewModel.setButtonPreviousEnabled(true)
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
@@ -178,35 +202,84 @@ class EstateCreationActivity : AppCompatActivity() {
             completeEstateCreation()
     }
 
+    /**
+     *  Decrement [optionalDetailsFragmentPosition]. If it is equals to -1, that means we need to
+     *  go back to the [BasicDetailsFragment], and hide "Previous" button.
+     *  In the other case, we go to the right [OptionalDetailsFragment].
+     */
     private fun goToPreviousOptionalDetails() {
+        Log.d(TAG, "goToPreviousOptionalDetail() ; $optionalDetailsFragmentPosition")
         optionalDetailsFragmentPosition--
         if (optionalDetailsFragmentPosition >= 0)
             goToOptionalDetails()
-        if (optionalDetailsFragmentPosition == 0)
-            viewModel.setButtonPreviousEnabled(false)
-    }
-
-    fun setupEstate(typeIndex : Int, address : String, price : Float, surface : Float,
-                    description : String) {
-        estate.apply {
-            this.typeIndex = typeIndex
-            this.address = address
-            this.price = price
-            this.surface = surface
-            this.description = description
+        else {
+            showFirstFragment()
+            viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         }
     }
 
+    /**
+     *  This function is used by [BasicDetailsFragment], and is used to enable or disable "Next"
+     *  button, given if the fields are correctly filled.
+     *  @param enable ([Boolean]) Decides if the "Next" button should be enabled or not.
+     */
+    fun setNextButtonAbility(enable : Boolean) {
+        viewModel.setButtonNextEnabled(enable)
+    }
+
+    /**
+     *  Displays the activity [ShowEstateActivity] to ask if the user is satisfied with the data he
+     *  provided. We need to wait for a result, as this [EstateCreationActivity] will save the
+     *  [Estate], or allow the user to edit it.
+     */
     private fun completeEstateCreation() {
-        // TODO : Here, we display the activity EstateDetailsActivity to ask if it is correct, then
-        //  save the result in the database.
         resultLauncher?.launch(ShowEstateActivity.newInstance(
             this, estate, Enums.ShowEstateType.ASK_FOR_CONFIRMATION))
+    }
+
+    /**
+     *  This function is used when the user clicked on "Cancel" button in [ShowEstateActivity]
+     *  (or if he presses the back button).
+     *  It will remove every [androidx.fragment.app.Fragment] in this [Activity], and display again
+     *  [BasicDetailsFragment] to allow the user to edit the data he provided.
+     *  We hide "Previous" button and set [optionalDetailsFragmentPosition] to -1, then call
+     *  [showFirstFragment].
+     */
+    private fun handleCompleteEstateCreationCancelled(resultIntent : Intent?) {
+        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE))
+            estate = resultIntent.extras!!.get(TAG_ESTATE) as Estate
+
+        // Remove every fragment in the Activity
+        for (fragment in supportFragmentManager.fragments) {
+            supportFragmentManager.beginTransaction().remove(fragment).commit()
+        }
+
+        viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
+
+        optionalDetailsFragmentPosition = -1
+        showFirstFragment()
+    }
+
+    /**
+     *  This function is used when the user clicked on "Confirm" button in [ShowEstateActivity].
+     *  It will save the [Estate] instance in the database.
+     *  TODO
+     */
+    private fun handleCompleteEstateCreationConfirmed(resultIntent: Intent?) {
+        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
+            // TODO : Save this estate in the database
+            Log.d(TAG, "Should save estate")
+        } else {
+            // TODO : Display error
+            Log.d(TAG, "Error")
+        }
     }
 
     companion object {
 
         private const val TAG = "EstateCreationActivity"
+
+        private const val TAG_ESTATE = "estate"
 
         fun newInstance(context: Context) : Intent =
             Intent(context, EstateCreationActivity::class.java)

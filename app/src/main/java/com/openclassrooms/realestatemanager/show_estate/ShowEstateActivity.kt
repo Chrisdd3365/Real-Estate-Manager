@@ -1,14 +1,13 @@
 package com.openclassrooms.realestatemanager.show_estate
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.R
@@ -16,6 +15,11 @@ import com.openclassrooms.realestatemanager.databinding.ActivityShowEstateBindin
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
+/**
+ *  TODO : This [Activity] should only displays a [androidx.fragment.app.Fragment] with all this
+ *      content, as we need to be able to re-use this fragment for landscape display, on the right
+ *      of the element selected in the [PropertiesListFragment].
+ */
 class ShowEstateActivity : AppCompatActivity() {
 
     // Helper classes
@@ -52,14 +56,14 @@ class ShowEstateActivity : AppCompatActivity() {
         viewModel.setButtonsText(this, type!!)
         viewModel.setData(this, estate!!)
 
-        setImageType()
+        setTypeIcon()
 
         setButtonsBehaviors()
 
         setNearbyData()
     }
 
-    private fun setImageType() {
+    private fun setTypeIcon() {
         when (estate!!.typeIndex) {
             0 -> { typeIcon?.setImageResource(R.drawable.ic_flat) }
             1 -> { typeIcon?.setImageResource(R.drawable.ic_townhouse) }
@@ -73,7 +77,13 @@ class ShowEstateActivity : AppCompatActivity() {
         leftButton?.setOnClickListener {
             when (type!!) {
                 Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
-                    // TODO : Cancel
+                    // The user wants to edit the data he provided, so we send him back to previous
+                    //  Activity.
+                    setResult(
+                        Activity.RESULT_CANCELED,
+                        Intent().apply { putExtra(TAG_ESTATE, estate) }
+                    )
+                    finish()
                 }
                 Enums.ShowEstateType.SHOW_ESTATE -> {
                     // TODO : Delete this estate
@@ -83,7 +93,13 @@ class ShowEstateActivity : AppCompatActivity() {
         rightButton?.setOnClickListener {
             when (type!!) {
                 Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
-                    // TODO : Save this estate
+                    // The user is satisfied by the current data displayed, so we send him back to
+                    //  the previous Activity in order to save this [Estate].
+                    setResult(
+                        Activity.RESULT_OK,
+                        Intent().apply { putExtra(TAG_ESTATE, estate) }
+                    )
+                    finish()
                 }
                 Enums.ShowEstateType.SHOW_ESTATE -> {
                     // TODO : Edit this estate
@@ -110,17 +126,17 @@ class ShowEstateActivity : AppCompatActivity() {
         }
 
         // Setting "Nearby:" icons given [estate] data
-        if (estate!!.school != null && estate!!.school == true)
+        if (estate!!.school == true)
             addNearbyIconInFlexbox(R.drawable.ic_school)
-        if (estate!!.playground != null && estate!!.playground == true)
+        if (estate!!.playground == true)
             addNearbyIconInFlexbox(R.drawable.ic_playground)
-        if (estate!!.shop != null && estate!!.shop == true)
+        if (estate!!.shop == true)
             addNearbyIconInFlexbox(R.drawable.ic_shop)
-        if (estate!!.buses != null && estate!!.buses == true)
+        if (estate!!.buses == true)
             addNearbyIconInFlexbox(R.drawable.ic_bus_station)
-        if (estate!!.subway != null && estate!!.subway == true)
+        if (estate!!.subway == true)
             addNearbyIconInFlexbox(R.drawable.ic_subway_station)
-        if (estate!!.park != null && estate!!.park == true)
+        if (estate!!.park == true)
             addNearbyIconInFlexbox(R.drawable.ic_park)
 
         viewModel.showNearbyLayout()
@@ -146,6 +162,7 @@ class ShowEstateActivity : AppCompatActivity() {
 
     companion object {
 
+        @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
         private const val TAG_ESTATE = "estate"
