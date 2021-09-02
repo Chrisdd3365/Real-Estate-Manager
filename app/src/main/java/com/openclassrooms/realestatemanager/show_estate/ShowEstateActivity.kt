@@ -118,8 +118,10 @@ class ShowEstateActivity : AppCompatActivity() {
             viewModel.hideNearbyLayout()
             return
         }
-        if (!estate!!.school!! && !estate!!.playground!! && !estate!!.shop!! && !estate!!.buses!!
-            && !estate!!.subway!! && !estate!!.park!!) {
+
+        // TODO : Check null
+        if (estate!!.school == false && estate!!.playground == false && estate!!.shop == false
+            && estate!!.buses == false && estate!!.subway == false && estate!!.park == false) {
             // If there are nothing nearby, hide the "Nearby:" layout
             viewModel.hideNearbyLayout()
             return

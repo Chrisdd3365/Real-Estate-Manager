@@ -86,77 +86,115 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     private fun setupOptionalDetailsFragmentList() {
+        Log.d(TAG, "Subway = ${estate.subway}")
+        optionalDetailsFragmentList.clear()
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.rooms_count_question), Enums.OptionalDetailType.COUNT) { result: Any ->
-                    try {
-                        estate.roomCount = result as Int
-                    } catch (ignored : Exception) {}
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.rooms_count_question),
+                Enums.OptionalDetailType.COUNT,
+                estate.roomCount
+            ) { result: Any ->
+                try {
+                    estate.roomCount = result as Int
+                    optionalDetailsFragmentList[0].setDefaultValue(estate.roomCount)
+                } catch (ignored : Exception) {}
             }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.bathrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
-                    try {
-                        estate.bathroomsCount = result as Int
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.bathrooms_count_question),
+                Enums.OptionalDetailType.COUNT,
+                estate.bathroomsCount
+            ) { result : Any ->
+                try {
+                    estate.bathroomsCount = result as Int
+                    optionalDetailsFragmentList[1].setDefaultValue(estate.bathroomsCount)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.bedrooms_count_question), Enums.OptionalDetailType.COUNT) { result : Any ->
-                    try {
-                        estate.bedroomsCount = result as Int
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.bedrooms_count_question),
+                Enums.OptionalDetailType.COUNT,
+                estate.bedroomsCount
+            ) { result : Any ->
+                try {
+                    estate.bedroomsCount = result as Int
+                    optionalDetailsFragmentList[2].setDefaultValue(estate.bedroomsCount)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.school_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.school = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.school_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.school
+            ) { result : Any ->
+                try {
+                    estate.school = result as Boolean
+                    optionalDetailsFragmentList[3].setDefaultValue(estate.school)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.playground_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.playground = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.playground_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.playground
+            ) { result : Any ->
+                try {
+                    estate.playground = result as Boolean
+                    optionalDetailsFragmentList[4].setDefaultValue(estate.playground)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.shop_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.shop = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.shop_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.shop
+            ) { result : Any ->
+                try {
+                    estate.shop = result as Boolean
+                    optionalDetailsFragmentList[5].setDefaultValue(estate.shop)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.park_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.park = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.park_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.park
+            ) { result : Any ->
+                try {
+                    estate.park = result as Boolean
+                    optionalDetailsFragmentList[6].setDefaultValue(estate.park)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.buses_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.buses = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.buses_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.buses
+            ) { result : Any ->
+                try {
+                    estate.buses = result as Boolean
+                    optionalDetailsFragmentList[7].setDefaultValue(estate.buses)
+                } catch (ignored : Exception) {}
+            }
         )
         optionalDetailsFragmentList.add(
-            OptionalDetailsFragment
-                .newInstance(getString(R.string.subway_question), Enums.OptionalDetailType.CLOSED) { result : Any ->
-                    try {
-                        estate.subway = result as Boolean
-                    } catch (ignored : Exception) {}
-                }
+            OptionalDetailsFragment.newInstance(
+                getString(R.string.subway_question),
+                Enums.OptionalDetailType.CLOSED,
+                estate.subway
+            ) { result : Any ->
+                try {
+                    estate.subway = result as Boolean
+                    optionalDetailsFragmentList[8].setDefaultValue(estate.subway)
+                } catch (ignored : Exception) {}
+            }
         )
     }
 
@@ -243,8 +281,10 @@ class EstateCreationActivity : AppCompatActivity() {
      *  (or if he presses the back button).
      *  It will remove every [androidx.fragment.app.Fragment] in this [Activity], and display again
      *  [BasicDetailsFragment] to allow the user to edit the data he provided.
-     *  We hide "Previous" button and set [optionalDetailsFragmentPosition] to -1, then call
-     *  [showFirstFragment].
+     *  We hide "Previous" button and set [optionalDetailsFragmentPosition] to -1.
+     *  We also need to reset the [optionalDetailsFragmentList], in order to give it already
+     *  provided data.
+     *  Finally we call [showFirstFragment].
      */
     private fun handleCompleteEstateCreationCancelled(resultIntent : Intent?) {
         if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE))
@@ -257,6 +297,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
         viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
 
+        setupOptionalDetailsFragmentList()
         optionalDetailsFragmentPosition = -1
         showFirstFragment()
     }
