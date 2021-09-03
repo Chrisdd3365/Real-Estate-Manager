@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 
 class EstateCreationActivityViewModel : ViewModel() {
 
-    val loadingVisibility = ObservableInt(View.GONE)
+    val loadingVisibility = ObservableInt(View.VISIBLE)
     val fragmentVisibility = ObservableInt(View.GONE)
     val navigationButtonsVisibility = ObservableInt(View.GONE)
     val skipTextViewVisibility = ObservableInt(View.GONE)

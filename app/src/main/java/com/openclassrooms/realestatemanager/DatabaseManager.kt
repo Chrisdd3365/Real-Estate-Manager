@@ -2,8 +2,10 @@ package com.openclassrooms.realestatemanager
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.openclassrooms.realestatemanager.model.Estate
 import java.util.*
 
@@ -104,7 +106,59 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke()
     }
 
+    fun getEstates(success : (ArrayList<Estate>) -> Unit, failure : () -> Unit) {
+        val database = this.readableDatabase
+        val estates = ArrayList<Estate>()
+
+        try {
+            val cursor = database.query(
+                ESTATE_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "$COLUMN_ON_MARKET_SINCE DESC"
+            )
+
+            with(cursor) {
+                while (moveToNext()) {
+                    estates.add(
+                        Estate().apply {
+                            id = getLong(getColumnIndex(COLUMN_ID))
+                            typeIndex = getInt(getColumnIndex(COLUMN_TYPE))
+                            description = getString(getColumnIndex(COLUMN_DESCRIPTION))
+                            address = getString(getColumnIndex(COLUMN_ADDRESS))
+                            onMarketSince = Date() // TODO
+                            price = getFloat(getColumnIndex(COLUMN_PRICE))
+                            surface = getFloat(getColumnIndex(COLUMN_SURFACE))
+                            roomCount = getInt(getColumnIndex(COLUMN_ROOMS_COUNT))
+                            bathroomsCount = getInt(getColumnIndex(COLUMN_BATHROOMS_COUNT))
+                            bedroomsCount = getInt(getColumnIndex(COLUMN_BEDROOMS_COUNT))
+                            school = getBoolean(getColumnIndex(COLUMN_SCHOOL_NEARBY))
+                            playground = getBoolean(getColumnIndex(COLUMN_PLAYGROUND_NEARBY))
+                            shop = getBoolean(getColumnIndex(COLUMN_SHOP_NEARBY))
+                            buses = getBoolean(getColumnIndex(COLUMN_BUSES_NEARBY))
+                            subway = getBoolean(getColumnIndex(COLUMN_SUBWAY_NEARBY))
+                            park = getBoolean(getColumnIndex(COLUMN_PARK_NEARBY))
+                        }
+                    )
+                }
+            }
+            cursor.close()
+
+            success.invoke(estates)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error while querying database : $exception")
+            failure.invoke()
+        }
+    }
+
     companion object {
+
+        private const val TAG = "DatabaseManager"
+
         private const val DATABASE_NAME = "${BuildConfig.APPLICATION_ID}-database"
         private const val DATABASE_VERSION = 1
 
@@ -150,4 +204,16 @@ class DatabaseManager(context : Context)
             );
         """
     }
+}
+
+/**
+ *  Extension to handle nullable [Boolean] retrieval from [Cursor].
+ *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
+ *  TODO : Move to somewhere else
+ */
+private fun Cursor.getBoolean(columnIndex: Int): Boolean? {
+    return if (isNull(columnIndex))
+        null
+    else
+        getInt(columnIndex) != 0
 }

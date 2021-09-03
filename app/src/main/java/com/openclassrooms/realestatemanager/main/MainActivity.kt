@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.main
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
@@ -10,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
@@ -61,8 +61,7 @@ class MainActivity : AppCompatActivity() {
         addPropertyFab = binding.addPropertyFab
         addAgentFab = binding.addAgentFab
 
-        // Setup estate list
-        estateList = getStaticEstateList()
+        viewModel.setLoading()
 
         // Init child fragments
         propertiesListFragment = PropertiesListFragment.newInstance(estateList)
@@ -95,8 +94,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
+            // TODO : Handle result
             startActivity(EstateCreationActivity.newInstance(this, null))
         }
+
+        // Setup estate list
+        DatabaseManager(this).getEstates({
+            // TODO : If the list is empty, show "No items" messages instead
+            estateList = if (it.isEmpty()) getStaticEstateList() else it
+            propertiesListFragment?.setEstateList(it)
+            viewModel.setFragments()
+        }, {
+
+        })
     }
 
     private fun getStaticEstateList() : ArrayList<Estate> {

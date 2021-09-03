@@ -44,11 +44,19 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.adapter = propertiesListAdapter
 
         propertiesListRv?.post {
-            propertiesListAdapter.setData(estatesList)
+            propertiesListAdapter.setData(context, estatesList)
             viewModel.setPropertiesList()
         }
 
         return binding.root
+    }
+
+    fun setEstateList(list : ArrayList<Estate>) {
+        this.estatesList = list ;
+        propertiesListRv?.post {
+            propertiesListAdapter.setData(context, estatesList)
+            viewModel.setPropertiesList()
+        }
     }
 
     companion object {

@@ -16,6 +16,12 @@
         android:orientation="vertical"
         tools:context=".main.MainActivity">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="@{viewModel.loadingVisibility}"/>
+
         <com.google.android.material.tabs.TabLayout
             style="@style/AppTabLayout"
             android:id="@+id/tab_layout"
@@ -25,14 +31,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabIconTint="@color/white">
+            app:tabIconTint="@color/white"
+            android:visibility="@{viewModel.fragmentsVisibility}">
 
         </com.google.android.material.tabs.TabLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:visibility="@{viewModel.fragmentsVisibility}">
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
