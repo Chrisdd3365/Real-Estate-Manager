@@ -57,4 +57,6 @@
     <string name="bathrooms">bathrooms</string>
     <string name="bedrooms">bedrooms</string>
 
+    <string name="dumb_error">An error occurred</string>
+
 </resources>

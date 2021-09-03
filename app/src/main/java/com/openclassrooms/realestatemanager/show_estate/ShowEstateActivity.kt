@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityShowEstateBinding
+import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
@@ -102,7 +103,8 @@ class ShowEstateActivity : AppCompatActivity() {
                     finish()
                 }
                 Enums.ShowEstateType.SHOW_ESTATE -> {
-                    // TODO : Edit this estate
+                    startActivity(EstateCreationActivity.newInstance(this, estate))
+                    finish()
                 }
             }
         }

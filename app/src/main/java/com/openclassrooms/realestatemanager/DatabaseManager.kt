@@ -57,6 +57,41 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke(insertedId)
     }
 
+    fun updateEstate(estate: Estate, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
+        val database = this.writableDatabase
+
+        val contentValues = ContentValues().apply {
+            put(COLUMN_TYPE, estate.typeIndex)
+            put(COLUMN_DESCRIPTION, estate.description)
+            put(COLUMN_ADDRESS, estate.address)
+            put(COLUMN_ON_MARKET_SINCE, Date().toString()) // TODO
+            put(COLUMN_PRICE, estate.price)
+            put(COLUMN_SURFACE, estate.surface)
+            put(COLUMN_ROOMS_COUNT, estate.roomCount)
+            put(COLUMN_BATHROOMS_COUNT, estate.bathroomsCount)
+            put(COLUMN_BEDROOMS_COUNT, estate.bedroomsCount)
+            put(COLUMN_SCHOOL_NEARBY, estate.school)
+            put(COLUMN_PLAYGROUND_NEARBY, estate.playground)
+            put(COLUMN_SHOP_NEARBY, estate.shop)
+            put(COLUMN_BUSES_NEARBY, estate.buses)
+            put(COLUMN_SUBWAY_NEARBY, estate.subway)
+            put(COLUMN_PARK_NEARBY, estate.park)
+        }
+
+        val affectedRows = database.update(
+            ESTATE_TABLE,
+            contentValues,
+            COLUMN_ID,
+            arrayOf("${estate.id}")
+        )
+        database.close()
+
+        if (affectedRows == -1)
+            onFailure?.invoke()
+        else
+            onSuccess?.invoke()
+    }
+
     fun deleteEstate(idToDelete : Long, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
         val database = this.writableDatabase
 

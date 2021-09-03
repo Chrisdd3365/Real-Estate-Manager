@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
@@ -34,7 +36,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private val viewModel = EstateCreationActivityViewModel()
 
     // Fragments
-    private val basicDetailsFragment = BasicDetailsFragment.newInstance()
+    private var basicDetailsFragment : Fragment? = null
     private val optionalDetailsFragmentList : ArrayList<OptionalDetailsFragment> = ArrayList()
 
     // Layout variables
@@ -45,6 +47,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var estate = Estate()
     private var optionalDetailsFragmentPosition = -1
     private var resultLauncher : ActivityResultLauncher<Intent>? = null
+    private var isEditing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +57,14 @@ class EstateCreationActivity : AppCompatActivity() {
         )
 
         binding.viewModel = viewModel
+
+        viewModel.setLoading()
+
+        if (intent.hasExtra(TAG_ESTATE)) {
+            estate = intent.extras!!.get(TAG_ESTATE) as Estate
+            basicDetailsFragment = BasicDetailsFragment.newInstance(estate)
+            isEditing = true
+        }
 
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -76,7 +87,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
         nextButton?.setOnClickListener {
 
-            if (optionalDetailsFragmentPosition == -1)
+            if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null)
                 // If we are on the basicDetailsFragment, setup the Estate with the data from it.
                 estate = (basicDetailsFragment as BasicDetailsFragment).getEstate()
 
@@ -205,10 +216,13 @@ class EstateCreationActivity : AppCompatActivity() {
      *  "Cancel" button in [ShowEstateActivity].
      */
     private fun showFirstFragment() {
+        if (basicDetailsFragment == null)
+            basicDetailsFragment = BasicDetailsFragment.newInstance(null)
         viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_root, basicDetailsFragment)
+            .replace(R.id.fragment_root, basicDetailsFragment!!)
             .commit()
+        viewModel.setFragments()
     }
 
     /**
@@ -304,28 +318,65 @@ class EstateCreationActivity : AppCompatActivity() {
 
     /**
      *  This function is used when the user clicked on "Confirm" button in [ShowEstateActivity].
-     *  It will save the [Estate] instance in the database.
-     *  TODO
+     *  If the user is editing an existing [Estate] ([isEditing] is true), we call
+     *  [saveEstateChanges].
+     *  If this is a very new [Estate], we use [saveEstate] instead.
+     *  @param resultIntent ([Intent]?) - The [Intent] from [ShowEstateActivity], containing
+     *  an [Estate] instance in extras.
      */
     private fun handleCompleteEstateCreationConfirmed(resultIntent: Intent?) {
         if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
+            viewModel.setLoading()
+
             val estateToSave : Estate = resultIntent.extras!!.get(TAG_ESTATE) as Estate
-            DatabaseManager(this).saveEstate(
-                estateToSave,
-                onSuccess = { insertedId ->
-                    Log.d(TAG, "Estate saved with id $insertedId")
-                    finish()
-                    // TODO : Finish with result, in order to insert the new estate in the list
-                },
-                onFailure = {
-                    Log.e(TAG, "An error occurred with the database.")
-                    // TODO : Show error toast
-                }
-            )
+            if (isEditing)
+                saveEstateChanges(estateToSave)
+            else
+                saveEstate(estateToSave)
         } else {
-            // TODO : Display error
             Log.d(TAG, "Error")
+            Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun saveEstate(estateToSave: Estate) {
+        DatabaseManager(this).saveEstate(
+            estateToSave,
+            onSuccess = { insertedId ->
+                Log.d(TAG, "Estate saved with id $insertedId")
+                finishWithResult(insertedId, estateToSave)
+            },
+            onFailure = {
+                Log.e(TAG, "An error occurred with the database.")
+                Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+            }
+        )
+    }
+
+    private fun saveEstateChanges(estateToSave: Estate) {
+        DatabaseManager(this).updateEstate(
+            estateToSave,
+            onSuccess = {
+                Log.d(TAG, "Estate ${estate.id} updated")
+                finishWithResult(estate.id!!, estateToSave)
+            },
+            onFailure = {
+                Log.e(TAG, "An error occurred with the database.")
+                Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+            }
+        )
+    }
+
+    private fun finishWithResult(insertedId : Long, estateToSave: Estate) {
+        estateToSave.id = insertedId
+        setResult(
+            Activity.RESULT_OK,
+            Intent().apply {
+                putExtra(TAG_ESTATE, estateToSave)
+                putExtra(TAG_NEW_ESTATE, !isEditing)
+            }
+        )
+        finish()
     }
 
     companion object {
@@ -333,9 +384,13 @@ class EstateCreationActivity : AppCompatActivity() {
         private const val TAG = "EstateCreationActivity"
 
         private const val TAG_ESTATE = "estate"
+        private const val TAG_NEW_ESTATE = "is_new_estate"
 
-        fun newInstance(context: Context) : Intent =
-            Intent(context, EstateCreationActivity::class.java)
+        fun newInstance(context: Context, estate: Estate?) : Intent {
+            val intent = Intent(context, EstateCreationActivity::class.java)
+            if (estate != null) intent.putExtra(TAG_ESTATE, estate)
+            return intent
+        }
 
     }
 }

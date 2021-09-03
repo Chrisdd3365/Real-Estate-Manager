@@ -6,6 +6,7 @@ import kotlin.collections.ArrayList
 
 class Estate : Serializable {
 
+    var id : Long? = null
     var type : String? = null   // TODO : Remove
     var typeIndex : Int? = null
     var description : String? = null

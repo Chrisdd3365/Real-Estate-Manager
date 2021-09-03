@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
-            startActivity(EstateCreationActivity.newInstance(this))
+            startActivity(EstateCreationActivity.newInstance(this, null))
         }
     }
 

@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.estate_creation.basic_details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivi
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.TextValidator
 
-class BasicDetailsFragment : Fragment() {
+class BasicDetailsFragment(private val estate: Estate?) : Fragment() {
 
     // Helper classes
     private val viewModel = BasicDetailsFragmentViewModel()
@@ -53,6 +52,18 @@ class BasicDetailsFragment : Fragment() {
             resources.getStringArray(R.array.estate_types)
         )
         typeSpinner?.adapter = typeSpinnerAdapter
+
+        // Setup default variables if needed
+        if (estate != null) {
+            if (estate.typeIndex != null) typeSpinner?.setSelection(estate.typeIndex!!)
+            else typeSpinner?.setSelection(0)
+            addressEditText?.setText(estate.address)
+            priceEditText?.setText(estate.price?.toString())
+            surfaceEditText?.setText(estate.surface?.toString())
+            descriptionEditText?.setText(estate.description)
+
+            checkIfAllFieldsAreFilled()
+        }
 
         // Setup text validators
         // TODO : Put this in common, set auto validate() function in TextValidator
@@ -132,8 +143,8 @@ class BasicDetailsFragment : Fragment() {
         @Suppress("unused")
         private const val TAG = "BasicDetailsFragment"
 
-        fun newInstance() : Fragment {
-            return BasicDetailsFragment()
+        fun newInstance(estate: Estate?) : Fragment {
+            return BasicDetailsFragment(estate)
         }
     }
 }
