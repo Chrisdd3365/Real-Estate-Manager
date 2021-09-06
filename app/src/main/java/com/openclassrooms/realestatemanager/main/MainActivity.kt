@@ -1,6 +1,10 @@
 package com.openclassrooms.realestatemanager.main
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     // Helper classes
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
     private var viewModel = MainActivityViewModel()
+    private var resultLauncher : ActivityResultLauncher<Intent>? = null
 
     // Child fragments
     private var propertiesListFragment : PropertiesListFragment? = null
@@ -44,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     private var areMiniFabEnabled = false
 
-    var estateList = ArrayList<Estate>()
+    private var estateList = ArrayList<Estate>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,20 +87,26 @@ class MainActivity : AppCompatActivity() {
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
 
+        resultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            result ->
+            if (result.resultCode == Activity.RESULT_OK) handleEstateCreated(result.data)
+        }
+
         // Setup buttons
         mainFab?.setOnClickListener {
-            if (areMiniFabEnabled) {
+            areMiniFabEnabled = if (areMiniFabEnabled) {
                 viewModel.setMiniFabVisibility(false)
-                areMiniFabEnabled = false
+                false
             } else {
                 viewModel.setMiniFabVisibility(true)
-                areMiniFabEnabled = true
+                true
             }
         }
 
         addPropertyFab?.setOnClickListener {
-            // TODO : Handle result
-            startActivity(EstateCreationActivity.newInstance(this, null))
+            resultLauncher?.launch(EstateCreationActivity.newInstance(this, null))
         }
 
         // Setup estate list
@@ -109,7 +120,39 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun handleEstateCreated(resultIntent : Intent?) {
+        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
+            val resultEstate : Estate? = resultIntent.extras?.get(TAG_ESTATE) as? Estate
+            val isNewEstate : Boolean? = resultIntent.extras?.get(TAG_NEW_ESTATE) as? Boolean
+            if (resultEstate != null) {
+                if (isNewEstate == true) {
+                    estateList.add(0, resultEstate)
+                    propertiesListFragment?.addNewEstate(resultEstate)
+                } else {
+                    val editedIndex = estateList.indexOf(resultEstate)
+                    if (editedIndex != -1) {
+                        estateList[editedIndex] = resultEstate
+                        propertiesListFragment?.editEstateAtPosition(editedIndex, resultEstate)
+                    }
+                }
+            }
+        }
+    }
+
+    fun editEstate(estateToEdit : Estate) {
+        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateToEdit))
+    }
+
     private fun getStaticEstateList() : ArrayList<Estate> {
         return StaticData.staticEstatesList
+    }
+
+    companion object {
+
+        @Suppress("unused")
+        private const val TAG = "MainActivity"
+
+        private const val TAG_ESTATE = "estate"
+        private const val TAG_NEW_ESTATE = "is_new_estate"
     }
 }

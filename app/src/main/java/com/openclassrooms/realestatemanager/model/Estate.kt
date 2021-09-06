@@ -6,7 +6,7 @@ import kotlin.collections.ArrayList
 
 class Estate : Serializable {
 
-    var id : Long? = null
+    var id : Int? = null
     var type : String? = null   // TODO : Remove
     var typeIndex : Int? = null
     var description : String? = null
@@ -27,4 +27,10 @@ class Estate : Serializable {
     var park : Boolean? = null
 
     var picturesUris = ArrayList<String>()
+
+    override fun equals(other: Any?): Boolean {
+        if ((other as Estate).id == this.id)
+            return true
+        return super.equals(other)
+    }
 }

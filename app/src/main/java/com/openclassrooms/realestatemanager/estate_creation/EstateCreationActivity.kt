@@ -34,6 +34,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Helper classes
     private val viewModel = EstateCreationActivityViewModel()
+    private var resultLauncher : ActivityResultLauncher<Intent>? = null
 
     // Fragments
     private var basicDetailsFragment : Fragment? = null
@@ -46,7 +47,6 @@ class EstateCreationActivity : AppCompatActivity() {
 
     private var estate = Estate()
     private var optionalDetailsFragmentPosition = -1
-    private var resultLauncher : ActivityResultLauncher<Intent>? = null
     private var isEditing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +69,6 @@ class EstateCreationActivity : AppCompatActivity() {
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            Log.d(TAG, "Result = $result")
             if (result.resultCode == Activity.RESULT_CANCELED)
                 handleCompleteEstateCreationCancelled(result.data)
             else if (result.resultCode == Activity.RESULT_OK)
@@ -87,9 +86,13 @@ class EstateCreationActivity : AppCompatActivity() {
 
         nextButton?.setOnClickListener {
 
-            if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null)
+            if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null) {
                 // If we are on the basicDetailsFragment, setup the Estate with the data from it.
-                estate = (basicDetailsFragment as BasicDetailsFragment).getEstate()
+                val basicDetailsFragmentResult =
+                    (basicDetailsFragment as BasicDetailsFragment).getEstate()
+                if (basicDetailsFragmentResult != null)
+                    estate = basicDetailsFragmentResult
+            }
 
             goToNextOptionalDetails()
         }
@@ -97,7 +100,6 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     private fun setupOptionalDetailsFragmentList() {
-        Log.d(TAG, "Subway = ${estate.subway}")
         optionalDetailsFragmentList.clear()
         optionalDetailsFragmentList.add(
             OptionalDetailsFragment.newInstance(
@@ -261,7 +263,6 @@ class EstateCreationActivity : AppCompatActivity() {
      *  In the other case, we go to the right [OptionalDetailsFragment].
      */
     private fun goToPreviousOptionalDetails() {
-        Log.d(TAG, "goToPreviousOptionalDetail() ; $optionalDetailsFragmentPosition")
         optionalDetailsFragmentPosition--
         if (optionalDetailsFragmentPosition >= 0)
             goToOptionalDetails()
@@ -343,11 +344,9 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                Log.d(TAG, "Estate saved with id $insertedId")
                 finishWithResult(insertedId, estateToSave)
             },
             onFailure = {
-                Log.e(TAG, "An error occurred with the database.")
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
             }
         )
@@ -357,7 +356,6 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                Log.d(TAG, "Estate ${estate.id} updated")
                 finishWithResult(estate.id!!, estateToSave)
             },
             onFailure = {
@@ -367,7 +365,7 @@ class EstateCreationActivity : AppCompatActivity() {
         )
     }
 
-    private fun finishWithResult(insertedId : Long, estateToSave: Estate) {
+    private fun finishWithResult(insertedId : Int, estateToSave: Estate) {
         estateToSave.id = insertedId
         setResult(
             Activity.RESULT_OK,

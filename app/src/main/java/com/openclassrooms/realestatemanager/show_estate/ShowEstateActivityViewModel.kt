@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.show_estate
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
@@ -32,7 +33,11 @@ class ShowEstateActivityViewModel : ViewModel() {
         bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context.getString(R.string.bedrooms)}")
         bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context.getString(R.string.bathrooms)}")
         price.set(estate.price?.toString() + "$") // TODO : Get price from utils
-        type.set(context.resources.getStringArray(R.array.estate_types)[estate.typeIndex!!])
+        try {
+            type.set(context.resources.getStringArray(R.array.estate_types)[estate.typeIndex!!])
+        } catch (exception : Exception) {
+            Log.e(TAG, "ERROR : ${exception.message}")
+        }
     }
 
     fun setButtonsText(context: Context, showEstateType: Enums.ShowEstateType) {
@@ -54,5 +59,9 @@ class ShowEstateActivityViewModel : ViewModel() {
 
     fun showNearbyLayout() {
         nearbyLayoutVisibility.set(View.VISIBLE)
+    }
+
+    companion object {
+        private const val TAG = "ShowEstateAVM"
     }
 }

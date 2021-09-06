@@ -29,7 +29,7 @@ class DatabaseManager(context : Context)
      *  @param onSuccess ([Unit]) Function to call when the save is completed, with the id inserted.
      *  @param onFailure ([Unit]) Function to call when an error occurs.
      */
-    fun saveEstate(estate : Estate, onSuccess: ((newId : Long) -> Any)?, onFailure: (() -> Any)?) {
+    fun saveEstate(estate : Estate, onSuccess: ((newId : Int) -> Any)?, onFailure: (() -> Any)?) {
         val database = this.writableDatabase
 
         val contentValues = ContentValues().apply {
@@ -56,7 +56,7 @@ class DatabaseManager(context : Context)
         if (insertedId == -1L)
             onFailure?.invoke()
         else
-            onSuccess?.invoke(insertedId)
+            onSuccess?.invoke(insertedId.toInt())
     }
 
     fun updateEstate(estate: Estate, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
@@ -83,7 +83,7 @@ class DatabaseManager(context : Context)
         val affectedRows = database.update(
             ESTATE_TABLE,
             contentValues,
-            COLUMN_ID,
+            "$COLUMN_ID IS ?",
             arrayOf("${estate.id}")
         )
         database.close()
@@ -125,7 +125,7 @@ class DatabaseManager(context : Context)
                 while (moveToNext()) {
                     estates.add(
                         Estate().apply {
-                            id = getLong(getColumnIndex(COLUMN_ID))
+                            id = getInt(getColumnIndex(COLUMN_ID))
                             typeIndex = getInt(getColumnIndex(COLUMN_TYPE))
                             description = getString(getColumnIndex(COLUMN_DESCRIPTION))
                             address = getString(getColumnIndex(COLUMN_ADDRESS))

@@ -23,9 +23,15 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
         notifyDataSetChanged()
     }
 
-    fun addItem(toAdd : Estate) {
-        items.add(toAdd)
+    fun addItem(index: Int?, toAdd : Estate) {
+        if (index != null) items.add(index, toAdd)
+        else items.add(toAdd)
         notifyItemInserted(items.indexOf(toAdd))
+    }
+
+    fun changeItem(index: Int, toEdit : Estate) {
+        items[index] = toEdit
+        notifyItemChanged(index)
     }
 
     fun removeItem(toRemove : Estate) {
@@ -78,5 +84,10 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             price.set("${estate.price} $")
         }
 
+    }
+
+    companion object {
+        @Suppress("unused")
+        private const val TAG = "PropertiesListAdapter"
     }
 }

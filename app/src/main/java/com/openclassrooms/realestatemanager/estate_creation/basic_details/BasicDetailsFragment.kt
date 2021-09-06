@@ -13,7 +13,7 @@ import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivi
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.TextValidator
 
-class BasicDetailsFragment(private val estate: Estate?) : Fragment() {
+class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
 
     // Helper classes
     private val viewModel = BasicDetailsFragmentViewModel()
@@ -55,12 +55,12 @@ class BasicDetailsFragment(private val estate: Estate?) : Fragment() {
 
         // Setup default variables if needed
         if (estate != null) {
-            if (estate.typeIndex != null) typeSpinner?.setSelection(estate.typeIndex!!)
+            if (estate?.typeIndex != null) typeSpinner?.setSelection(estate?.typeIndex!!)
             else typeSpinner?.setSelection(0)
-            addressEditText?.setText(estate.address)
-            priceEditText?.setText(estate.price?.toString())
-            surfaceEditText?.setText(estate.surface?.toString())
-            descriptionEditText?.setText(estate.description)
+            addressEditText?.setText(estate?.address)
+            priceEditText?.setText(estate?.price?.toString())
+            surfaceEditText?.setText(estate?.surface?.toString())
+            descriptionEditText?.setText(estate?.description)
 
             checkIfAllFieldsAreFilled()
         }
@@ -128,14 +128,17 @@ class BasicDetailsFragment(private val estate: Estate?) : Fragment() {
      *  @return ([Estate]) An [Estate] instance, pre-filled with data filled in this
      *  [BasicDetailsFragment].
      */
-    fun getEstate() : Estate {
-        return Estate().apply {
-            typeIndex = typeSpinner?.selectedItemPosition!!
+    fun getEstate() : Estate? {
+        if (estate == null)
+            estate = Estate()
+        estate?.apply {
+            typeIndex = typeSpinner?.selectedItemPosition!! - 1
             address = addressEditText?.text.toString()
             price = priceEditText?.text.toString().toFloat()
             surface = surfaceEditText?.text.toString().toFloat()
             description = descriptionEditText?.text.toString()
         }
+        return estate
     }
 
     companion object {
