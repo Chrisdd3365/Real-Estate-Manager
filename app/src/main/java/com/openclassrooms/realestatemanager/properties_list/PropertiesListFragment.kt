@@ -70,6 +70,11 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
     }
 
+    fun removeEstateAtPosition(position: Int) {
+        propertiesListRv?.post { propertiesListAdapter.removeItem(position) }
+        estatesList.removeAt(position)
+    }
+
     companion object {
 
         /**

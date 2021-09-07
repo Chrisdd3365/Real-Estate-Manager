@@ -75,27 +75,30 @@ class EstateCreationActivity : AppCompatActivity() {
         previousButton = binding.previousButton
         nextButton = binding.nextButton
 
+        setupButtons()
+
         if (isNewEstate) {
             showFirstFragment(null)
-
             setupOptionalDetailsFragmentList()
-
-            nextButton?.setOnClickListener {
-
-                if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null) {
-                    // If we are on the basicDetailsFragment, setup the Estate with the data from it.
-                    val basicDetailsFragmentResult =
-                        (basicDetailsFragment as BasicDetailsFragment).getEstate()
-                    if (basicDetailsFragmentResult != null)
-                        estate = basicDetailsFragmentResult
-                }
-
-                goToNextOptionalDetails()
-            }
-            previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
         } else {
             showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
         }
+    }
+
+    private fun setupButtons() {
+        nextButton?.setOnClickListener {
+
+            if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null) {
+                // If we are on the basicDetailsFragment, setup the Estate with the data from it.
+                val basicDetailsFragmentResult =
+                    (basicDetailsFragment as BasicDetailsFragment).getEstate()
+                if (basicDetailsFragmentResult != null)
+                    estate = basicDetailsFragmentResult
+            }
+
+            goToNextOptionalDetails()
+        }
+        previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
     }
 
     private fun setupOptionalDetailsFragmentList() {
@@ -296,6 +299,24 @@ class EstateCreationActivity : AppCompatActivity() {
             .commit()
     }
 
+    fun deleteEstate() {
+        if (estate != null && estate?.id != null) {
+            viewModel.setLoading()
+            DatabaseManager(this).deleteEstate(
+                estate!!.id!!,
+                {
+                    finishWithResult(-1, estate)
+                }, {
+                    showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
+                    viewModel.setFragments()
+                    Log.e(TAG, "An error occurred while deletion")
+                    Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                        .show()
+                }
+            )
+        }
+    }
+
     /**
      *  This function is used when the user clicked on "Cancel" button in [ShowEstateFragment]
      *  (or if he presses the back button).
@@ -363,12 +384,15 @@ class EstateCreationActivity : AppCompatActivity() {
         )
     }
 
-    private fun finishWithResult(insertedId : Int, estateToSave: Estate) {
-        estateToSave.id = insertedId
+    private fun finishWithResult(insertedId : Int, estateToSave: Estate?) {
+        if (insertedId != -1)
+            estateToSave!!.id = insertedId
         setResult(
             Activity.RESULT_OK,
             Intent().apply {
-                putExtra(TAG_ESTATE, estateToSave)
+                if (estateToSave != null)
+                    putExtra(TAG_ESTATE, estateToSave)
+                putExtra(TAG_TO_DELETE, (insertedId == -1))
                 putExtra(TAG_NEW_ESTATE, !isEditing)
             }
         )
@@ -381,6 +405,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
         private const val TAG_ESTATE = "estate"
         private const val TAG_NEW_ESTATE = "is_new_estate"
+        private const val TAG_TO_DELETE = "to_delete"
 
         fun newInstance(context: Context, estate: Estate?, newEstate: Boolean) : Intent {
             val intent = Intent(context, EstateCreationActivity::class.java)

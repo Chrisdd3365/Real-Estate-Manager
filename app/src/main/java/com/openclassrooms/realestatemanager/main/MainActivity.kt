@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) {
             result ->
-            if (result.resultCode == Activity.RESULT_OK) handleEstateCreated(result.data)
+            if (result.resultCode == Activity.RESULT_OK) handleEstateChanges(result.data)
         }
 
         // Setup buttons
@@ -120,20 +120,28 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleEstateCreated(resultIntent : Intent?) {
-        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
-            val resultEstate : Estate? = resultIntent.extras?.get(TAG_ESTATE) as? Estate
-            val isNewEstate : Boolean? = resultIntent.extras?.get(TAG_NEW_ESTATE) as? Boolean
-            if (resultEstate != null) {
-                if (isNewEstate == true) {
-                    estateList.add(0, resultEstate)
-                    propertiesListFragment?.addNewEstate(resultEstate)
-                } else {
-                    val editedIndex = estateList.indexOf(resultEstate)
-                    if (editedIndex != -1) {
-                        estateList[editedIndex] = resultEstate
-                        propertiesListFragment?.editEstateAtPosition(editedIndex, resultEstate)
-                    }
+    private fun handleEstateChanges(resultIntent : Intent?) {
+        if (resultIntent == null)
+            return
+        val toDelete = resultIntent.getBooleanExtra(TAG_TO_DELETE, false)
+        val isNewEstate = resultIntent.getBooleanExtra(TAG_NEW_ESTATE, false)
+        val resultEstate = resultIntent.extras?.get(TAG_ESTATE) as? Estate
+
+        if (toDelete && resultEstate != null) {
+            val index = estateList.indexOf(resultEstate)
+            if (index != -1) {
+                propertiesListFragment?.removeEstateAtPosition(index)
+                estateList.remove(resultEstate)
+            }
+        } else if (resultEstate != null) {
+            if (isNewEstate) {
+                estateList.add(0, resultEstate)
+                propertiesListFragment?.addNewEstate(resultEstate)
+            } else {
+                val editedIndex = estateList.indexOf(resultEstate)
+                if (editedIndex != -1) {
+                    estateList[editedIndex] = resultEstate
+                    propertiesListFragment?.editEstateAtPosition(editedIndex, resultEstate)
                 }
             }
         }
@@ -154,5 +162,6 @@ class MainActivity : AppCompatActivity() {
 
         private const val TAG_ESTATE = "estate"
         private const val TAG_NEW_ESTATE = "is_new_estate"
+        private const val TAG_TO_DELETE = "to_delete"
     }
 }

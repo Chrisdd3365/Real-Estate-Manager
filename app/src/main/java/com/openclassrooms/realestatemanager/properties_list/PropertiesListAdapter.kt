@@ -34,10 +34,9 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
         notifyItemChanged(index)
     }
 
-    fun removeItem(toRemove : Estate) {
-        val position = items.indexOf(toRemove)
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    fun removeItem(toRemoveIndex : Int) {
+        items.removeAt(toRemoveIndex)
+        notifyItemRemoved(toRemoveIndex)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

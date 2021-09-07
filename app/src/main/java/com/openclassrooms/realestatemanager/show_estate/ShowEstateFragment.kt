@@ -88,7 +88,12 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
                 }
             }
             Enums.ShowEstateType.SHOW_ESTATE -> {
-                // TODO()
+                leftButton?.setOnClickListener {
+                    (activity as? EstateCreationActivity)?.deleteEstate()
+                }
+                rightButton?.setOnClickListener {
+                    (activity as? EstateCreationActivity)?.handleCompleteEstateCreationCancelled()
+                }
             }
         }
     }

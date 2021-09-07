@@ -94,10 +94,14 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke()
     }
 
-    fun deleteEstate(idToDelete : Long, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
+    fun deleteEstate(idToDelete : Int, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
         val database = this.writableDatabase
 
-        val affectedRows = database.delete(ESTATE_TABLE, COLUMN_ID, arrayOf("$idToDelete"))
+        val affectedRows = database.delete(
+            ESTATE_TABLE,
+            "$COLUMN_ID is ?",
+            arrayOf("$idToDelete")
+        )
         database.close()
 
         if (affectedRows == 0)
