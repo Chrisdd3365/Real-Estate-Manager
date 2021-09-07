@@ -49,7 +49,7 @@ class PropertiesListFragment : Fragment() {
     }
 
     private fun estateClicked(clicked : Estate) {
-        (activity as? MainActivity)?.editEstate(clicked)
+        (activity as? MainActivity)?.estateClicked(clicked)
     }
 
     fun setEstateList(list : ArrayList<Estate>) {

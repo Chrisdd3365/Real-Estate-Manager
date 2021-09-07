@@ -1,17 +1,20 @@
 package com.openclassrooms.realestatemanager.show_estate
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.graphics.PorterDuff
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.*
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.databinding.ActivityShowEstateBinding
+import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
@@ -21,10 +24,11 @@ import com.openclassrooms.realestatemanager.utils.Enums
  *      content, as we need to be able to re-use this fragment for landscape display, on the right
  *      of the element selected in the [PropertiesListFragment].
  */
-class ShowEstateActivity : AppCompatActivity() {
+class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType)
+    : Fragment() {
 
     // Helper classes
-    private val viewModel = ShowEstateActivityViewModel()
+    private val viewModel = ShowEstateFragmentViewModel()
 
     // Layout variables
     private var typeIcon : ImageView? = null
@@ -32,19 +36,12 @@ class ShowEstateActivity : AppCompatActivity() {
     private var rightButton : Button? = null
     private var nearbyImagesFlexbox : FlexboxLayout? = null
 
-    private var type : Enums.ShowEstateType? = null
-    private var estate : Estate? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        type = intent.extras?.get(TAG_TYPE) as Enums.ShowEstateType
-        estate = intent.extras?.get(TAG_ESTATE) as Estate
-
-        if (estate == null) finish()
-
-        val binding = DataBindingUtil.setContentView<ActivityShowEstateBinding>(
-            this, R.layout.activity_show_estate
+        // Inflate the layout for this fragment, using DataBinding
+        val binding = DataBindingUtil.inflate<FragmentShowEstateBinding>(
+            inflater, R.layout.fragment_show_estate, container, false
         )
 
         binding.viewModel = viewModel
@@ -54,14 +51,16 @@ class ShowEstateActivity : AppCompatActivity() {
         rightButton = binding.rightButton
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
 
-        viewModel.setButtonsText(this, type!!)
-        viewModel.setData(this, estate!!)
+        viewModel.setButtonsText(context, type)
+        viewModel.setData(context, estate!!)
 
         setTypeIcon()
 
         setButtonsBehaviors()
 
         setNearbyData()
+
+        return binding.root
     }
 
     private fun setTypeIcon() {
@@ -75,37 +74,21 @@ class ShowEstateActivity : AppCompatActivity() {
     }
 
     private fun setButtonsBehaviors() {
-        leftButton?.setOnClickListener {
-            when (type!!) {
-                Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
-                    // The user wants to edit the data he provided, so we send him back to previous
-                    //  Activity.
-                    setResult(
-                        Activity.RESULT_CANCELED,
-                        Intent().apply { putExtra(TAG_ESTATE, estate) }
-                    )
-                    finish()
+        when (type) {
+            Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
+                leftButton?.setOnClickListener {
+                    // The user wants to edit the data he provided, so we send him back to the
+                    //  first fragment of EstateCreationActivity.
+                    (activity as? EstateCreationActivity)?.handleCompleteEstateCreationCancelled()
                 }
-                Enums.ShowEstateType.SHOW_ESTATE -> {
-                    // TODO : Delete this estate
+                rightButton?.setOnClickListener {
+                    // The user is satisfied with the current data of the estate, we save this
+                    //  [Estate].
+                    (activity as? EstateCreationActivity)?.handleCompleteEstateCreationConfirmed()
                 }
             }
-        }
-        rightButton?.setOnClickListener {
-            when (type!!) {
-                Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
-                    // The user is satisfied by the current data displayed, so we send him back to
-                    //  the previous Activity in order to save this [Estate].
-                    setResult(
-                        Activity.RESULT_OK,
-                        Intent().apply { putExtra(TAG_ESTATE, estate) }
-                    )
-                    finish()
-                }
-                Enums.ShowEstateType.SHOW_ESTATE -> {
-                    startActivity(EstateCreationActivity.newInstance(this, estate))
-                    finish()
-                }
+            Enums.ShowEstateType.SHOW_ESTATE -> {
+                // TODO()
             }
         }
     }
@@ -143,7 +126,9 @@ class ShowEstateActivity : AppCompatActivity() {
         if (estate!!.park == true)
             addNearbyIconInFlexbox(R.drawable.ic_park)
 
+        Log.d(TAG, "Nearby icons set")
         viewModel.showNearbyLayout()
+        Log.d(TAG, "End of setNearbyData()")
     }
 
     /**
@@ -152,10 +137,11 @@ class ShowEstateActivity : AppCompatActivity() {
      *  @param iconId [Int] - ID of the drawable resource.
      */
     private fun addNearbyIconInFlexbox(iconId : Int) {
-        val imageView = ImageView(this)
+        Log.d(TAG, "addNearbyIconInFlexbox with icon $iconId")
+        val imageView = ImageView(context)
         imageView.setImageResource(iconId)
         imageView.id = 0
-        imageView.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
+        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white), PorterDuff.Mode.SRC_IN)
         nearbyImagesFlexbox?.addView(imageView)
 
         val imageViewLayoutParams = (imageView.layoutParams as FlexboxLayout.LayoutParams)
@@ -169,14 +155,8 @@ class ShowEstateActivity : AppCompatActivity() {
         @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
-        private const val TAG_ESTATE = "estate"
-        private const val TAG_TYPE = "type"
-
-        fun newInstance(context : Context?, estate : Estate, type : Enums.ShowEstateType) : Intent {
-            val intent = Intent(context, ShowEstateActivity::class.java)
-            intent.putExtra(TAG_TYPE, type)
-            intent.putExtra(TAG_ESTATE, estate)
-            return intent
+        fun newInstance(estate : Estate?, type : Enums.ShowEstateType) : ShowEstateFragment {
+            return ShowEstateFragment(estate, type)
         }
 
     }

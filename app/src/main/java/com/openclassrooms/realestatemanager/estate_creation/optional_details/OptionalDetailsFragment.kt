@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.estate_creation.optional_details
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -105,7 +104,6 @@ class OptionalDetailsFragment(private var question: String,
         //  without changing any value, we need to store a variable, as the list of
         //  OptionalDetailsFragments is reset each time the user clicks on "Cancel".
         if (questionType == Enums.OptionalDetailType.COUNT) {
-            callback.invoke(0)
             if (defaultValue != null)
                 callback.invoke(defaultValue as Int)
             else

@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -20,7 +18,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBi
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
-import com.openclassrooms.realestatemanager.show_estate.ShowEstateActivity
+import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
 import java.lang.Exception
 
@@ -34,7 +32,6 @@ class EstateCreationActivity : AppCompatActivity() {
 
     // Helper classes
     private val viewModel = EstateCreationActivityViewModel()
-    private var resultLauncher : ActivityResultLauncher<Intent>? = null
 
     // Fragments
     private var basicDetailsFragment : Fragment? = null
@@ -45,9 +42,10 @@ class EstateCreationActivity : AppCompatActivity() {
     private var previousButton : Button? = null
     private var nextButton : Button? = null
 
-    private var estate = Estate()
+    private var estate : Estate? = null
     private var optionalDetailsFragmentPosition = -1
     private var isEditing = false
+    private var isNewEstate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,43 +58,44 @@ class EstateCreationActivity : AppCompatActivity() {
 
         viewModel.setLoading()
 
-        if (intent.hasExtra(TAG_ESTATE)) {
-            estate = intent.extras!!.get(TAG_ESTATE) as Estate
-            basicDetailsFragment = BasicDetailsFragment.newInstance(estate)
-            isEditing = true
+        if (estate == null) {
+            if (intent.hasExtra(TAG_ESTATE)) {
+                estate = intent.extras!!.get(TAG_ESTATE) as Estate
+                basicDetailsFragment = BasicDetailsFragment.newInstance(estate)
+                isEditing = true
+            } else
+                estate = Estate()
         }
 
-        resultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_CANCELED)
-                handleCompleteEstateCreationCancelled(result.data)
-            else if (result.resultCode == Activity.RESULT_OK)
-                handleCompleteEstateCreationConfirmed(result.data)
-        }
+        if (intent.hasExtra(TAG_NEW_ESTATE))
+            isNewEstate = intent.getBooleanExtra(TAG_NEW_ESTATE, true)
 
         // Init layout variables
         fragmentRoot = binding.fragmentRoot
         previousButton = binding.previousButton
         nextButton = binding.nextButton
 
-        showFirstFragment()
+        if (isNewEstate) {
+            showFirstFragment(null)
 
-        setupOptionalDetailsFragmentList()
+            setupOptionalDetailsFragmentList()
 
-        nextButton?.setOnClickListener {
+            nextButton?.setOnClickListener {
 
-            if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null) {
-                // If we are on the basicDetailsFragment, setup the Estate with the data from it.
-                val basicDetailsFragmentResult =
-                    (basicDetailsFragment as BasicDetailsFragment).getEstate()
-                if (basicDetailsFragmentResult != null)
-                    estate = basicDetailsFragmentResult
+                if (optionalDetailsFragmentPosition == -1 && basicDetailsFragment != null) {
+                    // If we are on the basicDetailsFragment, setup the Estate with the data from it.
+                    val basicDetailsFragmentResult =
+                        (basicDetailsFragment as BasicDetailsFragment).getEstate()
+                    if (basicDetailsFragmentResult != null)
+                        estate = basicDetailsFragmentResult
+                }
+
+                goToNextOptionalDetails()
             }
-
-            goToNextOptionalDetails()
+            previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
+        } else {
+            showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
         }
-        previousButton?.setOnClickListener { goToPreviousOptionalDetails() }
     }
 
     private fun setupOptionalDetailsFragmentList() {
@@ -105,11 +104,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.rooms_count_question),
                 Enums.OptionalDetailType.COUNT,
-                estate.roomCount
+                estate?.roomCount
             ) { result: Any ->
                 try {
-                    estate.roomCount = result as Int
-                    optionalDetailsFragmentList[0].setDefaultValue(estate.roomCount)
+                    estate?.roomCount = result as Int
+                    optionalDetailsFragmentList[0].setDefaultValue(estate?.roomCount)
                 } catch (ignored : Exception) {}
             }
         )
@@ -117,11 +116,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.bathrooms_count_question),
                 Enums.OptionalDetailType.COUNT,
-                estate.bathroomsCount
+                estate?.bathroomsCount
             ) { result : Any ->
                 try {
-                    estate.bathroomsCount = result as Int
-                    optionalDetailsFragmentList[1].setDefaultValue(estate.bathroomsCount)
+                    estate?.bathroomsCount = result as Int
+                    optionalDetailsFragmentList[1].setDefaultValue(estate?.bathroomsCount)
                 } catch (ignored : Exception) {}
             }
         )
@@ -129,11 +128,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.bedrooms_count_question),
                 Enums.OptionalDetailType.COUNT,
-                estate.bedroomsCount
+                estate?.bedroomsCount
             ) { result : Any ->
                 try {
-                    estate.bedroomsCount = result as Int
-                    optionalDetailsFragmentList[2].setDefaultValue(estate.bedroomsCount)
+                    estate?.bedroomsCount = result as Int
+                    optionalDetailsFragmentList[2].setDefaultValue(estate?.bedroomsCount)
                 } catch (ignored : Exception) {}
             }
         )
@@ -141,11 +140,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.school_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.school
+                estate?.school
             ) { result : Any ->
                 try {
-                    estate.school = result as Boolean
-                    optionalDetailsFragmentList[3].setDefaultValue(estate.school)
+                    estate?.school = result as Boolean
+                    optionalDetailsFragmentList[3].setDefaultValue(estate?.school)
                 } catch (ignored : Exception) {}
             }
         )
@@ -153,11 +152,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.playground_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.playground
+                estate?.playground
             ) { result : Any ->
                 try {
-                    estate.playground = result as Boolean
-                    optionalDetailsFragmentList[4].setDefaultValue(estate.playground)
+                    estate?.playground = result as Boolean
+                    optionalDetailsFragmentList[4].setDefaultValue(estate?.playground)
                 } catch (ignored : Exception) {}
             }
         )
@@ -165,11 +164,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.shop_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.shop
+                estate?.shop
             ) { result : Any ->
                 try {
-                    estate.shop = result as Boolean
-                    optionalDetailsFragmentList[5].setDefaultValue(estate.shop)
+                    estate?.shop = result as Boolean
+                    optionalDetailsFragmentList[5].setDefaultValue(estate?.shop)
                 } catch (ignored : Exception) {}
             }
         )
@@ -177,11 +176,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.park_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.park
+                estate?.park
             ) { result : Any ->
                 try {
-                    estate.park = result as Boolean
-                    optionalDetailsFragmentList[6].setDefaultValue(estate.park)
+                    estate?.park = result as Boolean
+                    optionalDetailsFragmentList[6].setDefaultValue(estate?.park)
                 } catch (ignored : Exception) {}
             }
         )
@@ -189,11 +188,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.buses_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.buses
+                estate?.buses
             ) { result : Any ->
                 try {
-                    estate.buses = result as Boolean
-                    optionalDetailsFragmentList[7].setDefaultValue(estate.buses)
+                    estate?.buses = result as Boolean
+                    optionalDetailsFragmentList[7].setDefaultValue(estate?.buses)
                 } catch (ignored : Exception) {}
             }
         )
@@ -201,11 +200,11 @@ class EstateCreationActivity : AppCompatActivity() {
             OptionalDetailsFragment.newInstance(
                 getString(R.string.subway_question),
                 Enums.OptionalDetailType.CLOSED,
-                estate.subway
+                estate?.subway
             ) { result : Any ->
                 try {
-                    estate.subway = result as Boolean
-                    optionalDetailsFragmentList[8].setDefaultValue(estate.subway)
+                    estate?.subway = result as Boolean
+                    optionalDetailsFragmentList[8].setDefaultValue(estate?.subway)
                 } catch (ignored : Exception) {}
             }
         )
@@ -215,11 +214,11 @@ class EstateCreationActivity : AppCompatActivity() {
      *  Shows the first fragment, with the type, address, price, surface, and description.
      *  The "Previous" button is hidden, as there is no fragment before this one.
      *  We use `.replace` instead of `.add`, as we can have another fragment if the user clicks on
-     *  "Cancel" button in [ShowEstateActivity].
+     *  "Cancel" button in [ShowEstateFragment].
      */
-    private fun showFirstFragment() {
+    private fun showFirstFragment(estate : Estate?) {
         if (basicDetailsFragment == null)
-            basicDetailsFragment = BasicDetailsFragment.newInstance(null)
+            basicDetailsFragment = BasicDetailsFragment.newInstance(estate)
         viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_root, basicDetailsFragment!!)
@@ -245,7 +244,7 @@ class EstateCreationActivity : AppCompatActivity() {
     /**
      *  Increment [optionalDetailsFragmentPosition]. If there is more [OptionalDetailsFragment] to
      *  display, we call [goToOptionalDetails]. In the other case, we show the [Estate] result with
-     *  [completeEstateCreation].
+     *  [showFullEstate].
      */
     private fun goToNextOptionalDetails() {
         optionalDetailsFragmentPosition++
@@ -254,7 +253,7 @@ class EstateCreationActivity : AppCompatActivity() {
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
         else
-            completeEstateCreation()
+            showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
     }
 
     /**
@@ -267,7 +266,7 @@ class EstateCreationActivity : AppCompatActivity() {
         if (optionalDetailsFragmentPosition >= 0)
             goToOptionalDetails()
         else {
-            showFirstFragment()
+            showFirstFragment(estate)
             viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         }
     }
@@ -282,17 +281,23 @@ class EstateCreationActivity : AppCompatActivity() {
     }
 
     /**
-     *  Displays the activity [ShowEstateActivity] to ask if the user is satisfied with the data he
+     *  Displays the activity [ShowEstateFragment] to ask if the user is satisfied with the data he
      *  provided. We need to wait for a result, as this [EstateCreationActivity] will save the
      *  [Estate], or allow the user to edit it.
      */
-    private fun completeEstateCreation() {
-        resultLauncher?.launch(ShowEstateActivity.newInstance(
-            this, estate, Enums.ShowEstateType.ASK_FOR_CONFIRMATION))
+    private fun showFullEstate(type : Enums.ShowEstateType) {
+        viewModel.setNavigationButtonVisibility(View.GONE, View.GONE)
+        viewModel.setFragments()
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_root,
+                ShowEstateFragment.newInstance(estate, type)
+            )
+            .commit()
     }
 
     /**
-     *  This function is used when the user clicked on "Cancel" button in [ShowEstateActivity]
+     *  This function is used when the user clicked on "Cancel" button in [ShowEstateFragment]
      *  (or if he presses the back button).
      *  It will remove every [androidx.fragment.app.Fragment] in this [Activity], and display again
      *  [BasicDetailsFragment] to allow the user to edit the data he provided.
@@ -301,10 +306,7 @@ class EstateCreationActivity : AppCompatActivity() {
      *  provided data.
      *  Finally we call [showFirstFragment].
      */
-    private fun handleCompleteEstateCreationCancelled(resultIntent : Intent?) {
-        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE))
-            estate = resultIntent.extras!!.get(TAG_ESTATE) as Estate
-
+    fun handleCompleteEstateCreationCancelled() {
         // Remove every fragment in the Activity
         for (fragment in supportFragmentManager.fragments) {
             supportFragmentManager.beginTransaction().remove(fragment).commit()
@@ -314,33 +316,27 @@ class EstateCreationActivity : AppCompatActivity() {
 
         setupOptionalDetailsFragmentList()
         optionalDetailsFragmentPosition = -1
-        showFirstFragment()
+        showFirstFragment(estate)
     }
 
     /**
-     *  This function is used when the user clicked on "Confirm" button in [ShowEstateActivity].
+     *  This function is used when the user clicked on "Confirm" button in [ShowEstateFragment].
      *  If the user is editing an existing [Estate] ([isEditing] is true), we call
      *  [saveEstateChanges].
      *  If this is a very new [Estate], we use [saveEstate] instead.
-     *  @param resultIntent ([Intent]?) - The [Intent] from [ShowEstateActivity], containing
-     *  an [Estate] instance in extras.
      */
-    private fun handleCompleteEstateCreationConfirmed(resultIntent: Intent?) {
-        if (resultIntent != null && resultIntent.hasExtra(TAG_ESTATE)) {
-            viewModel.setLoading()
+    fun handleCompleteEstateCreationConfirmed() {
+        viewModel.setLoading()
 
-            val estateToSave : Estate = resultIntent.extras!!.get(TAG_ESTATE) as Estate
-            if (isEditing)
-                saveEstateChanges(estateToSave)
-            else
-                saveEstate(estateToSave)
-        } else {
-            Log.d(TAG, "Error")
-            Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
-        }
+        if (isEditing)
+            saveEstateChanges(estate)
+        else
+            saveEstate(estate)
     }
 
-    private fun saveEstate(estateToSave: Estate) {
+    private fun saveEstate(estateToSave: Estate?) {
+        if (estateToSave == null)
+            return
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
@@ -352,11 +348,13 @@ class EstateCreationActivity : AppCompatActivity() {
         )
     }
 
-    private fun saveEstateChanges(estateToSave: Estate) {
+    private fun saveEstateChanges(estateToSave: Estate?) {
+        if (estateToSave == null)
+            return
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                finishWithResult(estate.id!!, estateToSave)
+                finishWithResult(estate?.id!!, estateToSave)
             },
             onFailure = {
                 Log.e(TAG, "An error occurred with the database.")
@@ -384,9 +382,10 @@ class EstateCreationActivity : AppCompatActivity() {
         private const val TAG_ESTATE = "estate"
         private const val TAG_NEW_ESTATE = "is_new_estate"
 
-        fun newInstance(context: Context, estate: Estate?) : Intent {
+        fun newInstance(context: Context, estate: Estate?, newEstate: Boolean) : Intent {
             val intent = Intent(context, EstateCreationActivity::class.java)
             if (estate != null) intent.putExtra(TAG_ESTATE, estate)
+            intent.putExtra(TAG_NEW_ESTATE, newEstate)
             return intent
         }
 

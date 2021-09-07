@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
-            resultLauncher?.launch(EstateCreationActivity.newInstance(this, null))
+            resultLauncher?.launch(EstateCreationActivity.newInstance(this, null, true))
         }
 
         // Setup estate list
@@ -139,8 +139,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun editEstate(estateToEdit : Estate) {
-        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateToEdit))
+    fun estateClicked(estateClicked : Estate) {
+        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked, false))
     }
 
     private fun getStaticEstateList() : ArrayList<Estate> {

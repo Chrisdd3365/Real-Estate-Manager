@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.model
 
+import android.util.Log
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -28,9 +29,20 @@ class Estate : Serializable {
 
     var picturesUris = ArrayList<String>()
 
+    override fun toString(): String {
+        return "[ESTATE] $id ; $roomCount rooms ; $bathroomsCount bathrooms ; " +
+                "$bedroomsCount bedrooms"
+    }
+
     override fun equals(other: Any?): Boolean {
         if ((other as Estate).id == this.id)
             return true
         return super.equals(other)
+    }
+
+    companion object {
+
+        @Suppress("unused")
+        private const val TAG = "Estate"
     }
 }

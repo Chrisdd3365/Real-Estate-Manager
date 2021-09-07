@@ -7,13 +7,13 @@
     <data>
         <variable
             name="viewModel"
-            type="com.openclassrooms.realestatemanager.show_estate.ShowEstateActivityViewModel" />
+            type="com.openclassrooms.realestatemanager.show_estate.ShowEstateFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".show_estate.ShowEstateActivity">
+        tools:context=".show_estate.ShowEstateFragment">
 
         <!-- TODO : Implement Pluto to have images carousel -->
         <ImageView

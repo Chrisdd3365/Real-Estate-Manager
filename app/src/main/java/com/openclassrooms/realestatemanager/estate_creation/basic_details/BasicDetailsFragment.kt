@@ -132,7 +132,7 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
         if (estate == null)
             estate = Estate()
         estate?.apply {
-            typeIndex = typeSpinner?.selectedItemPosition!! - 1
+            typeIndex = typeSpinner?.selectedItemPosition!!
             address = addressEditText?.text.toString()
             price = priceEditText?.text.toString().toFloat()
             surface = surfaceEditText?.text.toString().toFloat()
