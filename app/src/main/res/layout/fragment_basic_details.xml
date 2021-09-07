@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragmentViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:gravity="center|start"
+                android:text="@string/type_title"/>
+
+            <Spinner
+                android:id="@+id/type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
+
+        <EditText
+            style="@style/RealEstateManagerEditText"
+            android:id="@+id/address_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:inputType="textPostalAddress"
+            android:hint="@string/address_hint"
+            android:autofillHints="@string/address_hint" />
+
+        <EditText
+            style="@style/RealEstateManagerEditText"
+            android:id="@+id/price_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:inputType="numberDecimal"
+            android:hint="@string/price_hint"
+            android:autofillHints="@string/price_hint"/>
+
+        <EditText
+            style="@style/RealEstateManagerEditText"
+            android:id="@+id/surface_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:inputType="numberDecimal"
+            android:hint="@string/surface_hint"
+            android:autofillHints="@string/surface_hint"/>
+
+        <EditText
+            style="@style/RealEstateManagerEditText"
+            android:id="@+id/description_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:inputType="text"
+            android:hint="@string/description_hint"
+            android:autofillHints="@string/description_hint"
+            android:lines="2"/>
+
+    </LinearLayout>
+
+</layout>

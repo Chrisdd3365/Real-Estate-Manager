@@ -5,4 +5,58 @@
 
     <string name="no_properties">No properties were found !</string>
 
+    <string name="skip">Skip</string>
+    <string name="button_previous">Previous</string>
+    <string name="button_next">Next</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_edit">Edit</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_confirm">Confirm</string>
+
+    <string name="type_title">Type :</string>
+    <string name="nearby_title">Nearby :</string>
+    <string name="address_hint">Address</string>
+    <string name="price_hint">Price</string>
+    <string name="surface_hint">Surface</string>
+    <string name="description_hint">Description</string>
+
+    <!-- Validators -->
+    <string name="mandatory_field">This field is mandatory</string>
+    <string name="incorrect_format">Incorrect format</string>
+
+    <!-- Estate types -->
+    <string-array name="estate_types">
+        <item name="type_flat">Flat</item>
+        <item name="type_townhouse">Townhouse</item>
+        <item name="type_penthouse">Penthouse</item>
+        <item name="type_house">House</item>
+        <item name="type_duplex">Duplex</item>
+    </string-array>
+
+    <!-- Estate creation questions -->
+    <string name="rooms_count_question">How many rooms ?</string>
+    <string name="bathrooms_count_question">How many bathrooms ?</string>
+    <string name="bedrooms_count_question">How many bedrooms ?</string>
+    <string name="school_question">Is there a school nearby ?</string>
+    <string name="playground_question">Is there a playground nearby ?</string>
+    <string name="shop_question">Is there a shop nearby ?</string>
+    <string name="park_question">Is there a park nearby ?</string>
+    <string name="buses_question">Are there buses nearby ?</string>
+    <string name="subway_question">Is there a subway station nearby ?</string>
+
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="empty_hint"> </string>
+
+    <!-- Show estate display -->
+    <string name="square_meters">m²</string>
+    <string name="square_feet">ft²</string>
+    <string name="rooms">rooms</string>
+    <string name="bathrooms">bathrooms</string>
+    <string name="bedrooms">bedrooms</string>
+
+    <string name="dumb_error">An error occurred</string>
+
 </resources>

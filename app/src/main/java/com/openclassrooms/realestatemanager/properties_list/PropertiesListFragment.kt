@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
+import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
 
 class PropertiesListFragment : Fragment() {
 
     // Helper classes
     private val viewModel = PropertiesListFragmentViewModel()
-    private val propertiesListAdapter = PropertiesListAdapter()
+    private val propertiesListAdapter = PropertiesListAdapter { estateClicked(it) }
 
     // Layout variables
     private var propertiesListRv : RecyclerView? = null
@@ -40,11 +41,38 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.adapter = propertiesListAdapter
 
         propertiesListRv?.post {
-            propertiesListAdapter.setData(estatesList)
+            propertiesListAdapter.setData(context, estatesList)
             viewModel.setPropertiesList()
         }
 
         return binding.root
+    }
+
+    private fun estateClicked(clicked : Estate) {
+        (activity as? MainActivity)?.estateClicked(clicked)
+    }
+
+    fun setEstateList(list : ArrayList<Estate>) {
+        this.estatesList = list
+        propertiesListRv?.post {
+            propertiesListAdapter.setData(context, estatesList)
+            viewModel.setPropertiesList()
+        }
+    }
+
+    fun addNewEstate(estate : Estate) {
+        estatesList.add(estate)
+        propertiesListRv?.post { propertiesListAdapter.addItem(0, estate) }
+    }
+
+    fun editEstateAtPosition(position: Int, estate: Estate) {
+        estatesList[position] = estate
+        propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
+    }
+
+    fun removeEstateAtPosition(position: Int) {
+        propertiesListRv?.post { propertiesListAdapter.removeItem(position) }
+        estatesList.removeAt(position)
     }
 
     companion object {

@@ -16,6 +16,12 @@
         android:orientation="vertical"
         tools:context=".main.MainActivity">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="@{viewModel.loadingVisibility}"/>
+
         <com.google.android.material.tabs.TabLayout
             style="@style/AppTabLayout"
             android:id="@+id/tab_layout"
@@ -25,16 +31,67 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabIconTint="@color/white">
+            app:tabIconTint="@color/white"
+            android:visibility="@{viewModel.fragmentsVisibility}">
 
         </com.google.android.material.tabs.TabLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:visibility="@{viewModel.fragmentsVisibility}">
 
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/add_property_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="@{viewModel.miniFabVisibility}"
+                    android:layout_gravity="center"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_building"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/add_agent_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="@{viewModel.miniFabVisibility}"
+                    android:layout_gravity="center"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_profile"
+                    tools:visibility="visible" />
+
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/main_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:rotation="@{viewModel.mainFabTranslation}"
+                    app:srcCompat="@android:drawable/ic_input_add" />
+
+            </LinearLayout>
+
+        </FrameLayout>
     </LinearLayout>
 
 </layout>
