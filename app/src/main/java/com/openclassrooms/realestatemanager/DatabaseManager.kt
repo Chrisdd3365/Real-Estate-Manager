@@ -14,6 +14,7 @@ class DatabaseManager(context : Context)
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(SQL_CREATE_ESTATE_TABLE)
+        db?.execSQL(SQL_CREATE_IMAGES_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -159,6 +160,18 @@ class DatabaseManager(context : Context)
         }
     }
 
+    /**
+     *  Extension to handle nullable [Boolean] retrieval from [Cursor].
+     *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
+     *  TODO : Move to somewhere else
+     */
+    private fun Cursor.getBoolean(columnIndex: Int): Boolean? {
+        return if (isNull(columnIndex))
+            null
+        else
+            getInt(columnIndex) != 0
+    }
+
     companion object {
 
         private const val TAG = "DatabaseManager"
@@ -167,6 +180,7 @@ class DatabaseManager(context : Context)
         private const val DATABASE_VERSION = 1
 
         private const val ESTATE_TABLE = "estates"
+        private const val IMAGE_TABLE = "images"
 
         private const val COLUMN_ID = "id"
 
@@ -186,6 +200,10 @@ class DatabaseManager(context : Context)
         private const val COLUMN_BUSES_NEARBY = "buses_nearby"
         private const val COLUMN_SUBWAY_NEARBY = "subway_nearby"
         private const val COLUMN_PARK_NEARBY = "park_nearby"
+
+        // Image table columns
+        private const val COLUMN_URI = "uri"
+        private const val COLUMN_ESTATE_ID = "estate_id"
 
         private const val SQL_CREATE_ESTATE_TABLE = """
             CREATE TABLE IF NOT EXISTS $ESTATE_TABLE (
@@ -207,17 +225,16 @@ class DatabaseManager(context : Context)
                 $COLUMN_PARK_NEARBY BOOLEAN
             );
         """
+
+        private const val SQL_CREATE_IMAGES_TABLE = """
+            CREATE TABLE IF NOT EXISTS $IMAGE_TABLE (
+                $COLUMN_ID INTEGER PRIMARY KEY,
+                $COLUMN_URI VARCHAR(100) NOT NULL,
+                $COLUMN_ESTATE_ID INTEGER NOT NULL,
+                FOREIGN KEY ($COLUMN_ESTATE_ID)
+                    REFERENCES $ESTATE_TABLE ($COLUMN_ID)
+            );
+        """
     }
 }
 
-/**
- *  Extension to handle nullable [Boolean] retrieval from [Cursor].
- *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
- *  TODO : Move to somewhere else
- */
-private fun Cursor.getBoolean(columnIndex: Int): Boolean? {
-    return if (isNull(columnIndex))
-        null
-    else
-        getInt(columnIndex) != 0
-}
