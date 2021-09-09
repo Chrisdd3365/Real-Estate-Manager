@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
+import com.openclassrooms.realestatemanager.estate_creation.add_images.AddPicturesFragment
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
@@ -253,8 +254,11 @@ class EstateCreationActivity : AppCompatActivity() {
         optionalDetailsFragmentPosition++
         if (optionalDetailsFragmentPosition >= 0)
             viewModel.setButtonPreviousEnabled(true)
+
         if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
+        else if (optionalDetailsFragmentPosition == optionalDetailsFragmentList.size)
+            goToImagesFragment()
         else
             showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
     }
@@ -272,6 +276,15 @@ class EstateCreationActivity : AppCompatActivity() {
             showFirstFragment(estate)
             viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         }
+    }
+
+    private fun goToImagesFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_root,
+                AddPicturesFragment.newInstance(estate?.picturesUris)
+            )
+            .commit()
     }
 
     /**

@@ -5,6 +5,11 @@ import android.net.wifi.WifiManager
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
+import android.net.Uri
+
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -40,5 +45,32 @@ object Utils {
     fun isInternetAvailable(context: Context): Boolean {
         val wifi = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         return wifi.isWifiEnabled
+    }
+
+    fun decodeUri(context: Context, uri: Uri, requiredSize: Int): Bitmap? {
+
+        val bitmapOptions = BitmapFactory.Options()
+        bitmapOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeStream(
+            context.contentResolver.openInputStream(uri),
+            null,
+            bitmapOptions
+        )
+        var widthTmp = bitmapOptions.outWidth
+        var heightTmp = bitmapOptions.outHeight
+        var scale = 1
+        while (true) {
+            if (widthTmp / 2 < requiredSize || heightTmp / 2 < requiredSize) break
+            widthTmp /= 2
+            heightTmp /= 2
+            scale *= 2
+        }
+        val resultBitmapOptions = BitmapFactory.Options()
+        resultBitmapOptions.inSampleSize = scale
+        return BitmapFactory.decodeStream(
+            context.contentResolver.openInputStream(uri),
+            null,
+            resultBitmapOptions
+        )
     }
 }
