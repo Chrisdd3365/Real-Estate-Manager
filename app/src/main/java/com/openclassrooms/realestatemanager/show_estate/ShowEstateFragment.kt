@@ -12,6 +12,7 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
@@ -35,6 +36,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
     private var leftButton : Button? = null
     private var rightButton : Button? = null
     private var nearbyImagesFlexbox : FlexboxLayout? = null
+    private var picturesViewPager : ViewPager2? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -50,6 +52,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         leftButton = binding.leftButton
         rightButton = binding.rightButton
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
+        picturesViewPager = binding.picturesViewPager
 
         viewModel.setButtonsText(context, type)
         viewModel.setData(context, estate!!)
@@ -59,6 +62,8 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         setButtonsBehaviors()
 
         setNearbyData()
+
+        setPicturesCarousel()
 
         return binding.root
     }
@@ -153,6 +158,17 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         imageViewLayoutParams.width = 100
         imageViewLayoutParams.height = 100
         imageViewLayoutParams.marginEnd = 25
+    }
+
+    private fun setPicturesCarousel() {
+        if (estate == null || estate!!.picturesUris.isEmpty()) {
+            // TODO : Set placeholder
+            return
+        }
+        val picturesViewPagerAdapter = PicturesSliderViewPagerAdapter()
+
+        picturesViewPager?.adapter = picturesViewPagerAdapter
+        picturesViewPager?.post { picturesViewPagerAdapter.setItems(estate!!.picturesUris) }
     }
 
     companion object {
