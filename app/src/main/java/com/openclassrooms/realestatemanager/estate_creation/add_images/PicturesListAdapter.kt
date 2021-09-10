@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.estate_creation.add_images
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -18,7 +19,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class PicturesListAdapter(private val dragStartListener: OnStartDragListener, var context: Context)
+class PicturesListAdapter(private val dragStartListener: OnStartDragListener, var context: Context,
+                          val removePicture : (String) -> Unit)
     : RecyclerView.Adapter<PicturesListAdapter.PictureViewHolder>(), ItemTouchHelperAdapter {
 
     private var items = ArrayList<String>()
@@ -29,10 +31,22 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
         notifyDataSetChanged()
     }
 
+    fun getItems() : ArrayList<String> {
+        return items
+    }
+
     // TODO : Make sure the image is unique
     fun addNewItem(newPicture : String) {
         items.add(newPicture)
         notifyItemInserted(items.indexOf(newPicture))
+    }
+
+    fun removeItem(toRemove : String) {
+        val index = items.indexOf(toRemove)
+        if (index != -1) {
+            items.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PictureViewHolder {
@@ -73,11 +87,17 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
         @SuppressLint("ClickableViewAccessibility")
         fun setData(pictureUri: String) {
 
+            binding.reorderButton.setColorFilter(Color.WHITE)
+
             binding.reorderButton.setOnTouchListener { _, event ->
                 if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                     dragStartListener?.onStartDrag(this)
                 }
                 false
+            }
+
+            binding.deleteButton.setOnClickListener {
+                removePicture.invoke(pictureUri)
             }
 
             val bitmap = Utils.decodeUri(context, Uri.parse(pictureUri), 125)

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,9 @@ import com.openclassrooms.realestatemanager.utils.OnStartDragListener
 import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import java.io.File
 
-class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragment(), OnStartDragListener {
+class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
+                          private val picturesListChanged : (ArrayList<String>) -> Unit)
+    : Fragment(), OnStartDragListener {
 
     // Helper classes
     private val viewModel = AddPicturesFragmentViewModel()
@@ -55,16 +58,16 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragmen
             }
         }
 
+        // Gets a picture from the gallery
         galleryRequestLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 if (it.data != null && it.data!!.data != null) {
-                    // From gallery
                     val newItem = (it.data!!.data as Uri).toString()
-                    if (newItem.isNotBlank()) {
+                    if (newItem.isNotBlank() && !pictures.contains(newItem)) {
                         picturesAdapter?.addNewItem(newItem)
-                        pictures.add(newItem)
+                        notifyEstateCreationActivity()
                     }
                 }
 
@@ -76,8 +79,8 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragmen
         ) {
             if (it && newUri != null && newUri != Uri.EMPTY) {
                 picturesAdapter?.addNewItem(newUri.toString())
-                pictures.add(newUri.toString())
                 newUri = null
+                notifyEstateCreationActivity()
             }
         }
 
@@ -97,7 +100,10 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragmen
         addPictureButton = binding.addPictureButton
         picturesRv = binding.picturesRv
 
-        picturesAdapter = PicturesListAdapter(this, requireContext())
+        picturesAdapter = PicturesListAdapter(this, requireContext()) {
+            picturesAdapter?.removeItem(it)
+            notifyEstateCreationActivity()
+        }
 
         picturesRv?.layoutManager = LinearLayoutManager(context)
         picturesRv?.adapter = picturesAdapter
@@ -124,7 +130,14 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragmen
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
         viewHolder?.let {
             itemTouchHelper?.startDrag(it)
+            notifyEstateCreationActivity()
         }
+    }
+
+    private fun notifyEstateCreationActivity() {
+        if (picturesAdapter != null)
+            pictures = picturesAdapter!!.getItems()
+        picturesListChanged.invoke(pictures)
     }
 
     private fun checkAndAskPermissions() : Boolean {
@@ -206,8 +219,9 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?) : Fragmen
         @Suppress("unused")
         private const val TAG = "AddImagesFragment"
 
-        fun newInstance(picturesUri : ArrayList<String>?) : AddPicturesFragment {
-            return AddPicturesFragment(picturesUri)
+        fun newInstance(picturesUri : ArrayList<String>?, callback : (ArrayList<String>) -> Unit)
+        : AddPicturesFragment {
+            return AddPicturesFragment(picturesUri, callback)
         }
     }
 

@@ -282,7 +282,10 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                AddPicturesFragment.newInstance(estate?.picturesUris)
+                AddPicturesFragment.newInstance(estate?.picturesUris) {
+                    estate?.picturesUris = it
+                    Log.d(TAG, "Pictures list = ${estate?.picturesUris}")
+                }
             )
             .commit()
     }
