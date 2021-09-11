@@ -1,14 +1,15 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.net.wifi.WifiManager
+import android.os.Build
+import android.provider.MediaStore
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import android.graphics.BitmapFactory
-
-import android.graphics.Bitmap
-import android.net.Uri
 
 
 /**
@@ -47,30 +48,14 @@ object Utils {
         return wifi.isWifiEnabled
     }
 
-    fun decodeUri(context: Context, uri: Uri, requiredSize: Int): Bitmap? {
-
-        val bitmapOptions = BitmapFactory.Options()
-        bitmapOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(
-            context.contentResolver.openInputStream(uri),
-            null,
-            bitmapOptions
-        )
-        var widthTmp = bitmapOptions.outWidth
-        var heightTmp = bitmapOptions.outHeight
-        var scale = 1
-        while (true) {
-            if (widthTmp / 2 < requiredSize || heightTmp / 2 < requiredSize) break
-            widthTmp /= 2
-            heightTmp /= 2
-            scale *= 2
-        }
-        val resultBitmapOptions = BitmapFactory.Options()
-        resultBitmapOptions.inSampleSize = scale
-        return BitmapFactory.decodeStream(
-            context.contentResolver.openInputStream(uri),
-            null,
-            resultBitmapOptions
-        )
+    fun getBitmapFromUri(context : Context, uri : String) : Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            ImageDecoder.decodeBitmap(
+                ImageDecoder.createSource(
+                context.contentResolver,
+                Uri.parse(uri))
+            )
+        else
+            MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
     }
 }

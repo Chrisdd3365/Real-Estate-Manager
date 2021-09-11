@@ -8,7 +8,6 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.BuildConfig
+import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentAddPicturesBinding
 import com.openclassrooms.realestatemanager.utils.OnStartDragListener
@@ -30,6 +30,7 @@ import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import java.io.File
 
 class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
+                          private val editingEstateId: Int?,
                           private val picturesListChanged : (ArrayList<String>) -> Unit)
     : Fragment(), OnStartDragListener {
 
@@ -64,13 +65,12 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 if (it.data != null && it.data!!.data != null) {
-                    val newItem = (it.data!!.data as Uri).toString()
-                    if (newItem.isNotBlank() && !pictures.contains(newItem)) {
-                        picturesAdapter?.addNewItem(newItem)
+                    val uri = (it.data!!.data as Uri).toString()
+                    if (uri.isNotEmpty()) {
+                        picturesAdapter?.addNewItem(uri)
                         notifyEstateCreationActivity()
                     }
                 }
-
             }
         }
 
@@ -112,9 +112,17 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper?.attachToRecyclerView(picturesRv)
 
-        if (picturesUri != null) {
+        if (picturesUri != null && picturesUri!!.isNotEmpty()) {
             pictures.addAll(picturesUri!!)
             picturesRv?.post { picturesAdapter?.addItems(pictures) }
+        } else if (editingEstateId != null) {
+            DatabaseManager(requireContext()).getImagesForEstate(
+                editingEstateId,
+                {
+                    // TODO : Add these bitmaps in the list
+                },
+                failure = {}
+            )
         }
 
         addPictureButton?.setOnClickListener {
@@ -219,9 +227,10 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         @Suppress("unused")
         private const val TAG = "AddImagesFragment"
 
-        fun newInstance(picturesUri : ArrayList<String>?, callback : (ArrayList<String>) -> Unit)
+        fun newInstance(picturesUri : ArrayList<String>?, editingEstateId : Int?,
+                        callback : (ArrayList<String>) -> Unit)
         : AddPicturesFragment {
-            return AddPicturesFragment(picturesUri, callback)
+            return AddPicturesFragment(picturesUri, editingEstateId, callback)
         }
     }
 

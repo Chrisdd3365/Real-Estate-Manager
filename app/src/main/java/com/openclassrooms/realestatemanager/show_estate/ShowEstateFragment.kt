@@ -1,6 +1,6 @@
 package com.openclassrooms.realestatemanager.show_estate
 
-import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
@@ -14,17 +14,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
+import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
+import com.openclassrooms.realestatemanager.utils.Utils
 
-/**
- *  TODO : This [Activity] should only displays a [androidx.fragment.app.Fragment] with all this
- *      content, as we need to be able to re-use this fragment for landscape display, on the right
- *      of the element selected in the [PropertiesListFragment].
- */
 class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType)
     : Fragment() {
 
@@ -161,14 +158,33 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
     }
 
     private fun setPicturesCarousel() {
-        if (estate == null || estate!!.picturesUris.isEmpty()) {
-            // TODO : Set placeholder
-            return
-        }
-        val picturesViewPagerAdapter = PicturesSliderViewPagerAdapter()
+        var pictures = ArrayList<Bitmap>()
 
-        picturesViewPager?.adapter = picturesViewPagerAdapter
-        picturesViewPager?.post { picturesViewPagerAdapter.setItems(estate!!.picturesUris) }
+        if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate!!.id != null) {
+            DatabaseManager(requireContext()).getImagesForEstate(
+                estate!!.id!!,
+                success = {
+                    Log.d(TAG, "Success ! List size = ${it.size}")
+                    pictures = it
+                },
+                failure = {
+                    viewModel.hideImagesLayout()
+                }
+            )
+        } else if (type == Enums.ShowEstateType.ASK_FOR_CONFIRMATION && estate != null && estate!!.picturesUris.isNotEmpty()) {
+            for (picture : String in estate!!.picturesUris) {
+                val bitmap = Utils.getBitmapFromUri(requireContext(), picture)
+                pictures.add(bitmap)
+            }
+        }
+
+        if (pictures.isNotEmpty()) {
+            val picturesViewPagerAdapter = PicturesSliderViewPagerAdapter()
+            picturesViewPager?.adapter = picturesViewPagerAdapter
+            picturesViewPager?.post { picturesViewPagerAdapter.setItems(pictures) }
+            viewModel.showImagesLayout()
+        } else
+            viewModel.hideImagesLayout()
     }
 
     companion object {

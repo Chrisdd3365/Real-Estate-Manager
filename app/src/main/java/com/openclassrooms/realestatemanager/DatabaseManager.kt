@@ -5,8 +5,11 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import com.openclassrooms.realestatemanager.model.Estate
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 class DatabaseManager(context : Context)
@@ -160,6 +163,75 @@ class DatabaseManager(context : Context)
         }
     }
 
+    fun saveEstateImage(estateId : Int, image : Bitmap, onFailure: (() -> Any)?,
+                        onSuccess: (() -> Any)?) {
+        val database = this.writableDatabase
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+
+        val contentValues = ContentValues().apply {
+            put(COLUMN_IMAGE, byteArrayOutputStream.toByteArray())
+            put(COLUMN_ESTATE_ID, estateId)
+        }
+
+        val insertedId = database.insert(IMAGE_TABLE, null, contentValues)
+        database.close()
+
+        if (insertedId == -1L)
+            onFailure?.invoke()
+        else
+            onSuccess?.invoke()
+    }
+
+    fun getImagesForEstate(estateId: Int, success: (ArrayList<Bitmap>) -> Unit, failure: () -> Unit) {
+        Log.d(TAG, "getImageForEstate() id $estateId")
+        val database = this.readableDatabase
+        val images = ArrayList<Bitmap>()
+
+        try {
+
+            val cursor = database.query(
+                IMAGE_TABLE,
+                null,
+                "$COLUMN_ESTATE_ID IS ?",
+                arrayOf("$estateId"),
+                null,
+                null,
+                null,
+            )
+
+            with(cursor) {
+                while (cursor.moveToNext()) {
+                    val byteArray = getBlob(getColumnIndex(COLUMN_IMAGE))
+                    images.add(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size))
+                }
+            }
+            cursor.close()
+
+            Log.d(TAG, "getImageForEstate() ; found ${images.size} images")
+
+            success.invoke(images)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error while querying database : $exception")
+            failure.invoke()
+        }
+    }
+
+    fun deleteImagesForEstate(estateId: Int, onSuccess: () -> Unit) {
+        val database = this.writableDatabase
+
+        val affectedRows = database.delete(
+            IMAGE_TABLE,
+            "$COLUMN_ESTATE_ID is ?",
+            arrayOf("$estateId")
+        )
+        database.close()
+
+        onSuccess.invoke()
+    }
+
     /**
      *  Extension to handle nullable [Boolean] retrieval from [Cursor].
      *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
@@ -202,7 +274,7 @@ class DatabaseManager(context : Context)
         private const val COLUMN_PARK_NEARBY = "park_nearby"
 
         // Image table columns
-        private const val COLUMN_URI = "uri"
+        private const val COLUMN_IMAGE = "uri"
         private const val COLUMN_ESTATE_ID = "estate_id"
 
         private const val SQL_CREATE_ESTATE_TABLE = """
@@ -229,7 +301,7 @@ class DatabaseManager(context : Context)
         private const val SQL_CREATE_IMAGES_TABLE = """
             CREATE TABLE IF NOT EXISTS $IMAGE_TABLE (
                 $COLUMN_ID INTEGER PRIMARY KEY,
-                $COLUMN_URI VARCHAR(100) NOT NULL,
+                $COLUMN_IMAGE BLOB NOT NULL,
                 $COLUMN_ESTATE_ID INTEGER NOT NULL,
                 FOREIGN KEY ($COLUMN_ESTATE_ID)
                     REFERENCES $ESTATE_TABLE ($COLUMN_ID)

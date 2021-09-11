@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.estate_creation.add_images
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -18,7 +17,9 @@ import com.openclassrooms.realestatemanager.utils.Utils
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+/**
+ * TODO : This should take Bitmaps items
+ */
 class PicturesListAdapter(private val dragStartListener: OnStartDragListener, var context: Context,
                           val removePicture : (String) -> Unit)
     : RecyclerView.Adapter<PicturesListAdapter.PictureViewHolder>(), ItemTouchHelperAdapter {
@@ -100,7 +101,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
                 removePicture.invoke(pictureUri)
             }
 
-            val bitmap = Utils.decodeUri(context, Uri.parse(pictureUri), 125)
+            val bitmap = Utils.getBitmapFromUri(context, pictureUri)
             binding.pictureImageView.setImageBitmap(bitmap)
             binding.pictureImageView.scaleType = ImageView.ScaleType.FIT_CENTER
 

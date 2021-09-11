@@ -1,6 +1,6 @@
 package com.openclassrooms.realestatemanager.show_estate
 
-import android.net.Uri
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,9 +12,9 @@ import com.openclassrooms.realestatemanager.databinding.PictureSliderItemBinding
 
 class PicturesSliderViewPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items = ArrayList<String>()
+    private var items = ArrayList<Bitmap>()
 
-    fun setItems(pictures : ArrayList<String>) {
+    fun setItems(pictures : ArrayList<Bitmap>) {
         Log.d(TAG, "Setting ${pictures.size} items in the viewPager adapter")
         items.clear()
         items.addAll(pictures)
@@ -43,8 +43,8 @@ class PicturesSliderViewPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHol
     inner class PictureSliderItemViewHolder(private val binding : PictureSliderItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
-        fun setData(item : String) {
-            binding.pictureImageView.setImageURI(Uri.parse(item))
+        fun setData(item : Bitmap) {
+            binding.pictureImageView.setImageBitmap(item)
         }
     }
 

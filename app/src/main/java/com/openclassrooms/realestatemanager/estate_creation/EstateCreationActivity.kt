@@ -3,12 +3,14 @@ package com.openclassrooms.realestatemanager.estate_creation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -21,7 +23,8 @@ import com.openclassrooms.realestatemanager.estate_creation.optional_details.Opt
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
-import java.lang.Exception
+import com.openclassrooms.realestatemanager.utils.Utils
+
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -56,6 +59,9 @@ class EstateCreationActivity : AppCompatActivity() {
         )
 
         binding.viewModel = viewModel
+
+        intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
 
         viewModel.setLoading()
 
@@ -255,12 +261,14 @@ class EstateCreationActivity : AppCompatActivity() {
         if (optionalDetailsFragmentPosition >= 0)
             viewModel.setButtonPreviousEnabled(true)
 
-        if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
-            goToOptionalDetails()
-        else if (optionalDetailsFragmentPosition == optionalDetailsFragmentList.size)
-            goToImagesFragment()
-        else
-            showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
+        when {
+            optionalDetailsFragmentPosition < optionalDetailsFragmentList.size ->
+                goToOptionalDetails()
+            optionalDetailsFragmentPosition == optionalDetailsFragmentList.size ->
+                goToImagesFragment()
+            else ->
+                showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
+        }
     }
 
     /**
@@ -315,19 +323,31 @@ class EstateCreationActivity : AppCompatActivity() {
             .commit()
     }
 
+    /**
+     *  This function deletes the current [Estate]. It will first delete the images of this [Estate]
+     *  in the database (as the images database is using a foreign key on the [Estate] id), then
+     *  delete the actual [Estate].
+     */
     fun deleteEstate() {
         if (estate != null && estate?.id != null) {
             viewModel.setLoading()
-            DatabaseManager(this).deleteEstate(
+            val databaseManager = DatabaseManager(this)
+            databaseManager.deleteImagesForEstate(
                 estate!!.id!!,
-                {
-                    finishWithResult(-1, estate)
-                }, {
-                    showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
-                    viewModel.setFragments()
-                    Log.e(TAG, "An error occurred while deletion")
-                    Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
-                        .show()
+                onSuccess = {
+                    databaseManager.deleteEstate(
+                        estate!!.id!!,
+                        onSuccess = {
+                            finishWithResult(-1, estate)
+                        },
+                        onFailure = {
+                            showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
+                            viewModel.setFragments()
+                            Log.e(TAG, "An error occurred while deletion")
+                            Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    )
                 }
             )
         }
@@ -377,7 +397,10 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                finishWithResult(insertedId, estateToSave)
+                if (estateToSave.picturesUris.isEmpty())
+                    finishWithResult(insertedId, estateToSave)
+                else
+                    saveImages(insertedId, estateToSave)
             },
             onFailure = {
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
@@ -391,13 +414,35 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                finishWithResult(estate?.id!!, estateToSave)
+                if (estateToSave.picturesUris.isEmpty())
+                    finishWithResult(estateToSave.id!!, estateToSave)
+                else
+                    saveImages(estateToSave.id!!, estateToSave)
             },
             onFailure = {
                 Log.e(TAG, "An error occurred with the database.")
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
             }
         )
+    }
+
+    private fun saveImages(newEstateId: Int, estateToSave: Estate) {
+        var savedPictures = 0
+        for (picture : String in estateToSave.picturesUris) {
+            val bitmap = Utils.getBitmapFromUri(this, picture)
+            DatabaseManager(this).saveEstateImage(
+                newEstateId,
+                bitmap,
+                onSuccess = { savedPictures++ },
+                onFailure = { }
+            )
+        }
+        if (savedPictures == estateToSave.picturesUris.size)
+            finishWithResult(newEstateId, estateToSave)
+        else {
+            Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+            Log.e(TAG, "ERROR")
+        }
     }
 
     private fun finishWithResult(insertedId : Int, estateToSave: Estate?) {
