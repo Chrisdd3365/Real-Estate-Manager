@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.agent_creation.AgentCreationActivity
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
@@ -107,6 +108,10 @@ class MainActivity : AppCompatActivity() {
 
         addPropertyFab?.setOnClickListener {
             resultLauncher?.launch(EstateCreationActivity.newInstance(this, null, true))
+        }
+
+        addAgentFab?.setOnClickListener {
+            startActivity(AgentCreationActivity.newInstance(this))
         }
 
         // Setup estate list
