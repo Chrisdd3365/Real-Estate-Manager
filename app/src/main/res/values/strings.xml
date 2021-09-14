@@ -57,6 +57,12 @@
     <string name="bathrooms">bathrooms</string>
     <string name="bedrooms">bedrooms</string>
 
+    <!-- Agent creation fields -->
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone number</string>
+
     <string name="dumb_error">An error occurred</string>
 
 </resources>

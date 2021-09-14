@@ -15,6 +15,111 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_marginTop="15dp"
+            app:cardCornerRadius="250dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_height="250dp">
+
+            <ImageView
+                android:id="@+id/avatar_image_view"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                app:srcCompat="@drawable/ic_profile"
+                app:tint="@color/white" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView">
+
+            <EditText
+                android:id="@+id/first_name_edit_text"
+                style="@style/RealEstateManagerEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autofillHints="@string/first_name"
+                android:hint="@string/first_name"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/last_name_edit_text"
+                style="@style/RealEstateManagerEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autofillHints="@string/last_name"
+                android:hint="@string/last_name"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/email_edit_text"
+                style="@style/RealEstateManagerEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autofillHints="@string/email"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/phone_number_edit_text"
+                style="@style/RealEstateManagerEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autofillHints="@string/phone_number"
+                android:hint="@string/phone_number"
+                android:inputType="phone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navigation_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_button"
+                android:enabled="true"
+                android:text="@string/button_cancel"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_shape_button"
+                android:enabled="@{viewModel.buttonSaveEnabled}"
+                android:text="@string/button_confirm"
+                android:visibility="visible" />
+
+        </LinearLayout>
         <!--
             - Avatar layout
             - LinearLayout

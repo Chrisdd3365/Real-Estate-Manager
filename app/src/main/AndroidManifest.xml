@@ -11,9 +11,7 @@
         android:theme="@style/Theme.RealEstateManager" >
         <activity
             android:name=".agent_creation.AgentCreationActivity"
-            android:exported="true"
-            android:label="@string/title_activity_agent_creation"
-            android:theme="@style/Theme.RealEstateManager.NoActionBar" />
+            android:exported="true"/>
         <activity
             android:name=".show_estate.ShowEstateFragment"
             android:exported="true" />
