@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.agent_creation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -73,12 +74,17 @@ class AgentCreationActivity : AppCompatActivity() {
         emailEditText?.addTextChangedListener(
             object : TextValidator(emailEditText) {
                 override fun validate(editText: EditText?, text: String?) {
-                    // TODO : Check email format
-                    if (text.isNullOrBlank())
-                        emailEditText?.error = getString(R.string.mandatory_field)
-                    else {
-                        emailEditText?.error = null
-                        checkIfAllFieldsAreFilled()
+                    when {
+                        text.isNullOrBlank()
+                            -> emailEditText?.error = getString(R.string.mandatory_field)
+
+                        !EMAIL_REGEX.toRegex().matches(emailEditText?.text.toString())
+                            -> emailEditText?.error = getString(R.string.incorrect_format)
+
+                        else -> {
+                                emailEditText?.error = null
+                                checkIfAllFieldsAreFilled()
+                        }
                     }
                 }
             }
@@ -87,12 +93,17 @@ class AgentCreationActivity : AppCompatActivity() {
         phoneNumberEditText?.addTextChangedListener(
             object : TextValidator(phoneNumberEditText) {
                 override fun validate(editText: EditText?, text: String?) {
-                    // TODO : Check phone number format
-                    if (text.isNullOrBlank())
-                        phoneNumberEditText?.error = getString(R.string.mandatory_field)
-                    else {
-                        phoneNumberEditText?.error = null
-                        checkIfAllFieldsAreFilled()
+                    when {
+                        text.isNullOrBlank()
+                            -> phoneNumberEditText?.error = getString(R.string.mandatory_field)
+
+                        !PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberEditText?.text.toString())
+                            -> phoneNumberEditText?.error = getString(R.string.incorrect_format)
+
+                        else -> {
+                            phoneNumberEditText?.error = null
+                            checkIfAllFieldsAreFilled()
+                        }
                     }
                 }
             }
@@ -127,6 +138,8 @@ class AgentCreationActivity : AppCompatActivity() {
 
         @Suppress("unused")
         private const val TAG = "AgentCreationActivity"
+
+        private const val EMAIL_REGEX = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
 
         fun newInstance(context: Context) : Intent {
             return Intent(context, AgentCreationActivity::class.java)
