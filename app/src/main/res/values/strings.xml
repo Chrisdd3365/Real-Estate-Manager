@@ -57,6 +57,10 @@
     <string name="bathrooms">bathrooms</string>
     <string name="bedrooms">bedrooms</string>
 
+    <string name="add_picture">Add a picture</string>
+    <string name="new_picture">New picture</string>
+    <string name="pick_from_gallery">Pick from gallery</string>
+
     <!-- Agent creation fields -->
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
