@@ -20,9 +20,10 @@ import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBindin
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
-import com.openclassrooms.realestatemanager.utils.Utils
 
-class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType)
+class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType,
+                         private var picturesList : ArrayList<Bitmap>,
+                         private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
     : Fragment() {
 
     // Helper classes
@@ -166,15 +167,15 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
                 success = {
                     Log.d(TAG, "Success ! List size = ${it.size}")
                     pictures = it
+                    picturesRetrievedCallback.invoke(it)
                 },
                 failure = {
                     viewModel.hideImagesLayout()
                 }
             )
-        } else if (type == Enums.ShowEstateType.ASK_FOR_CONFIRMATION && estate != null && estate!!.picturesUris.isNotEmpty()) {
-            for (picture : String in estate!!.picturesUris) {
-                val bitmap = Utils.getBitmapFromUri(requireContext(), picture)
-                pictures.add(bitmap)
+        } else if (type == Enums.ShowEstateType.ASK_FOR_CONFIRMATION && estate != null && picturesList.isNotEmpty()) {
+            for (picture : Bitmap in picturesList) {
+                pictures.add(picture)
             }
         }
 
@@ -192,8 +193,11 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
-        fun newInstance(estate : Estate?, type : Enums.ShowEstateType) : ShowEstateFragment {
-            return ShowEstateFragment(estate, type)
+        fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
+                        picturesList : ArrayList<Bitmap>,
+                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
+        : ShowEstateFragment {
+            return ShowEstateFragment(estate, type, picturesList, picturesRetrievedCallback)
         }
 
     }

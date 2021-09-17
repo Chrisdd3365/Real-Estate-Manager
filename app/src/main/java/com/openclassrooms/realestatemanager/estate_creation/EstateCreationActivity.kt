@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,8 +24,6 @@ import com.openclassrooms.realestatemanager.estate_creation.optional_details.Opt
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
-import com.openclassrooms.realestatemanager.utils.Utils
-
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -50,6 +49,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var optionalDetailsFragmentPosition = -1
     private var isEditing = false
     private var isNewEstate = false
+    private var picturesList = ArrayList<Bitmap>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -290,9 +290,8 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                AddPicturesFragment.newInstance(estate?.picturesUris, estate?.id) {
-                    estate?.picturesUris = it
-                    Log.d(TAG, "Pictures list = ${estate?.picturesUris}")
+                AddPicturesFragment.newInstance(picturesList, estate?.id) {
+                    picturesList = it
                 }
             )
             .commit()
@@ -318,7 +317,9 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type)
+                ShowEstateFragment.newInstance(estate, type, picturesList) {
+                    picturesList = it
+                }
             )
             .commit()
     }
@@ -397,7 +398,7 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                if (estateToSave.picturesUris.isEmpty())
+                if (picturesList.isEmpty())
                     finishWithResult(insertedId, estateToSave)
                 else
                     saveImages(insertedId, estateToSave)
@@ -414,7 +415,7 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                if (estateToSave.picturesUris.isEmpty())
+                if (picturesList.isEmpty())
                     finishWithResult(estateToSave.id!!, estateToSave)
                 else
                     saveImages(estateToSave.id!!, estateToSave)
@@ -426,23 +427,37 @@ class EstateCreationActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     *  Saves the images of this [Estate] in the database with the [newEstateId].
+     *  First, we delete all the images for this [Estate], to avoid duplicated images, then, we
+     *  save every picture in the database.
+     *  @param newEstateId ([Int]) - The newly added [Estate] id, that will be kept in the database
+     *  along with images.
+     *  @param estateToSave ([Estate]) - The saved [Estate]. We need it in order to give it to
+     *  [finishWithResult] function.
+     */
     private fun saveImages(newEstateId: Int, estateToSave: Estate) {
-        var savedPictures = 0
-        for (picture : String in estateToSave.picturesUris) {
-            val bitmap = Utils.getBitmapFromUri(this, picture)
-            DatabaseManager(this).saveEstateImage(
-                newEstateId,
-                bitmap,
-                onSuccess = { savedPictures++ },
-                onFailure = { }
-            )
-        }
-        if (savedPictures == estateToSave.picturesUris.size)
-            finishWithResult(newEstateId, estateToSave)
-        else {
-            Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
-            Log.e(TAG, "ERROR")
-        }
+        val databaseManager = DatabaseManager(this)
+        databaseManager.deleteImagesForEstate(
+            newEstateId,
+            onSuccess = {
+                var savedPictures = 0
+                for (picture : Bitmap in picturesList) {
+                    DatabaseManager(this).saveEstateImage(
+                        newEstateId,
+                        picture,
+                        onSuccess = { savedPictures++ },
+                        onFailure = { }
+                    )
+                }
+                if (savedPictures == picturesList.size)
+                    finishWithResult(newEstateId, estateToSave)
+                else {
+                    Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+                    Log.e(TAG, "ERROR")
+                }
+            }
+        )
     }
 
     private fun finishWithResult(insertedId : Int, estateToSave: Estate?) {

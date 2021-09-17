@@ -222,7 +222,7 @@ class DatabaseManager(context : Context)
     fun deleteImagesForEstate(estateId: Int, onSuccess: () -> Unit) {
         val database = this.writableDatabase
 
-        val affectedRows = database.delete(
+        database.delete(
             IMAGE_TABLE,
             "$COLUMN_ESTATE_ID is ?",
             arrayOf("$estateId")

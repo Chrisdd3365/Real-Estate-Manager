@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager.estate_creation.add_images
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,36 +13,35 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.PicturesListItemBinding
 import com.openclassrooms.realestatemanager.utils.ItemTouchHelperAdapter
 import com.openclassrooms.realestatemanager.utils.OnStartDragListener
-import com.openclassrooms.realestatemanager.utils.Utils
 import java.util.*
 import kotlin.collections.ArrayList
 
 /**
  * TODO : This should take Bitmaps items
  */
-class PicturesListAdapter(private val dragStartListener: OnStartDragListener, var context: Context,
-                          val removePicture : (String) -> Unit)
+class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
+                          val removePicture : (Bitmap) -> Unit)
     : RecyclerView.Adapter<PicturesListAdapter.PictureViewHolder>(), ItemTouchHelperAdapter {
 
-    private var items = ArrayList<String>()
+    private var items = ArrayList<Bitmap>()
 
-    fun addItems(pictures : ArrayList<String>) {
+    fun addItems(pictures : ArrayList<Bitmap>) {
         items.clear()
         items.addAll(pictures)
         notifyDataSetChanged()
     }
 
-    fun getItems() : ArrayList<String> {
+    fun getItems() : ArrayList<Bitmap> {
         return items
     }
 
     // TODO : Make sure the image is unique
-    fun addNewItem(newPicture : String) {
+    fun addNewItem(newPicture : Bitmap) {
         items.add(newPicture)
         notifyItemInserted(items.indexOf(newPicture))
     }
 
-    fun removeItem(toRemove : String) {
+    fun removeItem(toRemove : Bitmap) {
         val index = items.indexOf(toRemove)
         if (index != -1) {
             items.removeAt(index)
@@ -58,8 +57,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
                 null,
                 false
             ),
-            dragStartListener,
-            context
+            dragStartListener
         )
     }
 
@@ -80,13 +78,11 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
     }
 
     inner class PictureViewHolder(private val binding : PicturesListItemBinding,
-                                  private val dragStartListener: OnStartDragListener? = null,
-                                  private val context : Context
-    )
+                                  private val dragStartListener: OnStartDragListener? = null)
         : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ClickableViewAccessibility")
-        fun setData(pictureUri: String) {
+        fun setData(picture : Bitmap) {
 
             binding.reorderButton.setColorFilter(Color.WHITE)
 
@@ -98,11 +94,10 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener, va
             }
 
             binding.deleteButton.setOnClickListener {
-                removePicture.invoke(pictureUri)
+                removePicture.invoke(picture)
             }
 
-            val bitmap = Utils.getBitmapFromUri(context, pictureUri)
-            binding.pictureImageView.setImageBitmap(bitmap)
+            binding.pictureImageView.setImageBitmap(picture)
             binding.pictureImageView.scaleType = ImageView.ScaleType.FIT_CENTER
 
         }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -27,11 +28,12 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentAddPicturesBinding
 import com.openclassrooms.realestatemanager.utils.OnStartDragListener
 import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
+import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.File
 
-class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
+class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                           private val editingEstateId: Int?,
-                          private val picturesListChanged : (ArrayList<String>) -> Unit)
+                          private val picturesListChanged : (ArrayList<Bitmap>) -> Unit)
     : Fragment(), OnStartDragListener {
 
     // Helper classes
@@ -46,7 +48,7 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
     private var addPictureButton : Button? = null
     private var picturesRv : RecyclerView? = null
 
-    private var pictures = ArrayList<String>()
+    private var pictures = ArrayList<Bitmap>()
     private var newUri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +69,8 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
                 if (it.data != null && it.data!!.data != null) {
                     val uri = (it.data!!.data as Uri).toString()
                     if (uri.isNotEmpty()) {
-                        picturesAdapter?.addNewItem(uri)
+                        val bitmap = Utils.getBitmapFromUri(requireContext(), uri)
+                        picturesAdapter?.addNewItem(bitmap)
                         notifyEstateCreationActivity()
                     }
                 }
@@ -78,7 +81,8 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
             ActivityResultContracts.TakePicture(),
         ) {
             if (it && newUri != null && newUri != Uri.EMPTY) {
-                picturesAdapter?.addNewItem(newUri.toString())
+                val bitmap = Utils.getBitmapFromUri(requireContext(), newUri.toString())
+                picturesAdapter?.addNewItem(bitmap)
                 newUri = null
                 notifyEstateCreationActivity()
             }
@@ -100,7 +104,7 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         addPictureButton = binding.addPictureButton
         picturesRv = binding.picturesRv
 
-        picturesAdapter = PicturesListAdapter(this, requireContext()) {
+        picturesAdapter = PicturesListAdapter(this) {
             picturesAdapter?.removeItem(it)
             notifyEstateCreationActivity()
         }
@@ -112,8 +116,8 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper?.attachToRecyclerView(picturesRv)
 
-        if (picturesUri != null && picturesUri!!.isNotEmpty()) {
-            pictures.addAll(picturesUri!!)
+        if (picturesList != null && picturesList!!.isNotEmpty()) {
+            pictures.addAll(picturesList!!)
             picturesRv?.post { picturesAdapter?.addItems(pictures) }
         } else if (editingEstateId != null) {
             DatabaseManager(requireContext()).getImagesForEstate(
@@ -227,8 +231,8 @@ class AddPicturesFragment(private var picturesUri: ArrayList<String>?,
         @Suppress("unused")
         private const val TAG = "AddImagesFragment"
 
-        fun newInstance(picturesUri : ArrayList<String>?, editingEstateId : Int?,
-                        callback : (ArrayList<String>) -> Unit)
+        fun newInstance(picturesUri : ArrayList<Bitmap>?, editingEstateId : Int?,
+                        callback : (ArrayList<Bitmap>) -> Unit)
         : AddPicturesFragment {
             return AddPicturesFragment(picturesUri, editingEstateId, callback)
         }
