@@ -12,6 +12,7 @@
     <string name="button_edit">Edit</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_confirm">Confirm</string>
+    <string name="button_remove_picture">Remove picture</string>
 
     <string name="type_title">Type :</string>
     <string name="nearby_title">Nearby :</string>
@@ -60,6 +61,12 @@
     <string name="add_picture">Add a picture</string>
     <string name="new_picture">New picture</string>
     <string name="pick_from_gallery">Pick from gallery</string>
+
+    <!-- Agent creation fields -->
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone number</string>
 
     <string name="dumb_error">An error occurred</string>
 
