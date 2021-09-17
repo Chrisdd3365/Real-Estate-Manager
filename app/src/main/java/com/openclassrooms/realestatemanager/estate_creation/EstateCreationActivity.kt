@@ -3,24 +3,27 @@ package com.openclassrooms.realestatemanager.estate_creation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
+import com.openclassrooms.realestatemanager.estate_creation.add_images.AddPicturesFragment
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
-import java.lang.Exception
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -46,6 +49,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var optionalDetailsFragmentPosition = -1
     private var isEditing = false
     private var isNewEstate = false
+    private var picturesList = ArrayList<Bitmap>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +59,9 @@ class EstateCreationActivity : AppCompatActivity() {
         )
 
         binding.viewModel = viewModel
+
+        intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
 
         viewModel.setLoading()
 
@@ -253,10 +260,15 @@ class EstateCreationActivity : AppCompatActivity() {
         optionalDetailsFragmentPosition++
         if (optionalDetailsFragmentPosition >= 0)
             viewModel.setButtonPreviousEnabled(true)
-        if (optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
-            goToOptionalDetails()
-        else
-            showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
+
+        when {
+            optionalDetailsFragmentPosition < optionalDetailsFragmentList.size ->
+                goToOptionalDetails()
+            optionalDetailsFragmentPosition == optionalDetailsFragmentList.size ->
+                goToImagesFragment()
+            else ->
+                showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
+        }
     }
 
     /**
@@ -272,6 +284,17 @@ class EstateCreationActivity : AppCompatActivity() {
             showFirstFragment(estate)
             viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
         }
+    }
+
+    private fun goToImagesFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_root,
+                AddPicturesFragment.newInstance(picturesList, estate?.id) {
+                    picturesList = it
+                }
+            )
+            .commit()
     }
 
     /**
@@ -294,24 +317,38 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type)
+                ShowEstateFragment.newInstance(estate, type, picturesList) {
+                    picturesList = it
+                }
             )
             .commit()
     }
 
+    /**
+     *  This function deletes the current [Estate]. It will first delete the images of this [Estate]
+     *  in the database (as the images database is using a foreign key on the [Estate] id), then
+     *  delete the actual [Estate].
+     */
     fun deleteEstate() {
         if (estate != null && estate?.id != null) {
             viewModel.setLoading()
-            DatabaseManager(this).deleteEstate(
+            val databaseManager = DatabaseManager(this)
+            databaseManager.deleteImagesForEstate(
                 estate!!.id!!,
-                {
-                    finishWithResult(-1, estate)
-                }, {
-                    showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
-                    viewModel.setFragments()
-                    Log.e(TAG, "An error occurred while deletion")
-                    Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
-                        .show()
+                onSuccess = {
+                    databaseManager.deleteEstate(
+                        estate!!.id!!,
+                        onSuccess = {
+                            finishWithResult(-1, estate)
+                        },
+                        onFailure = {
+                            showFullEstate(Enums.ShowEstateType.SHOW_ESTATE)
+                            viewModel.setFragments()
+                            Log.e(TAG, "An error occurred while deletion")
+                            Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    )
                 }
             )
         }
@@ -361,7 +398,10 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                finishWithResult(insertedId, estateToSave)
+                if (picturesList.isEmpty())
+                    finishWithResult(insertedId, estateToSave)
+                else
+                    saveImages(insertedId, estateToSave)
             },
             onFailure = {
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
@@ -375,11 +415,47 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                finishWithResult(estate?.id!!, estateToSave)
+                if (picturesList.isEmpty())
+                    finishWithResult(estateToSave.id!!, estateToSave)
+                else
+                    saveImages(estateToSave.id!!, estateToSave)
             },
             onFailure = {
                 Log.e(TAG, "An error occurred with the database.")
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+            }
+        )
+    }
+
+    /**
+     *  Saves the images of this [Estate] in the database with the [newEstateId].
+     *  First, we delete all the images for this [Estate], to avoid duplicated images, then, we
+     *  save every picture in the database.
+     *  @param newEstateId ([Int]) - The newly added [Estate] id, that will be kept in the database
+     *  along with images.
+     *  @param estateToSave ([Estate]) - The saved [Estate]. We need it in order to give it to
+     *  [finishWithResult] function.
+     */
+    private fun saveImages(newEstateId: Int, estateToSave: Estate) {
+        val databaseManager = DatabaseManager(this)
+        databaseManager.deleteImagesForEstate(
+            newEstateId,
+            onSuccess = {
+                var savedPictures = 0
+                for (picture : Bitmap in picturesList) {
+                    DatabaseManager(this).saveEstateImage(
+                        newEstateId,
+                        picture,
+                        onSuccess = { savedPictures++ },
+                        onFailure = { }
+                    )
+                }
+                if (savedPictures == picturesList.size)
+                    finishWithResult(newEstateId, estateToSave)
+                else {
+                    Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
+                    Log.e(TAG, "ERROR")
+                }
             }
         )
     }

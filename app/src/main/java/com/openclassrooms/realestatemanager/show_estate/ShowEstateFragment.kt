@@ -1,6 +1,6 @@
 package com.openclassrooms.realestatemanager.show_estate
 
-import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
@@ -12,19 +12,18 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
+import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
-/**
- *  TODO : This [Activity] should only displays a [androidx.fragment.app.Fragment] with all this
- *      content, as we need to be able to re-use this fragment for landscape display, on the right
- *      of the element selected in the [PropertiesListFragment].
- */
-class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType)
+class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType,
+                         private var picturesList : ArrayList<Bitmap>,
+                         private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
     : Fragment() {
 
     // Helper classes
@@ -35,6 +34,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
     private var leftButton : Button? = null
     private var rightButton : Button? = null
     private var nearbyImagesFlexbox : FlexboxLayout? = null
+    private var picturesViewPager : ViewPager2? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -50,6 +50,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         leftButton = binding.leftButton
         rightButton = binding.rightButton
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
+        picturesViewPager = binding.picturesViewPager
 
         viewModel.setButtonsText(context, type)
         viewModel.setData(context, estate!!)
@@ -59,6 +60,8 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         setButtonsBehaviors()
 
         setNearbyData()
+
+        setPicturesCarousel()
 
         return binding.root
     }
@@ -155,13 +158,46 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         imageViewLayoutParams.marginEnd = 25
     }
 
+    private fun setPicturesCarousel() {
+        var pictures = ArrayList<Bitmap>()
+
+        if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate!!.id != null) {
+            DatabaseManager(requireContext()).getImagesForEstate(
+                estate!!.id!!,
+                success = {
+                    Log.d(TAG, "Success ! List size = ${it.size}")
+                    pictures = it
+                    picturesRetrievedCallback.invoke(it)
+                },
+                failure = {
+                    viewModel.hideImagesLayout()
+                }
+            )
+        } else if (type == Enums.ShowEstateType.ASK_FOR_CONFIRMATION && estate != null && picturesList.isNotEmpty()) {
+            for (picture : Bitmap in picturesList) {
+                pictures.add(picture)
+            }
+        }
+
+        if (pictures.isNotEmpty()) {
+            val picturesViewPagerAdapter = PicturesSliderViewPagerAdapter()
+            picturesViewPager?.adapter = picturesViewPagerAdapter
+            picturesViewPager?.post { picturesViewPagerAdapter.setItems(pictures) }
+            viewModel.showImagesLayout()
+        } else
+            viewModel.hideImagesLayout()
+    }
+
     companion object {
 
         @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
-        fun newInstance(estate : Estate?, type : Enums.ShowEstateType) : ShowEstateFragment {
-            return ShowEstateFragment(estate, type)
+        fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
+                        picturesList : ArrayList<Bitmap>,
+                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
+        : ShowEstateFragment {
+            return ShowEstateFragment(estate, type, picturesList, picturesRetrievedCallback)
         }
 
     }

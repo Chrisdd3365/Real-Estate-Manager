@@ -1,6 +1,6 @@
 package com.openclassrooms.realestatemanager.model
 
-import android.util.Log
+import android.graphics.Bitmap
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,8 +26,6 @@ class Estate : Serializable {
     var buses : Boolean? = null
     var subway : Boolean? = null
     var park : Boolean? = null
-
-    var picturesUris = ArrayList<String>()
 
     override fun toString(): String {
         return "[ESTATE] $id ; $roomCount rooms ; $bathroomsCount bathrooms ; " +

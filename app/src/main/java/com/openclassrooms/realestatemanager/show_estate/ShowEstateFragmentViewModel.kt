@@ -13,6 +13,7 @@ import com.openclassrooms.realestatemanager.utils.Enums
 class ShowEstateFragmentViewModel : ViewModel() {
 
     val nearbyLayoutVisibility = ObservableInt(View.GONE)
+    val imagesLayoutVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -59,6 +60,14 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     fun showNearbyLayout() {
         nearbyLayoutVisibility.set(View.VISIBLE)
+    }
+
+    fun showImagesLayout() {
+        imagesLayoutVisibility.set(View.VISIBLE)
+    }
+
+    fun hideImagesLayout() {
+        imagesLayoutVisibility.set(View.GONE)
     }
 
     companion object {

@@ -1,10 +1,16 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.net.wifi.WifiManager
+import android.os.Build
+import android.provider.MediaStore
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -40,5 +46,16 @@ object Utils {
     fun isInternetAvailable(context: Context): Boolean {
         val wifi = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         return wifi.isWifiEnabled
+    }
+
+    fun getBitmapFromUri(context : Context, uri : String) : Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            ImageDecoder.decodeBitmap(
+                ImageDecoder.createSource(
+                context.contentResolver,
+                Uri.parse(uri))
+            )
+        else
+            MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
     }
 }
