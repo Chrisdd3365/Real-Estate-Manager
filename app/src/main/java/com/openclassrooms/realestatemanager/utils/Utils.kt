@@ -7,6 +7,9 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
+import com.openclassrooms.realestatemanager.BuildConfig
+import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,5 +60,21 @@ object Utils {
             )
         else
             MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
+    }
+
+    fun getTmpFileUri(context: Context): Uri {
+        val tmpFile = File.createTempFile(
+            "tmp_image_file",
+            ".png",
+            context.cacheDir
+        ).apply {
+            createNewFile()
+            deleteOnExit()
+        }
+
+        return FileProvider.getUriForFile(
+            context,
+            "${BuildConfig.APPLICATION_ID}.provider", tmpFile
+        )
     }
 }

@@ -12,6 +12,7 @@
     <string name="button_edit">Edit</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_confirm">Confirm</string>
+    <string name="button_remove_picture">Remove picture</string>
 
     <string name="type_title">Type :</string>
     <string name="nearby_title">Nearby :</string>

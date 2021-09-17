@@ -29,6 +29,7 @@ import com.openclassrooms.realestatemanager.databinding.FragmentAddPicturesBindi
 import com.openclassrooms.realestatemanager.utils.OnStartDragListener
 import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import com.openclassrooms.realestatemanager.utils.Utils
+import com.openclassrooms.realestatemanager.utils.Utils.getTmpFileUri
 import java.io.File
 
 class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
@@ -77,6 +78,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
             }
         }
 
+        // Gets a picture from the camera
         cameraRequestLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicture(),
         ) {
@@ -193,7 +195,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         ) { dialog, which ->
             when {
                 optionsMenu[which] == getString(R.string.new_picture) -> {
-                    newUri = getTmpFileUri()
+                    newUri = getTmpFileUri(requireContext())
                     cameraRequestLauncher?.launch(newUri)
                 }
                 optionsMenu[which] == getString(R.string.pick_from_gallery) -> {
@@ -208,22 +210,6 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         }
 
         alertDialogBuilder.show()
-    }
-
-    private fun getTmpFileUri(): Uri {
-        val tmpFile = File.createTempFile(
-            "tmp_image_file",
-            ".png",
-            requireContext().cacheDir
-        ).apply {
-            createNewFile()
-            deleteOnExit()
-        }
-
-        return FileProvider.getUriForFile(
-            requireContext(),
-            "${BuildConfig.APPLICATION_ID}.provider", tmpFile
-        )
     }
 
     companion object {

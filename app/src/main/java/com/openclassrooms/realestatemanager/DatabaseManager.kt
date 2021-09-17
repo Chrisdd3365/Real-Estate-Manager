@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -18,6 +19,7 @@ class DatabaseManager(context : Context)
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(SQL_CREATE_ESTATE_TABLE)
         db?.execSQL(SQL_CREATE_IMAGES_TABLE)
+        db?.execSQL(SQL_CREATE_AGENTS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -232,6 +234,29 @@ class DatabaseManager(context : Context)
         onSuccess.invoke()
     }
 
+    fun saveAgent(agent : Agent, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
+        val database = this.writableDatabase
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        agent.avatar?.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+
+        val contentValues = ContentValues().apply {
+            put(COLUMN_FIRST_NAME, agent.firstName)
+            put(COLUMN_LAST_NAME, agent.lastName)
+            put(COLUMN_EMAIL, agent.email)
+            put(COLUMN_PHONE_NUMBER, agent.phoneNumber)
+            put(COLUMN_AVATAR, byteArrayOutputStream.toByteArray())
+        }
+
+        val insertedId = database.insert(AGENTS_TABLE, null, contentValues)
+        database.close()
+
+        if (insertedId == -1L)
+            onFailure?.invoke()
+        else
+            onSuccess?.invoke()
+    }
+
     /**
      *  Extension to handle nullable [Boolean] retrieval from [Cursor].
      *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
@@ -253,6 +278,7 @@ class DatabaseManager(context : Context)
 
         private const val ESTATE_TABLE = "estates"
         private const val IMAGE_TABLE = "images"
+        private const val AGENTS_TABLE = "agents"
 
         private const val COLUMN_ID = "id"
 
@@ -276,6 +302,13 @@ class DatabaseManager(context : Context)
         // Image table columns
         private const val COLUMN_IMAGE = "uri"
         private const val COLUMN_ESTATE_ID = "estate_id"
+
+        // Agent table columns
+        private const val COLUMN_FIRST_NAME = "first_name"
+        private const val COLUMN_LAST_NAME = "last_name"
+        private const val COLUMN_EMAIL = "email"
+        private const val COLUMN_PHONE_NUMBER = "phone_number"
+        private const val COLUMN_AVATAR = "avatar"
 
         private const val SQL_CREATE_ESTATE_TABLE = """
             CREATE TABLE IF NOT EXISTS $ESTATE_TABLE (
@@ -305,6 +338,18 @@ class DatabaseManager(context : Context)
                 $COLUMN_ESTATE_ID INTEGER NOT NULL,
                 FOREIGN KEY ($COLUMN_ESTATE_ID)
                     REFERENCES $ESTATE_TABLE ($COLUMN_ID)
+            );
+        """
+
+        // TODO : REPLACE TEXT WITH VARCHAR
+        private const val SQL_CREATE_AGENTS_TABLE = """
+            CREATE TABLE IF NOT EXISTS $AGENTS_TABLE (
+                $COLUMN_ID INTEGER PRIMARY KEY,
+                $COLUMN_FIRST_NAME TEXT,
+                $COLUMN_LAST_NAME TEXT,
+                $COLUMN_EMAIL TEXT,
+                $COLUMN_PHONE_NUMBER TEXT,
+                $COLUMN_AVATAR BLOB
             );
         """
     }
