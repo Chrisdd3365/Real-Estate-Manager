@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.estate_creation.managing_details
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -24,7 +25,7 @@ class AgentsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.agents_list_item,
-                null,
+                parent,
                 false
             )
         )
@@ -42,19 +43,36 @@ class AgentsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setData(agent: Agent) {
             binding.viewModel = AgentsListItemViewModel()
             binding.viewModel?.setData(agent)
+
+            if (agent.avatar != null)
+                binding.avatarImageView.setImageBitmap(agent.avatar)
+            else
+                binding.avatarImageView.setImageResource(R.drawable.ic_profile)
         }
     }
 
     inner class AgentsListItemViewModel {
 
         val agentName = ObservableField("")
+        val agentMail = ObservableField("")
+        val agentPhoneNumber = ObservableField("")
 
         fun setData(agent : Agent) {
+
+            Log.d(TAG, "Setting data of $agent")
+
             var name = agent.firstName
             if (!name.isNullOrBlank())
                 name += " "
             name += agent.lastName
             agentName.set(name)
+
+            agentMail.set(agent.email)
+            agentPhoneNumber.set(agent.phoneNumber)
         }
+    }
+
+    companion object {
+        private const val TAG = "AgentsListAdapter"
     }
 }

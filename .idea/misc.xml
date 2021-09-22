@@ -10,7 +10,7 @@
         <entry key="app/src/main/res/layout/activity_estate_creation.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_show_estate.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/agents_list_item.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/agents_list_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_add_images.xml" value="0.17603850050658562" />
         <entry key="app/src/main/res/layout/fragment_add_pictures.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_basic_details.xml" value="0.1" />
@@ -18,7 +18,7 @@
         <entry key="app/src/main/res/layout/fragment_show_estate.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/picture_slider_item.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/pictures_list_item.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/properties_list_item.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/properties_list_item.xml" value="0.2050561797752809" />
         <entry key="app/src/main/res/layout/slider_item.xml" value="0.175" />
       </map>
     </option>

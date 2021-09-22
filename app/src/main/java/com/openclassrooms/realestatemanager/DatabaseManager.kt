@@ -278,6 +278,7 @@ class DatabaseManager(context : Context)
                 while (moveToNext()) {
                     result.add(
                         Agent().apply {
+                            id = getInt(getColumnIndex(COLUMN_ID))
                             firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
                             lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
                             email = getString(getColumnIndex(COLUMN_EMAIL))
