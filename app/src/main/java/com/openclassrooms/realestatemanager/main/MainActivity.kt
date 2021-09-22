@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             propertiesListFragment?.setEstateList(it)
             viewModel.setFragments()
         }, {
-
+            // TODO
         })
     }
 

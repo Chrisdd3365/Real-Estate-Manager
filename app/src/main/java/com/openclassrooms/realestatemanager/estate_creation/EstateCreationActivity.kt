@@ -20,6 +20,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
 import com.openclassrooms.realestatemanager.estate_creation.add_images.AddPicturesFragment
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
+import com.openclassrooms.realestatemanager.estate_creation.managing_details.ManagingFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
@@ -266,6 +267,8 @@ class EstateCreationActivity : AppCompatActivity() {
                 goToOptionalDetails()
             optionalDetailsFragmentPosition == optionalDetailsFragmentList.size ->
                 goToImagesFragment()
+            optionalDetailsFragmentPosition > optionalDetailsFragmentList.size ->
+                goToManagingFragment()
             else ->
                 showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
         }
@@ -293,6 +296,15 @@ class EstateCreationActivity : AppCompatActivity() {
                 AddPicturesFragment.newInstance(picturesList, estate?.id) {
                     picturesList = it
                 }
+            )
+            .commit()
+    }
+
+    private fun goToManagingFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_root,
+                ManagingFragment.newInstance()
             )
             .commit()
     }
