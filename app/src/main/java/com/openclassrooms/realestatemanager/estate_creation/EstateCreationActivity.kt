@@ -20,7 +20,9 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
 import com.openclassrooms.realestatemanager.estate_creation.add_images.AddPicturesFragment
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
+import com.openclassrooms.realestatemanager.estate_creation.managing_details.ManagingFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
+import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
@@ -50,6 +52,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var isEditing = false
     private var isNewEstate = false
     private var picturesList = ArrayList<Bitmap>()
+    private var managingAgents = ArrayList<Agent>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -266,6 +269,8 @@ class EstateCreationActivity : AppCompatActivity() {
                 goToOptionalDetails()
             optionalDetailsFragmentPosition == optionalDetailsFragmentList.size ->
                 goToImagesFragment()
+            optionalDetailsFragmentPosition == optionalDetailsFragmentList.size + 1 ->
+                goToManagingFragment()
             else ->
                 showFullEstate(Enums.ShowEstateType.ASK_FOR_CONFIRMATION)
         }
@@ -278,8 +283,12 @@ class EstateCreationActivity : AppCompatActivity() {
      */
     private fun goToPreviousOptionalDetails() {
         optionalDetailsFragmentPosition--
-        if (optionalDetailsFragmentPosition >= 0)
+        if (optionalDetailsFragmentPosition >= 0 && optionalDetailsFragmentPosition < optionalDetailsFragmentList.size)
             goToOptionalDetails()
+        else if (optionalDetailsFragmentPosition == optionalDetailsFragmentList.size)
+            goToImagesFragment()
+        else if (optionalDetailsFragmentPosition == optionalDetailsFragmentList.size + 1)
+            goToManagingFragment()
         else {
             showFirstFragment(estate)
             viewModel.setNavigationButtonVisibility(View.GONE, View.VISIBLE)
@@ -292,6 +301,17 @@ class EstateCreationActivity : AppCompatActivity() {
                 R.id.fragment_root,
                 AddPicturesFragment.newInstance(picturesList, estate?.id) {
                     picturesList = it
+                }
+            )
+            .commit()
+    }
+
+    private fun goToManagingFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_root,
+                ManagingFragment.newInstance(managingAgents) {
+                    managingAgents = it
                 }
             )
             .commit()
@@ -317,9 +337,14 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type, picturesList) {
-                    picturesList = it
-                }
+                ShowEstateFragment.newInstance(estate, type, picturesList, managingAgents,
+                    picturesRetrievedCallback = {
+                        picturesList = it
+                    },
+                    managingAgentsRetrievedCallback = {
+                        managingAgents = it
+                    }
+                )
             )
             .commit()
     }
@@ -398,10 +423,19 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                if (picturesList.isEmpty())
+                if (picturesList.isEmpty() && managingAgents.isEmpty())
                     finishWithResult(insertedId, estateToSave)
-                else
-                    saveImages(insertedId, estateToSave)
+                else {
+                    saveManagingAgents(
+                        insertedId,
+                        success = {
+                            if (picturesList.isNotEmpty())
+                                saveImages(insertedId, estateToSave)
+                            else
+                                finishWithResult(insertedId, estateToSave)
+                        }
+                    )
+                }
             },
             onFailure = {
                 Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
@@ -415,10 +449,19 @@ class EstateCreationActivity : AppCompatActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                if (picturesList.isEmpty())
+                if (picturesList.isEmpty() && managingAgents.isEmpty())
                     finishWithResult(estateToSave.id!!, estateToSave)
-                else
-                    saveImages(estateToSave.id!!, estateToSave)
+                else {
+                    saveManagingAgents(
+                        estateToSave.id!!,
+                        success = {
+                            if (picturesList.isNotEmpty())
+                                saveImages(estateToSave.id!!, estateToSave)
+                            else
+                                finishWithResult(estateToSave.id!!, estateToSave)
+                        }
+                    )
+                }
             },
             onFailure = {
                 Log.e(TAG, "An error occurred with the database.")
@@ -443,7 +486,7 @@ class EstateCreationActivity : AppCompatActivity() {
             onSuccess = {
                 var savedPictures = 0
                 for (picture : Bitmap in picturesList) {
-                    DatabaseManager(this).saveEstateImage(
+                    databaseManager.saveEstateImage(
                         newEstateId,
                         picture,
                         onSuccess = { savedPictures++ },
@@ -456,6 +499,32 @@ class EstateCreationActivity : AppCompatActivity() {
                     Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()
                     Log.e(TAG, "ERROR")
                 }
+            }
+        )
+    }
+
+    private fun saveManagingAgents(newEstateId: Int, success : () -> Unit) {
+        val databaseManager = DatabaseManager(this)
+
+        databaseManager.deleteEstateManagers(
+            newEstateId,
+            success = {
+                var savedManagingAgents = 0
+                for (agent : Agent in managingAgents) {
+                    databaseManager.saveEstateManager(
+                        newEstateId,
+                        agent,
+                        {
+                            savedManagingAgents++
+                        }, {
+                            Log.e(TAG, "Failed to save managing agents for estate $newEstateId")
+                            Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    )
+                }
+                if (savedManagingAgents == managingAgents.size)
+                    success.invoke()
             }
         )
     }

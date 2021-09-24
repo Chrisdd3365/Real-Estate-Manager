@@ -14,6 +14,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     val nearbyLayoutVisibility = ObservableInt(View.GONE)
     val imagesLayoutVisibility = ObservableInt(View.GONE)
+    val managingAgentsVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -68,6 +69,14 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     fun hideImagesLayout() {
         imagesLayoutVisibility.set(View.GONE)
+    }
+
+    fun showManagingAgents() {
+        managingAgentsVisibility.set(View.VISIBLE)
+    }
+
+    fun hideManagingAgents() {
+        managingAgentsVisibility.set(View.GONE)
     }
 
     companion object {

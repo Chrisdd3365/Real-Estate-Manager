@@ -12,6 +12,7 @@ import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DatabaseManager(context : Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -20,6 +21,7 @@ class DatabaseManager(context : Context)
         db?.execSQL(SQL_CREATE_ESTATE_TABLE)
         db?.execSQL(SQL_CREATE_IMAGES_TABLE)
         db?.execSQL(SQL_CREATE_AGENTS_TABLE)
+        db?.execSQL(SQL_CREATE_MANAGING_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -257,6 +259,109 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke()
     }
 
+    fun getAgents(success: ((ArrayList<Agent>) -> Unit), failure: (() -> Unit)) {
+        val database = this.readableDatabase
+        val result = ArrayList<Agent>()
+
+        try {
+            val cursor = database.query(
+                AGENTS_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+
+            with(cursor) {
+                while (moveToNext()) {
+                    result.add(
+                        Agent().apply {
+                            id = getInt(getColumnIndex(COLUMN_ID))
+                            firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
+                            lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
+                            email = getString(getColumnIndex(COLUMN_EMAIL))
+                            phoneNumber = getString(getColumnIndex(COLUMN_PHONE_NUMBER))
+
+                            val byteArray = getBlob(getColumnIndex(COLUMN_AVATAR))
+                            avatar = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                        }
+                    )
+                }
+            }
+            cursor.close()
+
+            success.invoke(result)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error while querying database : $exception")
+            failure.invoke()
+        }
+    }
+
+    fun deleteEstateManagers(estateId: Int, success: () -> Unit) {
+        val database = this.writableDatabase
+
+        database.delete(
+            MANAGING_TABLE,
+            "$COLUMN_ESTATE_ID is ?",
+            arrayOf("$estateId")
+        )
+        database.close()
+        success.invoke()
+    }
+
+    fun saveEstateManager(estateId: Int, managingAgent : Agent,
+                           success : () -> Unit, failure: () -> Unit) {
+        val database = this.writableDatabase
+
+        val contentValues = ContentValues().apply {
+            put(COLUMN_ESTATE_ID, estateId)
+            put(COLUMN_AGENT_ID, managingAgent.id)
+        }
+
+        val insertedId = database.insert(MANAGING_TABLE, null, contentValues)
+
+        database.close()
+
+        if (insertedId == -1L)
+            failure.invoke()
+        else
+            success.invoke()
+    }
+
+    fun getEstateManagers(estateId: Int, success: (ArrayList<Agent>) -> Unit, failure: () -> Unit) {
+        val database = this.readableDatabase
+
+        try {
+            val result = ArrayList<Agent>()
+            val cursor = database.rawQuery(SQL_MANAGING_AGENTS_JOIN, arrayOf("$estateId"))
+            with(cursor) {
+                while (cursor.moveToNext()) {
+                    result.add(
+                        Agent().apply {
+                            id = getInt(getColumnIndex(COLUMN_ID))
+                            firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
+                            lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
+                            email = getString(getColumnIndex(COLUMN_EMAIL))
+                            phoneNumber = getString(getColumnIndex(COLUMN_PHONE_NUMBER))
+
+                            val byteArray = getBlob(getColumnIndex(COLUMN_AVATAR))
+                            avatar = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                        }
+                    )
+                }
+            }
+            cursor.close()
+            success.invoke(result)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "ERROR : $exception")
+            failure.invoke()
+        }
+    }
+
     /**
      *  Extension to handle nullable [Boolean] retrieval from [Cursor].
      *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
@@ -279,6 +384,7 @@ class DatabaseManager(context : Context)
         private const val ESTATE_TABLE = "estates"
         private const val IMAGE_TABLE = "images"
         private const val AGENTS_TABLE = "agents"
+        private const val MANAGING_TABLE = "managing"
 
         private const val COLUMN_ID = "id"
 
@@ -309,6 +415,10 @@ class DatabaseManager(context : Context)
         private const val COLUMN_EMAIL = "email"
         private const val COLUMN_PHONE_NUMBER = "phone_number"
         private const val COLUMN_AVATAR = "avatar"
+
+        // Managing table columns
+        private const val COLUMN_AGENT_ID = "agent_id"
+//        private const val COLUMN_ESTATE_ID = "estate_id"
 
         private const val SQL_CREATE_ESTATE_TABLE = """
             CREATE TABLE IF NOT EXISTS $ESTATE_TABLE (
@@ -352,6 +462,32 @@ class DatabaseManager(context : Context)
                 $COLUMN_AVATAR BLOB
             );
         """
+
+        private const val SQL_CREATE_MANAGING_TABLE = """
+            CREATE TABLE IF NOT EXISTS $MANAGING_TABLE (
+                $COLUMN_ID INTEGER PRIMARY KEY,
+                $COLUMN_ESTATE_ID INTEGER NOT NULL,
+                $COLUMN_AGENT_ID INTEGER NOT NULL,
+                FOREIGN KEY ($COLUMN_ESTATE_ID)
+                    REFERENCES $ESTATE_TABLE ($COLUMN_ID),
+                FOREIGN KEY ($COLUMN_AGENT_ID)
+                    REFERENCES $AGENTS_TABLE ($COLUMN_ID)
+            );
+        """
+
+        private const val SQL_MANAGING_AGENTS_JOIN = """
+            SELECT  $AGENTS_TABLE.$COLUMN_ID as $COLUMN_ID,
+                    $AGENTS_TABLE.$COLUMN_FIRST_NAME as $COLUMN_FIRST_NAME,
+                    $AGENTS_TABLE.$COLUMN_LAST_NAME as $COLUMN_LAST_NAME,
+                    $AGENTS_TABLE.$COLUMN_EMAIL as $COLUMN_EMAIL,
+                    $AGENTS_TABLE.$COLUMN_PHONE_NUMBER as $COLUMN_PHONE_NUMBER,
+                    $AGENTS_TABLE.$COLUMN_AVATAR as $COLUMN_AVATAR,
+                    $MANAGING_TABLE.$COLUMN_ESTATE_ID as $COLUMN_ESTATE_ID,
+                    $MANAGING_TABLE.$COLUMN_AGENT_ID as $COLUMN_AGENT_ID
+                FROM $MANAGING_TABLE
+                    INNER JOIN $AGENTS_TABLE
+                        ON $MANAGING_TABLE.$COLUMN_AGENT_ID = $AGENTS_TABLE.$COLUMN_ID
+            WHERE $MANAGING_TABLE.$COLUMN_ESTATE_ID IS ?
+        """
     }
 }
-
