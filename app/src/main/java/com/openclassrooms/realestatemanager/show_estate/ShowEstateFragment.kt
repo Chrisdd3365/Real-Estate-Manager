@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.show_estate
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,8 @@ import com.openclassrooms.realestatemanager.utils.Enums
 class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType,
                          private var picturesList : ArrayList<Bitmap>,
                          private var managingAgents : ArrayList<Agent>,
-                         private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
+                         private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
+                         private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit)
     : Fragment() {
 
     // Helper classes
@@ -147,9 +147,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         if (estate!!.park == true)
             addNearbyIconInFlexbox(R.drawable.ic_park)
 
-        Log.d(TAG, "Nearby icons set")
         viewModel.showNearbyLayout()
-        Log.d(TAG, "End of setNearbyData()")
     }
 
     /**
@@ -158,7 +156,6 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
      *  @param iconId [Int] - ID of the drawable resource.
      */
     private fun addNearbyIconInFlexbox(iconId : Int) {
-        Log.d(TAG, "addNearbyIconInFlexbox with icon $iconId")
         val imageView = ImageView(context)
         imageView.setImageResource(iconId)
         imageView.id = 0
@@ -178,7 +175,6 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
             DatabaseManager(requireContext()).getImagesForEstate(
                 estate!!.id!!,
                 success = {
-                    Log.d(TAG, "Success ! List size = ${it.size}")
                     pictures = it
                     picturesRetrievedCallback.invoke(it)
                 },
@@ -207,6 +203,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
             estate!!.id!!,
             success = {
                 managingAgents = it
+                managingAgentsRetrievedCallback.invoke(it)
                 setManagingAgents()
             },
             failure = {
@@ -235,9 +232,11 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
                         picturesList : ArrayList<Bitmap>,
                         managingAgents : ArrayList<Agent>,
-                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
+                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
+                        managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit)
         : ShowEstateFragment {
-            return ShowEstateFragment(estate, type, picturesList, managingAgents, picturesRetrievedCallback)
+            return ShowEstateFragment(estate, type, picturesList, managingAgents,
+                picturesRetrievedCallback, managingAgentsRetrievedCallback)
         }
 
     }

@@ -310,7 +310,7 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ManagingFragment.newInstance {
+                ManagingFragment.newInstance(managingAgents) {
                     managingAgents = it
                 }
             )
@@ -337,9 +337,14 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type, picturesList, managingAgents) {
-                    picturesList = it
-                }
+                ShowEstateFragment.newInstance(estate, type, picturesList, managingAgents,
+                    picturesRetrievedCallback = {
+                        picturesList = it
+                    },
+                    managingAgentsRetrievedCallback = {
+                        managingAgents = it
+                    }
+                )
             )
             .commit()
     }

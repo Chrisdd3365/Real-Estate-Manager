@@ -341,6 +341,7 @@ class DatabaseManager(context : Context)
                 while (cursor.moveToNext()) {
                     result.add(
                         Agent().apply {
+                            id = getInt(getColumnIndex(COLUMN_ID))
                             firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
                             lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
                             email = getString(getColumnIndex(COLUMN_EMAIL))
@@ -475,9 +476,17 @@ class DatabaseManager(context : Context)
         """
 
         private const val SQL_MANAGING_AGENTS_JOIN = """
-            SELECT * FROM $MANAGING_TABLE
-                INNER JOIN $AGENTS_TABLE
-                    ON $MANAGING_TABLE.$COLUMN_AGENT_ID = $AGENTS_TABLE.$COLUMN_ID
+            SELECT  $AGENTS_TABLE.$COLUMN_ID as $COLUMN_ID,
+                    $AGENTS_TABLE.$COLUMN_FIRST_NAME as $COLUMN_FIRST_NAME,
+                    $AGENTS_TABLE.$COLUMN_LAST_NAME as $COLUMN_LAST_NAME,
+                    $AGENTS_TABLE.$COLUMN_EMAIL as $COLUMN_EMAIL,
+                    $AGENTS_TABLE.$COLUMN_PHONE_NUMBER as $COLUMN_PHONE_NUMBER,
+                    $AGENTS_TABLE.$COLUMN_AVATAR as $COLUMN_AVATAR,
+                    $MANAGING_TABLE.$COLUMN_ESTATE_ID as $COLUMN_ESTATE_ID,
+                    $MANAGING_TABLE.$COLUMN_AGENT_ID as $COLUMN_AGENT_ID
+                FROM $MANAGING_TABLE
+                    INNER JOIN $AGENTS_TABLE
+                        ON $MANAGING_TABLE.$COLUMN_AGENT_ID = $AGENTS_TABLE.$COLUMN_ID
             WHERE $MANAGING_TABLE.$COLUMN_ESTATE_ID IS ?
         """
     }

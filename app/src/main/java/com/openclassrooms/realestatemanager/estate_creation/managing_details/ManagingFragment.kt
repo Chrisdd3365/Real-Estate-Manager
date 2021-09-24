@@ -15,7 +15,8 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentManagingBinding
 import com.openclassrooms.realestatemanager.model.Agent
 
-class ManagingFragment(private val agentSelected : (ArrayList<Agent>) -> Unit) : Fragment() {
+class ManagingFragment(private val managingAgents: ArrayList<Agent>,
+                       private val agentSelected : (ArrayList<Agent>) -> Unit) : Fragment() {
 
     // Helper classes
     private val viewModel = ManagingFragmentViewModel()
@@ -51,6 +52,8 @@ class ManagingFragment(private val agentSelected : (ArrayList<Agent>) -> Unit) :
                 if (it.isNotEmpty()) {
                     agentsRv?.post { agentsListAdapter.setItems(it) }
                     viewModel.setAgents()
+                    if (managingAgents.isNotEmpty())
+                        agentsListAdapter.selectAgents(managingAgents)
                 } else
                     viewModel.setNoAgents()
             }, {
@@ -70,8 +73,9 @@ class ManagingFragment(private val agentSelected : (ArrayList<Agent>) -> Unit) :
 
         private const val TAG = "ManagingFragment"
 
-        fun newInstance(callback : (ArrayList<Agent>) -> Unit) : ManagingFragment {
-            return ManagingFragment(callback)
+        fun newInstance(managingAgents : ArrayList<Agent>, callback : (ArrayList<Agent>) -> Unit)
+        : ManagingFragment {
+            return ManagingFragment(managingAgents, callback)
         }
 
     }

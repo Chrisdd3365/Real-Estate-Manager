@@ -23,6 +23,14 @@ class AgentsListAdapter(val changed : (() -> Unit)?, val isSelecting : Boolean)
         notifyDataSetChanged()
     }
 
+    fun selectAgents(selectedAgents : ArrayList<Agent>) {
+        this.selectedAgents.clear()
+        for (selectedAgent : Agent in selectedAgents) {
+            this.selectedAgents.add(selectedAgent.id!!)
+            notifyItemChanged(agents.indexOf(selectedAgent))
+        }
+    }
+
     fun getSelectedAgents() : ArrayList<Agent> {
         val result = ArrayList<Agent>()
         for (agent : Agent in agents) {
@@ -69,9 +77,9 @@ class AgentsListAdapter(val changed : (() -> Unit)?, val isSelecting : Boolean)
                 viewModel.unselectAgent()
 
             binding.managingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked)
+                if (isChecked && !selectedAgents.contains(agent.id!!))
                     selectedAgents.add(agent.id!!)
-                else
+                else if (!isChecked)
                     selectedAgents.remove(agent.id)
                 changed?.invoke()
             }
