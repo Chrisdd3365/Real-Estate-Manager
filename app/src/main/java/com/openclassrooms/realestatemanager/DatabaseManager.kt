@@ -300,6 +300,67 @@ class DatabaseManager(context : Context)
         }
     }
 
+    fun deleteEstateManagers(estateId: Int, success: () -> Unit) {
+        val database = this.writableDatabase
+
+        database.delete(
+            MANAGING_TABLE,
+            "$COLUMN_ESTATE_ID is ?",
+            arrayOf("$estateId")
+        )
+        database.close()
+        success.invoke()
+    }
+
+    fun saveEstateManager(estateId: Int, managingAgent : Agent,
+                           success : () -> Unit, failure: () -> Unit) {
+        val database = this.writableDatabase
+
+        val contentValues = ContentValues().apply {
+            put(COLUMN_ESTATE_ID, estateId)
+            put(COLUMN_AGENT_ID, managingAgent.id)
+        }
+
+        val insertedId = database.insert(MANAGING_TABLE, null, contentValues)
+
+        database.close()
+
+        if (insertedId == -1L)
+            failure.invoke()
+        else
+            success.invoke()
+    }
+
+    fun getEstateManagers(estateId: Int, success: (ArrayList<Agent>) -> Unit, failure: () -> Unit) {
+        val database = this.readableDatabase
+
+        try {
+            val result = ArrayList<Agent>()
+            val cursor = database.rawQuery(SQL_MANAGING_AGENTS_JOIN, arrayOf("$estateId"))
+            with(cursor) {
+                while (cursor.moveToNext()) {
+                    result.add(
+                        Agent().apply {
+                            firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
+                            lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
+                            email = getString(getColumnIndex(COLUMN_EMAIL))
+                            phoneNumber = getString(getColumnIndex(COLUMN_PHONE_NUMBER))
+
+                            val byteArray = getBlob(getColumnIndex(COLUMN_AVATAR))
+                            avatar = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                        }
+                    )
+                }
+            }
+            cursor.close()
+            success.invoke(result)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "ERROR : $exception")
+            failure.invoke()
+        }
+    }
+
     /**
      *  Extension to handle nullable [Boolean] retrieval from [Cursor].
      *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
@@ -411,6 +472,13 @@ class DatabaseManager(context : Context)
                 FOREIGN KEY ($COLUMN_AGENT_ID)
                     REFERENCES $AGENTS_TABLE ($COLUMN_ID)
             );
+        """
+
+        private const val SQL_MANAGING_AGENTS_JOIN = """
+            SELECT * FROM $MANAGING_TABLE
+                INNER JOIN $AGENTS_TABLE
+                    ON $MANAGING_TABLE.$COLUMN_AGENT_ID = $AGENTS_TABLE.$COLUMN_ID
+            WHERE $MANAGING_TABLE.$COLUMN_ESTATE_ID IS ?
         """
     }
 }

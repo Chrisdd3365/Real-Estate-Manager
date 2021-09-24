@@ -58,6 +58,7 @@
     <string name="rooms">rooms</string>
     <string name="bathrooms">bathrooms</string>
     <string name="bedrooms">bedrooms</string>
+    <string name="managing_agents">Managing agents :</string>
 
     <string name="add_picture">Add a picture</string>
     <string name="new_picture">New picture</string>

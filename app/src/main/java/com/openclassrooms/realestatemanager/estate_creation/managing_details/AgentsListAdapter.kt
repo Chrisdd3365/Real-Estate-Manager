@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.AgentsListItemBinding
 import com.openclassrooms.realestatemanager.model.Agent
 
-class AgentsListAdapter(val changed : () -> Unit, val isSelecting : Boolean)
+class AgentsListAdapter(val changed : (() -> Unit)?, val isSelecting : Boolean)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val agents = ArrayList<Agent>()
@@ -73,7 +73,7 @@ class AgentsListAdapter(val changed : () -> Unit, val isSelecting : Boolean)
                     selectedAgents.add(agent.id!!)
                 else
                     selectedAgents.remove(agent.id)
-                changed.invoke()
+                changed?.invoke()
             }
         }
     }

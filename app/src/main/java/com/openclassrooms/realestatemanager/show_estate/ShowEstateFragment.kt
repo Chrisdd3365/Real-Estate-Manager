@@ -12,22 +12,28 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
+import com.openclassrooms.realestatemanager.estate_creation.managing_details.AgentsListAdapter
+import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
 class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType,
                          private var picturesList : ArrayList<Bitmap>,
+                         private var managingAgents : ArrayList<Agent>,
                          private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
     : Fragment() {
 
     // Helper classes
     private val viewModel = ShowEstateFragmentViewModel()
+    private val managingAgentsAdapter = AgentsListAdapter(null, false)
 
     // Layout variables
     private var typeIcon : ImageView? = null
@@ -35,6 +41,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
     private var rightButton : Button? = null
     private var nearbyImagesFlexbox : FlexboxLayout? = null
     private var picturesViewPager : ViewPager2? = null
+    private var managingAgentsRv : RecyclerView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -51,6 +58,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         rightButton = binding.rightButton
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
         picturesViewPager = binding.picturesViewPager
+        managingAgentsRv = binding.managingAgentsRv
 
         viewModel.setButtonsText(context, type)
         viewModel.setData(context, estate!!)
@@ -62,6 +70,11 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         setNearbyData()
 
         setPicturesCarousel()
+
+        if (type == Enums.ShowEstateType.SHOW_ESTATE)
+            getManagingAgents()
+        else
+            setManagingAgents()
 
         return binding.root
     }
@@ -188,6 +201,32 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
             viewModel.hideImagesLayout()
     }
 
+    private fun getManagingAgents() {
+        managingAgents.clear()
+        DatabaseManager(requireContext()).getEstateManagers(
+            estate!!.id!!,
+            success = {
+                managingAgents = it
+                setManagingAgents()
+            },
+            failure = {
+                // TODO : Touch to retry ?
+            }
+        )
+    }
+
+    private fun setManagingAgents() {
+        if (managingAgents.isEmpty()) {
+            viewModel.hideManagingAgents()
+            return
+        }
+
+        managingAgentsRv?.layoutManager = LinearLayoutManager(context)
+        managingAgentsRv?.adapter = managingAgentsAdapter
+        managingAgentsRv?.post { managingAgentsAdapter.setItems(managingAgents) }
+        viewModel.showManagingAgents()
+    }
+
     companion object {
 
         @Suppress("unused")
@@ -195,9 +234,10 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
 
         fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
                         picturesList : ArrayList<Bitmap>,
+                        managingAgents : ArrayList<Agent>,
                         picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit)
         : ShowEstateFragment {
-            return ShowEstateFragment(estate, type, picturesList, picturesRetrievedCallback)
+            return ShowEstateFragment(estate, type, picturesList, managingAgents, picturesRetrievedCallback)
         }
 
     }
