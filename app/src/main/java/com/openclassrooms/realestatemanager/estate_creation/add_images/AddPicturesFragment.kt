@@ -16,13 +16,11 @@ import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentAddPicturesBinding
@@ -30,7 +28,6 @@ import com.openclassrooms.realestatemanager.utils.OnStartDragListener
 import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.Utils.getTmpFileUri
-import java.io.File
 
 class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                           private val editingEstateId: Int?,

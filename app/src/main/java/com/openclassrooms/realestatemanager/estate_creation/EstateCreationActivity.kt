@@ -22,6 +22,7 @@ import com.openclassrooms.realestatemanager.estate_creation.add_images.AddPictur
 import com.openclassrooms.realestatemanager.estate_creation.basic_details.BasicDetailsFragment
 import com.openclassrooms.realestatemanager.estate_creation.managing_details.ManagingFragment
 import com.openclassrooms.realestatemanager.estate_creation.optional_details.OptionalDetailsFragment
+import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
@@ -51,6 +52,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var isEditing = false
     private var isNewEstate = false
     private var picturesList = ArrayList<Bitmap>()
+    private var managingAgents = ArrayList<Agent>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -304,7 +306,9 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ManagingFragment.newInstance()
+                ManagingFragment.newInstance {
+                    managingAgents = it
+                }
             )
             .commit()
     }
