@@ -100,6 +100,16 @@ class MainActivity : AppCompatActivity() {
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
 
+        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // This disable swipe when the user is on the MapView, in order to allow him to
+                //  navigate through the map.
+                viewPager?.isUserInputEnabled = (position == 0)
+            }
+        })
+
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
