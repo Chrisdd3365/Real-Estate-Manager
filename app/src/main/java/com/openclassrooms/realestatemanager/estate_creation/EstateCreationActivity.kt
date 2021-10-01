@@ -82,6 +82,9 @@ class EstateCreationActivity : AppCompatActivity() {
         if (intent.hasExtra(TAG_NEW_ESTATE))
             isNewEstate = intent.getBooleanExtra(TAG_NEW_ESTATE, true)
 
+        if (intent.hasExtra(TAG_CURRENT_LOCATION))
+            estatePosition = intent.extras?.get(TAG_CURRENT_LOCATION) as LatLng
+
         // Init layout variables
         fragmentRoot = binding.fragmentRoot
         previousButton = binding.previousButton

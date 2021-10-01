@@ -161,6 +161,7 @@ class MainActivity : AppCompatActivity() {
             if (isNewEstate) {
                 estateList.add(0, resultEstate)
                 propertiesListFragment?.addNewEstate(resultEstate)
+                mapViewFragment?.updateEstates(estateList)
             } else {
                 val editedIndex = estateList.indexOf(resultEstate)
                 if (editedIndex != -1) {

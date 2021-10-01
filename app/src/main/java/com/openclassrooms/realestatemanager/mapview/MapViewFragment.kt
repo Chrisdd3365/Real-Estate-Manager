@@ -82,16 +82,23 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
     private fun addMarkers() {
 
         for (estate : Estate in estatesList) {
-            // TODO
+            val latitude = estate.latitude
+            val longitude = estate.longitude
+            if (latitude != null && longitude != null) {
+                val estateType = context?.resources
+                    ?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!)
+                // TODO : Marker text should be set in multiple language and in square meters or
+                //  something else
+                googleMap?.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(latitude, longitude))
+                        .title("$estateType (${estate.surface} m2 at ${estate.price} $)")
+                )
+            }
         }
-
-        googleMap?.addMarker(
-            MarkerOptions()
-                .position(LatLng(0.0, 0.0))
-                .title("Test")
-        )
     }
 
+    // TODO : Create a function to add only one estate
     fun updateEstates(estatesList: ArrayList<Estate>) {
         this.estatesList.clear()
         this.estatesList.addAll(estatesList)
