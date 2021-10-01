@@ -1,15 +1,21 @@
 package com.openclassrooms.realestatemanager.main
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -36,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
     private var viewModel = MainActivityViewModel()
     private var resultLauncher : ActivityResultLauncher<Intent>? = null
+    private var permissionRequestLauncher : ActivityResultLauncher<String>? = null
+    private var fusedLocationClient : FusedLocationProviderClient? = null
 
     // Child fragments
     private var propertiesListFragment : PropertiesListFragment? = null
@@ -51,9 +59,13 @@ class MainActivity : AppCompatActivity() {
     private var areMiniFabEnabled = false
 
     private var estateList = ArrayList<Estate>()
+    private var lastKnownPosition : LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Setup location service client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(
             this, R.layout.activity_main
@@ -71,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         // Init child fragments
         propertiesListFragment = PropertiesListFragment.newInstance(estateList)
-        mapViewFragment = MapViewFragment.newInstance()
+        mapViewFragment = MapViewFragment.newInstance(estateList)
 
         // Create adapter
         mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
@@ -87,6 +99,16 @@ class MainActivity : AppCompatActivity() {
             else
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
         }.attach()
+
+        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // This disable swipe when the user is on the MapView, in order to allow him to
+                //  navigate through the map.
+                viewPager?.isUserInputEnabled = (position == 0)
+            }
+        })
 
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -107,12 +129,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
-            resultLauncher?.launch(EstateCreationActivity.newInstance(this, null, true))
+            resultLauncher?.launch(
+                EstateCreationActivity.newInstance(this, null, true,
+                    lastKnownPosition)
+            )
         }
 
         addAgentFab?.setOnClickListener {
             startActivity(AgentCreationActivity.newInstance(this))
         }
+
+        // Ask for location permissions
+        checkAndAskLocationPermissions()
 
         // Setup estate list
         DatabaseManager(this).getEstates({
@@ -120,6 +148,7 @@ class MainActivity : AppCompatActivity() {
             estateList = if (it.isEmpty()) getStaticEstateList() else it
             propertiesListFragment?.setEstateList(it)
             viewModel.setFragments()
+            mapViewFragment?.updateEstates(it)
         }, {
             // TODO
         })
@@ -142,6 +171,7 @@ class MainActivity : AppCompatActivity() {
             if (isNewEstate) {
                 estateList.add(0, resultEstate)
                 propertiesListFragment?.addNewEstate(resultEstate)
+                mapViewFragment?.updateEstates(estateList)
             } else {
                 val editedIndex = estateList.indexOf(resultEstate)
                 if (editedIndex != -1) {
@@ -153,11 +183,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun estateClicked(estateClicked : Estate) {
-        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked, false))
+        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked,
+            false, null))
     }
 
     private fun getStaticEstateList() : ArrayList<Estate> {
         return StaticData.staticEstatesList
+    }
+
+    fun getUserLastPosition(onLastLocationSuccess : ((LatLng) -> Unit)?) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient?.lastLocation?.addOnSuccessListener {
+                lastKnownPosition = LatLng(it.latitude, it.longitude)
+                onLastLocationSuccess?.invoke(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    private fun checkAndAskLocationPermissions() {
+        val locationPermission = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (locationPermission == PackageManager.PERMISSION_GRANTED) {
+            getUserLastPosition(null)
+            return
+        }
+
+        permissionRequestLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (!it) {
+                // TODO
+            }
+        }
+
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
     }
 
     companion object {

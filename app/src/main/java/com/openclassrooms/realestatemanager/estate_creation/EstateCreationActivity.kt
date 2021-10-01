@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.model.LatLng
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
@@ -53,6 +54,7 @@ class EstateCreationActivity : AppCompatActivity() {
     private var isNewEstate = false
     private var picturesList = ArrayList<Bitmap>()
     private var managingAgents = ArrayList<Agent>()
+    private var estatePosition : LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +81,9 @@ class EstateCreationActivity : AppCompatActivity() {
 
         if (intent.hasExtra(TAG_NEW_ESTATE))
             isNewEstate = intent.getBooleanExtra(TAG_NEW_ESTATE, true)
+
+        if (intent.hasExtra(TAG_CURRENT_LOCATION))
+            estatePosition = intent.extras?.get(TAG_CURRENT_LOCATION) as LatLng
 
         // Init layout variables
         fragmentRoot = binding.fragmentRoot
@@ -420,6 +425,8 @@ class EstateCreationActivity : AppCompatActivity() {
     private fun saveEstate(estateToSave: Estate?) {
         if (estateToSave == null)
             return
+        estateToSave.latitude = estatePosition?.latitude
+        estateToSave.longitude = estatePosition?.longitude
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
@@ -551,11 +558,15 @@ class EstateCreationActivity : AppCompatActivity() {
         private const val TAG_ESTATE = "estate"
         private const val TAG_NEW_ESTATE = "is_new_estate"
         private const val TAG_TO_DELETE = "to_delete"
+        private const val TAG_CURRENT_LOCATION = "current_location"
 
-        fun newInstance(context: Context, estate: Estate?, newEstate: Boolean) : Intent {
+        fun newInstance(context: Context, estate: Estate?, newEstate: Boolean, position: LatLng?)
+        : Intent {
             val intent = Intent(context, EstateCreationActivity::class.java)
             if (estate != null) intent.putExtra(TAG_ESTATE, estate)
             intent.putExtra(TAG_NEW_ESTATE, newEstate)
+            if (position != null)
+                intent.putExtra(TAG_CURRENT_LOCATION, position)
             return intent
         }
 
