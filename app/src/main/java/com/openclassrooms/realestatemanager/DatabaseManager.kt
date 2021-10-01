@@ -56,6 +56,8 @@ class DatabaseManager(context : Context)
             put(COLUMN_BUSES_NEARBY, estate.buses)
             put(COLUMN_SUBWAY_NEARBY, estate.subway)
             put(COLUMN_PARK_NEARBY, estate.park)
+            put(COLUMN_LATITUDE, estate.latitude)
+            put(COLUMN_LONGITURE, estate.longitude)
         }
 
         val insertedId = database.insert(ESTATE_TABLE, null, contentValues)
@@ -86,6 +88,8 @@ class DatabaseManager(context : Context)
             put(COLUMN_BUSES_NEARBY, estate.buses)
             put(COLUMN_SUBWAY_NEARBY, estate.subway)
             put(COLUMN_PARK_NEARBY, estate.park)
+            put(COLUMN_LATITUDE, estate.latitude)
+            put(COLUMN_LONGITURE, estate.longitude)
         }
 
         val affectedRows = database.update(
@@ -153,6 +157,8 @@ class DatabaseManager(context : Context)
                             buses = getBoolean(getColumnIndex(COLUMN_BUSES_NEARBY))
                             subway = getBoolean(getColumnIndex(COLUMN_SUBWAY_NEARBY))
                             park = getBoolean(getColumnIndex(COLUMN_PARK_NEARBY))
+                            latitude = getDouble(getColumnIndex(COLUMN_LATITUDE))
+                            longitude = getDouble(getColumnIndex(COLUMN_LONGITURE))
                         }
                     )
                 }
@@ -404,6 +410,8 @@ class DatabaseManager(context : Context)
         private const val COLUMN_BUSES_NEARBY = "buses_nearby"
         private const val COLUMN_SUBWAY_NEARBY = "subway_nearby"
         private const val COLUMN_PARK_NEARBY = "park_nearby"
+        private const val COLUMN_LATITUDE = "latitude"
+        private const val COLUMN_LONGITURE = "longitude"
 
         // Image table columns
         private const val COLUMN_IMAGE = "uri"
@@ -437,7 +445,9 @@ class DatabaseManager(context : Context)
                 $COLUMN_SHOP_NEARBY BOOLEAN,
                 $COLUMN_BUSES_NEARBY BOOLEAN,
                 $COLUMN_SUBWAY_NEARBY BOOLEAN,
-                $COLUMN_PARK_NEARBY BOOLEAN
+                $COLUMN_PARK_NEARBY BOOLEAN,
+                $COLUMN_LATITUDE REAL,
+                $COLUMN_LONGITURE REAL
             );
         """
 

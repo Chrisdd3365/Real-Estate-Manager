@@ -59,9 +59,13 @@ class MainActivity : AppCompatActivity() {
     private var areMiniFabEnabled = false
 
     private var estateList = ArrayList<Estate>()
+    private var lastKnownPosition : LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Setup location service client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(
             this, R.layout.activity_main
@@ -115,7 +119,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
-            resultLauncher?.launch(EstateCreationActivity.newInstance(this, null, true))
+            resultLauncher?.launch(
+                EstateCreationActivity.newInstance(this, null, true,
+                    lastKnownPosition)
+            )
         }
 
         addAgentFab?.setOnClickListener {
@@ -124,9 +131,6 @@ class MainActivity : AppCompatActivity() {
 
         // Ask for location permissions
         checkAndAskLocationPermissions()
-
-        // Setup location service client
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Setup estate list
         DatabaseManager(this).getEstates({
@@ -168,18 +172,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun estateClicked(estateClicked : Estate) {
-        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked, false))
+        resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked,
+            false, null))
     }
 
     private fun getStaticEstateList() : ArrayList<Estate> {
         return StaticData.staticEstatesList
     }
 
-    fun getUserLastPosition(onLastLocationSuccess : (LatLng) -> Unit) {
+    fun getUserLastPosition(onLastLocationSuccess : ((LatLng) -> Unit)?) {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                onLastLocationSuccess.invoke(LatLng(it.latitude, it.longitude))
+                lastKnownPosition = LatLng(it.latitude, it.longitude)
+                onLastLocationSuccess?.invoke(LatLng(it.latitude, it.longitude))
             }
         }
     }
@@ -189,8 +195,10 @@ class MainActivity : AppCompatActivity() {
             this, Manifest.permission.ACCESS_FINE_LOCATION
         )
 
-        if (locationPermission == PackageManager.PERMISSION_GRANTED)
+        if (locationPermission == PackageManager.PERMISSION_GRANTED) {
+            getUserLastPosition(null)
             return
+        }
 
         permissionRequestLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
