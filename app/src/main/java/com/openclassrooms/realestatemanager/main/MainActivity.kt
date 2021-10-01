@@ -1,15 +1,21 @@
 package com.openclassrooms.realestatemanager.main
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -36,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
     private var viewModel = MainActivityViewModel()
     private var resultLauncher : ActivityResultLauncher<Intent>? = null
+    private var permissionRequestLauncher : ActivityResultLauncher<String>? = null
+    private var fusedLocationClient : FusedLocationProviderClient? = null
 
     // Child fragments
     private var propertiesListFragment : PropertiesListFragment? = null
@@ -71,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         // Init child fragments
         propertiesListFragment = PropertiesListFragment.newInstance(estateList)
-        mapViewFragment = MapViewFragment.newInstance()
+        mapViewFragment = MapViewFragment.newInstance(estateList)
 
         // Create adapter
         mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
@@ -114,12 +122,19 @@ class MainActivity : AppCompatActivity() {
             startActivity(AgentCreationActivity.newInstance(this))
         }
 
+        // Ask for location permissions
+        checkAndAskLocationPermissions()
+
+        // Setup location service client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         // Setup estate list
         DatabaseManager(this).getEstates({
             // TODO : If the list is empty, show "No items" messages instead
             estateList = if (it.isEmpty()) getStaticEstateList() else it
             propertiesListFragment?.setEstateList(it)
             viewModel.setFragments()
+            mapViewFragment?.updateEstates(it)
         }, {
             // TODO
         })
@@ -158,6 +173,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun getStaticEstateList() : ArrayList<Estate> {
         return StaticData.staticEstatesList
+    }
+
+    fun getUserLastPosition(onLastLocationSuccess : (LatLng) -> Unit) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient?.lastLocation?.addOnSuccessListener {
+                onLastLocationSuccess.invoke(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    private fun checkAndAskLocationPermissions() {
+        val locationPermission = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (locationPermission == PackageManager.PERMISSION_GRANTED)
+            return
+
+        permissionRequestLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (!it) {
+                // TODO
+            }
+        }
+
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
     }
 
     companion object {
