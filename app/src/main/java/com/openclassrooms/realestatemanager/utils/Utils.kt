@@ -29,6 +29,14 @@ object Utils {
         return Math.round(dollars * 0.812).toInt()
     }
 
+    fun convertDollarToEuroDouble(dollars : Double) : Double {
+        return dollars * 0.812
+    }
+
+    fun convertEuroToDollarDouble(euros : Double) : Double {
+        return euros / 0.812
+    }
+
     /**
      * Conversion de la date d'aujourd'hui en un format plus approprié
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -76,5 +84,30 @@ object Utils {
             context,
             "${BuildConfig.APPLICATION_ID}.provider", tmpFile
         )
+    }
+
+    fun switchCurrency(context: Context) {
+        val newCurrency =
+            if (Singleton.currency == Enums.Currency.DOLLAR) Enums.Currency.EURO
+            else Enums.Currency.DOLLAR
+        changeCurrency(context, newCurrency)
+    }
+
+    /**
+     *  Saves the chosen currency in the [Singleton] and in the SharedPreferences.
+     *  @param context [Context] - Current context
+     *  @param newCurrency [Enums.Currency] - New currency to save.
+     */
+    fun changeCurrency(context: Context, newCurrency : Enums.Currency) {
+        Singleton.currency = newCurrency
+        Singleton.currencySymbol = if (newCurrency == Enums.Currency.DOLLAR) "$" else "€"
+        SharedPreferencesManager.saveCurrency(context, newCurrency)
+    }
+
+    fun getPriceWithCurrency(price : Double) : Double {
+        return if (Singleton.currency == Enums.Currency.DOLLAR)
+            price
+        else
+            convertDollarToEuroDouble(price)
     }
 }

@@ -11,4 +11,9 @@ object Enums {
         ASK_FOR_CONFIRMATION,
         SHOW_ESTATE
     }
+
+    enum class Currency {
+        DOLLAR,
+        EURO
+    }
 }

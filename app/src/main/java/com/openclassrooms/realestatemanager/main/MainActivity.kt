@@ -32,7 +32,7 @@ import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivi
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
-import com.openclassrooms.realestatemanager.utils.StaticData
+import com.openclassrooms.realestatemanager.utils.*
 
 // TODO : Add a splash screen before this activity
 
@@ -71,6 +71,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get the saved currency
+        // TODO : Move this in the splashscreen
+        Utils.changeCurrency(this, SharedPreferencesManager.getCurrency(this))
 
         // Setup location service client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -184,6 +188,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_switch_currency -> {
                     Log.d(TAG, "Switch currency !")
+                    Utils.switchCurrency(this)
                 }
                 R.id.nav_agents -> {
                     Log.d(TAG, "Show agents !")
