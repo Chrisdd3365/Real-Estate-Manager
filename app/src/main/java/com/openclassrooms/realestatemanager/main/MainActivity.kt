@@ -5,18 +5,23 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.openclassrooms.realestatemanager.DatabaseManager
@@ -44,12 +49,15 @@ class MainActivity : AppCompatActivity() {
     private var resultLauncher : ActivityResultLauncher<Intent>? = null
     private var permissionRequestLauncher : ActivityResultLauncher<String>? = null
     private var fusedLocationClient : FusedLocationProviderClient? = null
+    private var actionBarDrawerToggle : ActionBarDrawerToggle? = null
 
     // Child fragments
     private var propertiesListFragment : PropertiesListFragment? = null
     private var mapViewFragment : MapViewFragment? = null
 
     // Layout variables
+    private var drawerLayout : DrawerLayout? = null
+    private var navigationView : NavigationView? = null
     private var tabLayout : TabLayout? = null
     private var viewPager : ViewPager2? = null
     private var mainFab : FloatingActionButton? = null
@@ -73,6 +81,8 @@ class MainActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         // Init layout variables
+        drawerLayout = binding.drawerLayout
+        navigationView = binding.navigationView
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
         mainFab = binding.mainFab
@@ -80,6 +90,9 @@ class MainActivity : AppCompatActivity() {
         addAgentFab = binding.addAgentFab
 
         viewModel.setLoading()
+
+        // Setup NavigationDrawer
+        setupNavigationDrawer()
 
         // Init child fragments
         propertiesListFragment = PropertiesListFragment.newInstance(estateList)
@@ -154,6 +167,38 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun setupNavigationDrawer() {
+        actionBarDrawerToggle = ActionBarDrawerToggle(
+            this, drawerLayout, R.string.open_nav_bar, R.string.close_nav_bar
+        )
+        drawerLayout?.addDrawerListener(actionBarDrawerToggle!!)
+        actionBarDrawerToggle?.syncState()
+
+        // Make the Navigation drawer icon always appear on the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        navigationView?.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_switch_units -> {
+                    Log.d(TAG, "Switch units !")
+                }
+                R.id.nav_switch_currency -> {
+                    Log.d(TAG, "Switch currency !")
+                }
+                R.id.nav_agents -> {
+                    Log.d(TAG, "Show agents !")
+                }
+                R.id.nav_loaning_simulator -> {
+                    Log.d(TAG, "Loaning simulator !")
+                }
+                else -> {
+                    Log.d(TAG, "OTHER")
+                }
+            }
+            true
+        }
+    }
+
     private fun handleEstateChanges(resultIntent : Intent?) {
         if (resultIntent == null)
             return
@@ -222,6 +267,13 @@ class MainActivity : AppCompatActivity() {
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (actionBarDrawerToggle?.onOptionsItemSelected(item) == true) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

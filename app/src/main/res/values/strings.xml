@@ -70,6 +70,14 @@
     <string name="email">Email</string>
     <string name="phone_number">Phone number</string>
 
+    <!-- Navigation drawer -->
+    <string name="open_nav_bar">Open</string>
+    <string name="close_nav_bar">Close</string>
+    <string name="switch_units">Switch units (Square / Feet meters)</string>
+    <string name="switch_currency">Switch currency (Euro / Dollar)</string>
+    <string name="agents">See agents list</string>
+    <string name="loaning_simulator">Loaning simulator</string>
+
     <string name="dumb_error">An error occurred</string>
 
 </resources>
