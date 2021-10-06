@@ -10,6 +10,8 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.openclassrooms.realestatemanager.BuildConfig
 import java.io.File
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +21,10 @@ import java.util.*
  * Created by Philippe on 21/02/2018.
  */
 object Utils {
+
+    @Suppress("unused")
+    private const val TAG = "Utils"
+
     /**
      * Conversion d'un prix d'un bien immobilier (Dollars vers Euros)
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -30,11 +36,13 @@ object Utils {
     }
 
     fun convertDollarToEuroDouble(dollars : Double) : Double {
-        return dollars * 0.812
+        val bigDecimal = BigDecimal(dollars.times(0.812))
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
     }
 
     fun convertEuroToDollarDouble(euros : Double) : Double {
-        return euros / 0.812
+        val bigDecimal = BigDecimal(euros / 0.812)
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
     }
 
     /**
