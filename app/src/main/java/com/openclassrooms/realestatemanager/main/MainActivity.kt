@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
@@ -32,7 +33,7 @@ import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivi
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
-import com.openclassrooms.realestatemanager.utils.StaticData
+import com.openclassrooms.realestatemanager.utils.*
 
 // TODO : Add a splash screen before this activity
 
@@ -71,6 +72,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get the saved currency
+        // TODO : Move this in the splashscreen
+        Utils.changeCurrency(this, SharedPreferencesManager.getCurrency(this))
 
         // Setup location service client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -184,6 +189,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_switch_currency -> {
                     Log.d(TAG, "Switch currency !")
+                    switchCurrency()
                 }
                 R.id.nav_agents -> {
                     Log.d(TAG, "Show agents !")
@@ -267,6 +273,16 @@ class MainActivity : AppCompatActivity() {
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    /**
+     *  Changes the app currency display and closes the [DrawerLayout].
+     */
+    private fun switchCurrency() {
+        Utils.switchCurrency(this)
+        drawerLayout?.closeDrawer(GravityCompat.START)
+        propertiesListFragment?.currencyChanged()
+        mapViewFragment?.currencyChanged()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

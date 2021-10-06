@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.PropertiesListItemBinding
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.utils.Singleton
 
 class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -130,7 +131,7 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
                     ?.get(estate.typeIndex!!))
 
             city.set(estate.address)
-            price.set("${estate.price} $")
+            price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
         }
 
         fun setImage() {

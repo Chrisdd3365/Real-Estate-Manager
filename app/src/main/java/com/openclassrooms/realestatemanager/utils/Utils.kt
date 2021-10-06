@@ -10,6 +10,8 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.openclassrooms.realestatemanager.BuildConfig
 import java.io.File
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +21,10 @@ import java.util.*
  * Created by Philippe on 21/02/2018.
  */
 object Utils {
+
+    @Suppress("unused")
+    private const val TAG = "Utils"
+
     /**
      * Conversion d'un prix d'un bien immobilier (Dollars vers Euros)
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -27,6 +33,16 @@ object Utils {
      */
     fun convertDollarToEuro(dollars: Int): Int {
         return Math.round(dollars * 0.812).toInt()
+    }
+
+    fun convertDollarToEuroDouble(dollars : Double) : Double {
+        val bigDecimal = BigDecimal(dollars.times(0.812))
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+    }
+
+    fun convertEuroToDollarDouble(euros : Double) : Double {
+        val bigDecimal = BigDecimal(euros / 0.812)
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
     }
 
     /**
@@ -76,5 +92,30 @@ object Utils {
             context,
             "${BuildConfig.APPLICATION_ID}.provider", tmpFile
         )
+    }
+
+    fun switchCurrency(context: Context) {
+        val newCurrency =
+            if (Singleton.currency == Enums.Currency.DOLLAR) Enums.Currency.EURO
+            else Enums.Currency.DOLLAR
+        changeCurrency(context, newCurrency)
+    }
+
+    /**
+     *  Saves the chosen currency in the [Singleton] and in the SharedPreferences.
+     *  @param context [Context] - Current context
+     *  @param newCurrency [Enums.Currency] - New currency to save.
+     */
+    fun changeCurrency(context: Context, newCurrency : Enums.Currency) {
+        Singleton.currency = newCurrency
+        Singleton.currencySymbol = if (newCurrency == Enums.Currency.DOLLAR) "$" else "€"
+        SharedPreferencesManager.saveCurrency(context, newCurrency)
+    }
+
+    fun getPriceWithCurrency(price : Double) : Double {
+        return if (Singleton.currency == Enums.Currency.DOLLAR)
+            price
+        else
+            convertDollarToEuroDouble(price)
     }
 }
