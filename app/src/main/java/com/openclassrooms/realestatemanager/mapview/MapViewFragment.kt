@@ -13,11 +13,13 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentMapViewBinding
 import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.utils.Singleton
 
 /**
  *  Handles MapView using Google Maps API.
@@ -32,6 +34,8 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
 
     // Layout variables
     private var mapView : MapView? = null
+
+    private var markers = ArrayList<Marker>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,6 +85,8 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
 
     private fun addMarkers() {
 
+        removeMarkers()
+
         for (estate : Estate in estatesList) {
             val latitude = estate.latitude
             val longitude = estate.longitude
@@ -89,12 +95,24 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
                     ?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!)
                 // TODO : Marker text should be set in multiple language and in square meters or
                 //  something else
-                googleMap?.addMarker(
+                val marker = googleMap?.addMarker(
                     MarkerOptions()
                         .position(LatLng(latitude, longitude))
-                        .title("$estateType (${estate.surface} m2 at ${estate.price} $)")
+                        .title("$estateType (${estate.surface} m2 at ${estate.getPrice()} " +
+                                "${Singleton.currencySymbol})")
                 )
+                if (marker != null)
+                    markers.add(marker)
             }
+        }
+    }
+
+    /**
+     *  Removes every marker on [GoogleMap].
+     */
+    private fun removeMarkers() {
+        for (marker in markers) {
+            marker.remove()
         }
     }
 
@@ -102,6 +120,13 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
     fun updateEstates(estatesList: ArrayList<Estate>) {
         this.estatesList.clear()
         this.estatesList.addAll(estatesList)
+        addMarkers()
+    }
+
+    /**
+     *  Updates the [Marker]s to set the correct currency on their titles.
+     */
+    fun currencyChanged() {
         addMarkers()
     }
 

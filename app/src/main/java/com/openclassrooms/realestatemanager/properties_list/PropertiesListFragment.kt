@@ -75,6 +75,13 @@ class PropertiesListFragment : Fragment() {
         estatesList.removeAt(position)
     }
 
+    /**
+     *  Updates the [propertiesListAdapter] items to change the currency displayed.
+     */
+    fun currencyChanged() {
+        propertiesListAdapter.notifyItemRangeChanged(0, propertiesListAdapter.itemCount)
+    }
+
     companion object {
 
         /**

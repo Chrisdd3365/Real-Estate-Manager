@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
@@ -188,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_switch_currency -> {
                     Log.d(TAG, "Switch currency !")
-                    Utils.switchCurrency(this)
+                    switchCurrency()
                 }
                 R.id.nav_agents -> {
                     Log.d(TAG, "Show agents !")
@@ -272,6 +273,16 @@ class MainActivity : AppCompatActivity() {
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    /**
+     *  Changes the app currency display and closes the [DrawerLayout].
+     */
+    private fun switchCurrency() {
+        Utils.switchCurrency(this)
+        drawerLayout?.closeDrawer(GravityCompat.START)
+        propertiesListFragment?.currencyChanged()
+        mapViewFragment?.currencyChanged()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

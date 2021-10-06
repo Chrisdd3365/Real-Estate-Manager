@@ -58,7 +58,7 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
             if (estate?.typeIndex != null) typeSpinner?.setSelection(estate?.typeIndex!!)
             else typeSpinner?.setSelection(0)
             addressEditText?.setText(estate?.address)
-            priceEditText?.setText(estate?.price?.toString())
+            priceEditText?.setText(estate?.getPrice().toString())
             surfaceEditText?.setText(estate?.surface?.toString())
             descriptionEditText?.setText(estate?.description)
 
@@ -134,7 +134,7 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
         estate?.apply {
             typeIndex = typeSpinner?.selectedItemPosition!!
             address = addressEditText?.text.toString()
-            price = priceEditText?.text.toString().toFloat()
+            setPrice(priceEditText?.text.toString().toDouble())
             surface = surfaceEditText?.text.toString().toFloat()
             description = descriptionEditText?.text.toString()
         }

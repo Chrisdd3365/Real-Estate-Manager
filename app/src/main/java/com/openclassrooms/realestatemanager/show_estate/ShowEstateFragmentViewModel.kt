@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
+import com.openclassrooms.realestatemanager.utils.Singleton
 
 class ShowEstateFragmentViewModel : ViewModel() {
 
@@ -34,7 +35,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
         roomsCount.set("${estate.roomCount?.toString()} ${context?.getString(R.string.rooms)}")
         bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context?.getString(R.string.bedrooms)}")
         bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context?.getString(R.string.bathrooms)}")
-        price.set(estate.price?.toString() + "$") // TODO : Get price from utils
+        price.set(estate.getPrice().toString() + Singleton.currencySymbol)
         try {
             type.set(context?.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
         } catch (exception : Exception) {
