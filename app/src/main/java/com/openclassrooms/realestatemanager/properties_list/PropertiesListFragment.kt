@@ -61,6 +61,7 @@ class PropertiesListFragment : Fragment() {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             selectedEstate = clicked
             setupEstatePreview()
+            propertiesListAdapter.selectItem(estatesList.indexOf(clicked))
         } else {
             (activity as? MainActivity)?.estateClicked(clicked)
         }
@@ -91,6 +92,7 @@ class PropertiesListFragment : Fragment() {
             if (estatesList.isNotEmpty()) {
                 val newSelectedPosition = if (position == 0) position else position - 1
                 selectedEstate = estatesList[newSelectedPosition]
+                propertiesListAdapter.selectItem(newSelectedPosition)
                 setupEstatePreview()
             } else {
                 // TODO
@@ -126,8 +128,10 @@ class PropertiesListFragment : Fragment() {
     private fun setupEstatePreview() {
         if (selectedEstate == null && estatesList.isEmpty())
             return
-        if (selectedEstate == null)
+        if (selectedEstate == null) {
             selectedEstate = estatesList[0]
+            propertiesListAdapter.selectItem(0)
+        }
 
         showEstateFragment = ShowEstateFragment.newInstance(
             selectedEstate,
