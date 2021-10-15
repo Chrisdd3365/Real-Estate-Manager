@@ -122,6 +122,7 @@ class PropertiesListFragment : Fragment() {
             viewModel.setEstatePreview()
         } else {
             viewModel.removeEstatePreview()
+            propertiesListAdapter.unselectItem()
         }
     }
 
