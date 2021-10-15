@@ -8,32 +8,49 @@
             type="com.openclassrooms.realestatemanager.properties_list.PropertiesListFragmentViewModel" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".properties_list.PropertiesListFragment">
+        android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="@{viewModel.loadingVisibility}"/>
-
-        <TextView
-            android:id="@+id/no_properties_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_properties"
-            android:layout_gravity="center"
-            android:visibility="@{viewModel.noPropertiesVisibility}"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/properties_list_rv"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.propertiesListVisibility}"/>
+            android:layout_weight="1"
+            tools:context=".properties_list.PropertiesListFragment">
 
-    </FrameLayout>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.loadingVisibility}"/>
+
+            <TextView
+                android:id="@+id/no_properties_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_properties"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.noPropertiesVisibility}"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/properties_list_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.propertiesListVisibility}"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/estate_preview_layout"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:visibility="@{viewModel.estatePreviewVisibility}"
+            android:layout_weight="1">
+
+        </FrameLayout>
+
+    </LinearLayout>
 </layout>

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -113,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
         // Configure [TabLayout]
         TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
+
             if (position == 0)
                 tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
             else
@@ -293,8 +295,13 @@ class MainActivity : AppCompatActivity() {
     private fun switchUnit() {
         Utils.switchUnits(this)
         drawerLayout?.closeDrawer(GravityCompat.START)
-//        propertiesListFragment?.unitChanged()
+        propertiesListFragment?.unitChanged()
 //        mapViewFragment?.unitChanged()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        propertiesListFragment?.setupOrientation(newConfig.orientation)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
