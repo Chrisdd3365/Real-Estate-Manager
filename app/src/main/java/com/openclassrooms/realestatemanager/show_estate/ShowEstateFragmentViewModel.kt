@@ -30,12 +30,11 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     fun setData(context: Context?, estate: Estate) {
         description.set(estate.description)
-        // TODO : Get square meters or square feet given language
-        surfaceSize.set("${estate.surface.toString()} ${context?.getString(R.string.square_meters)}")
+        surfaceSize.set("${estate.getSurface()} ${Singleton.unitSymbol}")
         roomsCount.set("${estate.roomCount?.toString()} ${context?.getString(R.string.rooms)}")
         bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context?.getString(R.string.bedrooms)}")
         bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context?.getString(R.string.bathrooms)}")
-        price.set(estate.getPrice().toString() + Singleton.currencySymbol)
+        price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
         try {
             type.set(context?.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
         } catch (exception : Exception) {

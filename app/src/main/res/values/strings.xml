@@ -53,8 +53,6 @@
     <string name="empty_hint"> </string>
 
     <!-- Show estate display -->
-    <string name="square_meters">m²</string>
-    <string name="square_feet">ft²</string>
     <string name="rooms">rooms</string>
     <string name="bathrooms">bathrooms</string>
     <string name="bedrooms">bedrooms</string>

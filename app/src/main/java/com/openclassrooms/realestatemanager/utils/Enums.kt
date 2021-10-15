@@ -16,4 +16,9 @@ object Enums {
         DOLLAR,
         EURO
     }
+
+    enum class Unit {
+        METER,
+        FEET
+    }
 }

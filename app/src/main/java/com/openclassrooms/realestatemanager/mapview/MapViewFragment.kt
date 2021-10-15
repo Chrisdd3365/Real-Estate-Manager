@@ -98,8 +98,8 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
                 val marker = googleMap?.addMarker(
                     MarkerOptions()
                         .position(LatLng(latitude, longitude))
-                        .title("$estateType (${estate.surface} m2 at ${estate.getPrice()} " +
-                                "${Singleton.currencySymbol})")
+                        .title("$estateType (${estate.getSurface()} ${Singleton.unitSymbol} " +
+                                "at ${estate.getPrice()} ${Singleton.currencySymbol})")
                 )
                 if (marker != null)
                     markers.add(marker)

@@ -19,7 +19,7 @@ class Estate : Serializable {
     var onMarketSince : Date? = null
 
     private var price : Double? = null
-    var surface : Float? = null
+    private var surface : Double? = null
     var roomCount : Int? = null
     var bathroomsCount : Int? = null
     var bedroomsCount : Int? = null
@@ -60,7 +60,7 @@ class Estate : Serializable {
     }
 
     /**
-     *  Returns the original price (always in Dollars). This is mostly used when saving data in the
+     *  @return the original price (always in Dollars). This is mostly used when saving data in the
      *  database.
      */
     fun getDollarPrice() : Double {
@@ -74,6 +74,49 @@ class Estate : Serializable {
      */
     fun setDollarPrice(price: Double) {
         this.price = price
+    }
+
+    /**
+     *  Saves the surface of this [Estate] instance.
+     *  Note that we always save the surface in square feet, so if the user is currently using
+     *  square meters, we need to convert this surface in square feet before saving it.
+     *  @param surface [Double] - Surface of the [Estate] to save.
+     */
+    fun setSurface(surface: Double) {
+        this.surface =
+            if (Singleton.unit == Enums.Unit.FEET) surface
+            else Utils.convertSquareMetersToSquareFeet(surface)
+    }
+
+    /**
+     *  As we are always saving the surface in square feet, if the user is currently using square
+     *  meters, we first need to convert the surface before returning it.
+     *  @return [Double] - The surface of this [Estate], as it in square feet, or converted in
+     *  square meters.
+     */
+    fun getSurface() : Double {
+        return when {
+            surface == null -> 0.0
+            Singleton.unit ==  Enums.Unit.FEET  -> surface!!
+            else -> Utils.convertSquareFeetToSquareMeter(surface!!)
+        }
+    }
+
+    /**
+     *  When we want to save the surface in this [Estate] and we are sure that it is in square feet,
+     *  we can use this function. This is mostly used when retrieving data from the database.
+     *  @param surface [Double] - The new surface, in square feet, of this [Estate].
+     */
+    fun setSquareFeetSurface(surface: Double) {
+        this.surface = surface
+    }
+
+    /**
+     *  @return the original surface (always in square feet). This is mostly used when saving this
+     *  [Estate] in the database.
+     */
+    fun getSquareFeetSurface() : Double {
+        return if (surface == null) 0.0 else surface!!
     }
 
     override fun toString(): String {

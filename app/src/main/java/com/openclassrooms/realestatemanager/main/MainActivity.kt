@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         // Get the saved currency
         // TODO : Move this in the splashscreen
         Utils.changeCurrency(this, SharedPreferencesManager.getCurrency(this))
+        Utils.changeUnit(this, SharedPreferencesManager.getUnit(this))
 
         // Setup location service client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -186,6 +187,7 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.nav_switch_units -> {
                     Log.d(TAG, "Switch units !")
+                    switchUnit()
                 }
                 R.id.nav_switch_currency -> {
                     Log.d(TAG, "Switch currency !")
@@ -283,6 +285,16 @@ class MainActivity : AppCompatActivity() {
         drawerLayout?.closeDrawer(GravityCompat.START)
         propertiesListFragment?.currencyChanged()
         mapViewFragment?.currencyChanged()
+    }
+
+    /**
+     *  Changes the app unit display and closes the [DrawerLayout].
+     */
+    private fun switchUnit() {
+        Utils.switchUnits(this)
+        drawerLayout?.closeDrawer(GravityCompat.START)
+//        propertiesListFragment?.unitChanged()
+//        mapViewFragment?.unitChanged()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -45,6 +45,16 @@ object Utils {
         return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
     }
 
+    fun convertSquareMetersToSquareFeet(squareMeters: Double) : Double {
+        val bigDecimal = BigDecimal(squareMeters * 10.76391)
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+    }
+
+    fun convertSquareFeetToSquareMeter(squareFeet: Double) : Double {
+        val bigDecimal = BigDecimal(squareFeet / 10.76391)
+        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+    }
+
     /**
      * Conversion de la date d'aujourd'hui en un format plus approprié
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -117,5 +127,18 @@ object Utils {
             price
         else
             convertDollarToEuroDouble(price)
+    }
+
+    fun switchUnits(context: Context) {
+        val newUnit =
+            if (Singleton.unit == Enums.Unit.FEET) Enums.Unit.METER
+            else Enums.Unit.FEET
+        changeUnit(context, newUnit)
+    }
+
+    fun changeUnit(context: Context, newUnit : Enums.Unit) {
+        Singleton.unit = newUnit
+        Singleton.unitSymbol = if (newUnit == Enums.Unit.FEET) "ft²" else "m²"
+        SharedPreferencesManager.saveUnit(context, newUnit)
     }
 }
