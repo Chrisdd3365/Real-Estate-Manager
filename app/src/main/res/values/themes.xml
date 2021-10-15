@@ -35,4 +35,11 @@
     <style name="RealEstateManagerSpinner" parent="Widget.AppCompat.Spinner">
 
     </style>
+    <style name="Theme.RealEstateManager.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.RealEstateManager.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.RealEstateManager.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

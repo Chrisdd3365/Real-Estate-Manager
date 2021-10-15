@@ -87,6 +87,15 @@ class PropertiesListFragment : Fragment() {
     fun removeEstateAtPosition(position: Int) {
         propertiesListRv?.post { propertiesListAdapter.removeItem(position) }
         estatesList.removeAt(position)
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (estatesList.isNotEmpty()) {
+                val newSelectedPosition = if (position == 0) position else position - 1
+                selectedEstate = estatesList[newSelectedPosition]
+                setupEstatePreview()
+            } else {
+                // TODO
+            }
+        }
     }
 
     /**
@@ -142,6 +151,7 @@ class PropertiesListFragment : Fragment() {
 
     companion object {
 
+        @Suppress("unused")
         private const val TAG = "PropertiesListFrag"
 
         /**

@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -26,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.agent_creation.AgentCreationActivity
@@ -43,7 +45,7 @@ import com.openclassrooms.realestatemanager.utils.*
  *  It links a [ViewPager] with a [TabLayout] : Every time we swipe the [ViewPager], it also changes
  *  the tab name on [TabLayout], and reciprocally.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     // Helper classes
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
@@ -297,6 +299,25 @@ class MainActivity : AppCompatActivity() {
         drawerLayout?.closeDrawer(GravityCompat.START)
         propertiesListFragment?.unitChanged()
 //        mapViewFragment?.unitChanged()
+    }
+
+    override fun deleteEstate(estateToDelete : Estate) {
+        DatabaseManager(this).deleteEstate(
+            estateToDelete.id!!,
+            onSuccess = {
+                val index = estateList.indexOf(estateToDelete)
+                estateList.removeAt(index)
+                propertiesListFragment?.removeEstateAtPosition(index)
+            },
+            onFailure = {
+                Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                    .show()
+            }
+        )
+    }
+
+    override fun handleCompleteEstateCreationCancelled(estateToEdit: Estate) {
+        estateClicked(estateToEdit)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

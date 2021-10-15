@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
+import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentShowEstateBinding
@@ -95,7 +96,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
                 leftButton?.setOnClickListener {
                     // The user wants to edit the data he provided, so we send him back to the
                     //  first fragment of EstateCreationActivity.
-                    (activity as? EstateCreationActivity)?.handleCompleteEstateCreationCancelled()
+                    (activity as? BaseActivity)?.handleCompleteEstateCreationCancelled(estate!!)
                 }
                 rightButton?.setOnClickListener {
                     // The user is satisfied with the current data of the estate, we save this
@@ -105,10 +106,10 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
             }
             Enums.ShowEstateType.SHOW_ESTATE -> {
                 leftButton?.setOnClickListener {
-                    (activity as? EstateCreationActivity)?.deleteEstate()
+                    (activity as? BaseActivity)?.deleteEstate(estate!!)
                 }
                 rightButton?.setOnClickListener {
-                    (activity as? EstateCreationActivity)?.handleCompleteEstateCreationCancelled()
+                    (activity as? BaseActivity)?.handleCompleteEstateCreationCancelled(estate!!)
                 }
             }
         }
