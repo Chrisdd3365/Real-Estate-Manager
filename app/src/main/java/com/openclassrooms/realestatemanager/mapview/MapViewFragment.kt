@@ -26,7 +26,7 @@ import com.openclassrooms.realestatemanager.utils.Singleton
  *  Note that if you are testing this app on an emulator, the OpenGL API level should be set on 2.0.
  *  @see <a href="https://stackoverflow.com/a/48421364/8286029">StackOverflow answer</a>
  */
-class MapViewFragment() : Fragment() {
+class MapViewFragment : Fragment() {
 
     // Helper classes
     private val viewModel = MapViewFragmentViewModel()

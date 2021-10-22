@@ -72,6 +72,7 @@ class MainActivity : BaseActivity() {
 
     private var estateList = ArrayList<Estate>()
     private var lastKnownPosition : LatLng? = null
+    private var orientation = Configuration.ORIENTATION_UNDEFINED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,6 +141,9 @@ class MainActivity : BaseActivity() {
         // Ask for location permissions
         checkAndAskLocationPermissions()
 
+        // Setup orientation
+        orientation = resources.configuration.orientation
+
         // Setup estate list
         if (savedInstanceState == null) {
             DatabaseManager(this).getEstates({
@@ -183,8 +187,10 @@ class MainActivity : BaseActivity() {
                 super.onPageSelected(position)
 
                 // This disable swipe when the user is on the MapView, in order to allow him to
-                //  navigate through the map.
-                viewPager?.isUserInputEnabled = (position == 0)
+                //  navigate through the map, or when the user is in landscape mode, for smoother
+                //  navigation.
+                viewPager?.isUserInputEnabled =
+                    (position == 0 && orientation != Configuration.ORIENTATION_LANDSCAPE)
             }
         })
 
@@ -337,7 +343,8 @@ class MainActivity : BaseActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        propertiesListFragment?.setupOrientation(newConfig.orientation)
+        orientation = newConfig.orientation
+        propertiesListFragment?.setupOrientation(orientation)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
