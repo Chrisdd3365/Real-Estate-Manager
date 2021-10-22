@@ -76,6 +76,11 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (savedInstanceState != null) {
+            val saved = savedInstanceState.getSerializable("test") as ArrayList<*>
+            estateList = saved as ArrayList<Estate>
+        }
+
         // Get the saved currency
         // TODO : Move this in the splashscreen
         Utils.changeCurrency(this, SharedPreferencesManager.getCurrency(this))
@@ -102,36 +107,6 @@ class MainActivity : BaseActivity() {
 
         // Setup NavigationDrawer
         setupNavigationDrawer()
-
-        // Init child fragments
-        propertiesListFragment = PropertiesListFragment.newInstance(estateList)
-        mapViewFragment = MapViewFragment.newInstance(estateList)
-
-        // Create adapter
-        mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
-            mapViewFragment!!)
-
-        // Configure [ViewPager]
-        viewPager?.adapter = mainViewPagerAdapter
-
-        // Configure [TabLayout]
-        TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
-
-            if (position == 0)
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
-            else
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
-        }.attach()
-
-        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-
-                // This disable swipe when the user is on the MapView, in order to allow him to
-                //  navigate through the map.
-                viewPager?.isUserInputEnabled = (position == 0)
-            }
-        })
 
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -166,15 +141,55 @@ class MainActivity : BaseActivity() {
         checkAndAskLocationPermissions()
 
         // Setup estate list
-        DatabaseManager(this).getEstates({
-            // TODO : If the list is empty, show "No items" messages instead
-            estateList = if (it.isEmpty()) getStaticEstateList() else it
-            propertiesListFragment?.setEstateList(it)
-            viewModel.setFragments()
-            mapViewFragment?.updateEstates(it)
-        }, {
-            // TODO
+        if (savedInstanceState == null) {
+            DatabaseManager(this).getEstates({
+                // TODO : If the list is empty, show "No items" messages instead
+                estateList = if (it.isEmpty()) getStaticEstateList() else it
+                propertiesListFragment?.setEstateList(it)
+                viewModel.setFragments()
+                mapViewFragment?.updateEstates(it)
+                setupChildFragments()
+            }, {
+                // TODO
+            })
+        } else {
+            setupChildFragments()
+        }
+    }
+
+    private fun setupChildFragments() {
+        // Init child fragments
+        propertiesListFragment = PropertiesListFragment.newInstance(estateList)
+        mapViewFragment = MapViewFragment.newInstance(estateList)
+
+        // Create adapter
+        mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
+            mapViewFragment!!)
+
+        // Configure [ViewPager]
+        viewPager?.adapter = mainViewPagerAdapter
+
+        // Configure [TabLayout]
+        TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
+
+            if (position == 0)
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
+            else
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
+        }.attach()
+
+        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // This disable swipe when the user is on the MapView, in order to allow him to
+                //  navigate through the map.
+                viewPager?.isUserInputEnabled = (position == 0)
+            }
         })
+
+        viewModel.setFragments()
+//        propertiesListFragment?.setEstateList(estateList)
     }
 
     private fun setupNavigationDrawer() {
@@ -330,6 +345,11 @@ class MainActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("test", estateList)
+        super.onSaveInstanceState(outState)
     }
 
     companion object {

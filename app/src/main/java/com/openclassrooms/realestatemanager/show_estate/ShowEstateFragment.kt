@@ -25,11 +25,8 @@ import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 
-class ShowEstateFragment(private var estate: Estate?, private var type : Enums.ShowEstateType,
-                         private var picturesList : ArrayList<Bitmap>,
-                         private var managingAgents : ArrayList<Agent>,
-                         private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
-                         private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit)
+class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
+                         private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit = {})
     : Fragment() {
 
     // Helper classes
@@ -44,6 +41,11 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
 
+    private var estate : Estate? = null
+    private var type : Enums.ShowEstateType? = null
+    private var picturesList = ArrayList<Bitmap>()
+    private var managingAgents = ArrayList<Agent>()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
@@ -54,6 +56,18 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
 
         binding.viewModel = viewModel
 
+        if (arguments != null) {
+            estate = arguments?.getSerializable(TAG_ESTATE) as Estate
+            if (requireArguments().containsKey(TAG_TYPE)) {
+                val typeOrdinal = arguments?.getInt(TAG_TYPE)
+                type = Enums.ShowEstateType.values()[typeOrdinal ?: 0]
+            }
+//            picturesList = arguments?.getParcelableArray(TAG_PICTURES)
+//            managingAgents = arguments?.getSerializable()
+        } else {
+            type = Enums.ShowEstateType.SHOW_ESTATE
+        }
+
         typeIcon = binding.typeIcon
         leftButton = binding.leftButton
         rightButton = binding.rightButton
@@ -61,7 +75,7 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
 
-        viewModel.setButtonsText(context, type)
+        viewModel.setButtonsText(context, type!!)
         viewModel.setData(context, estate!!)
 
         setTypeIcon()
@@ -230,14 +244,30 @@ class ShowEstateFragment(private var estate: Estate?, private var type : Enums.S
         @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
+        private const val TAG_ESTATE = "estate"
+        private const val TAG_TYPE = "type"
+        private const val TAG_PICTURES = "pictures"
+        private const val TAG_AGENTS = "agents"
+
         fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
                         picturesList : ArrayList<Bitmap>,
                         managingAgents : ArrayList<Agent>,
                         picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
                         managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit)
         : ShowEstateFragment {
-            return ShowEstateFragment(estate, type, picturesList, managingAgents,
-                picturesRetrievedCallback, managingAgentsRetrievedCallback)
+
+            val fragment = ShowEstateFragment()
+            val bundle = Bundle()
+            bundle.putSerializable(TAG_ESTATE, estate)
+            bundle.putInt(TAG_TYPE, type.ordinal)
+//            bundle.putParcelableArray(TAG_PICTURES, picturesList) // FIXME
+            bundle.putSerializable(TAG_AGENTS, managingAgents)
+            fragment.arguments = bundle
+
+            return fragment
+//
+//            return ShowEstateFragment(estate, type, picturesList, managingAgents,
+//                picturesRetrievedCallback, managingAgentsRetrievedCallback)
         }
 
     }

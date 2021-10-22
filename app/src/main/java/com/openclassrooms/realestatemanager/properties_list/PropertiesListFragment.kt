@@ -41,6 +41,15 @@ class PropertiesListFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        if (arguments != null && arguments?.containsKey(TAG_ESTATES) == true) {
+            val estateArgs = requireArguments().getSerializable(TAG_ESTATES) as ArrayList<*>
+            estatesList = ArrayList()
+            for (estateArg in estateArgs) {
+//                estatesList.add(Estate().apply { typeIndex = 1 })
+                estatesList.add(estateArg as Estate)
+            }
+        }
+
         setupOrientation(resources.configuration.orientation)
 
         if (estatesList.isEmpty()) viewModel.setNoProperties() else viewModel.setLoading()
@@ -138,26 +147,22 @@ class PropertiesListFragment : Fragment() {
             selectedEstate,
             Enums.ShowEstateType.SHOW_ESTATE,
             ArrayList(), ArrayList(),
-            picturesRetrievedCallback = {
-
-            },
-            managingAgentsRetrievedCallback = {
-
-            }
+            // TODO : Set a default function for this
+            picturesRetrievedCallback = {},
+            managingAgentsRetrievedCallback = {}
         )
 
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(
-                R.id.estate_preview_layout,
-                showEstateFragment!!
-            )
-            ?.commit()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.estate_preview_layout, showEstateFragment!!)
+            .commit()
     }
 
     companion object {
 
         @Suppress("unused")
         private const val TAG = "PropertiesListFrag"
+
+        private const val TAG_ESTATES = "estates"
 
         /**
          * Use this factory method to create a new instance of
@@ -167,8 +172,9 @@ class PropertiesListFragment : Fragment() {
          */
         fun newInstance(estateList : ArrayList<Estate>) : PropertiesListFragment {
             val fragment = PropertiesListFragment()
-            fragment.estatesList = estateList
-
+            val bundle = Bundle()
+            bundle.putSerializable(TAG_ESTATES, estateList)
+            fragment.arguments = bundle
             return fragment
         }
     }
