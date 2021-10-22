@@ -25,7 +25,7 @@ class PropertiesListFragment : Fragment() {
     // Layout variables
     private var propertiesListRv : RecyclerView? = null
 
-    var estatesList = ArrayList<Estate>()
+    var estatesList : ArrayList<Estate>? = null
 
     var orientation = Configuration.ORIENTATION_UNDEFINED
     private var showEstateFragment : ShowEstateFragment? = null
@@ -45,21 +45,20 @@ class PropertiesListFragment : Fragment() {
             val estateArgs = requireArguments().getSerializable(TAG_ESTATES) as ArrayList<*>
             estatesList = ArrayList()
             for (estateArg in estateArgs) {
-//                estatesList.add(Estate().apply { typeIndex = 1 })
-                estatesList.add(estateArg as Estate)
+                estatesList?.add(estateArg as Estate)
             }
         }
 
         setupOrientation(resources.configuration.orientation)
 
-        if (estatesList.isEmpty()) viewModel.setNoProperties() else viewModel.setLoading()
+        if (estatesList?.isEmpty() == true) viewModel.setNoProperties() else viewModel.setLoading()
 
         propertiesListRv = binding.propertiesListRv
         propertiesListRv?.layoutManager = LinearLayoutManager(context)
         propertiesListRv?.adapter = propertiesListAdapter
 
         propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList)
+            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
         }
 
@@ -67,10 +66,10 @@ class PropertiesListFragment : Fragment() {
     }
 
     private fun estateClicked(clicked : Estate) {
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE && estatesList != null) {
             selectedEstate = clicked
             setupEstatePreview()
-            propertiesListAdapter.selectItem(estatesList.indexOf(clicked))
+            propertiesListAdapter.selectItem(estatesList!!.indexOf(clicked))
         } else {
             (activity as? MainActivity)?.estateClicked(clicked)
         }
@@ -79,28 +78,32 @@ class PropertiesListFragment : Fragment() {
     fun setEstateList(list : ArrayList<Estate>) {
         this.estatesList = list
         propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList)
+            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
         }
     }
 
     fun addNewEstate(estate : Estate) {
-        estatesList.add(estate)
+        if (estatesList == null)
+            estatesList = ArrayList()
+        estatesList!!.add(estate)
         propertiesListRv?.post { propertiesListAdapter.addItem(0, estate) }
     }
 
     fun editEstateAtPosition(position: Int, estate: Estate) {
-        estatesList[position] = estate
-        propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
+        if (estatesList != null && position < estatesList!!.size) {
+            estatesList!![position] = estate
+            propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
+        }
     }
 
     fun removeEstateAtPosition(position: Int) {
         propertiesListRv?.post { propertiesListAdapter.removeItem(position) }
-        estatesList.removeAt(position)
+        estatesList?.removeAt(position)
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (estatesList.isNotEmpty()) {
+            if (estatesList != null && estatesList?.isNotEmpty() == true) {
                 val newSelectedPosition = if (position == 0) position else position - 1
-                selectedEstate = estatesList[newSelectedPosition]
+                selectedEstate = estatesList!![newSelectedPosition]
                 propertiesListAdapter.selectItem(newSelectedPosition)
                 setupEstatePreview()
             } else {
@@ -136,10 +139,10 @@ class PropertiesListFragment : Fragment() {
     }
 
     private fun setupEstatePreview() {
-        if (selectedEstate == null && estatesList.isEmpty())
+        if (selectedEstate == null && (estatesList == null || estatesList!!.isEmpty()))
             return
-        if (selectedEstate == null) {
-            selectedEstate = estatesList[0]
+        if (selectedEstate == null && estatesList != null) {
+            selectedEstate = estatesList!![0]
             propertiesListAdapter.selectItem(0)
         }
 

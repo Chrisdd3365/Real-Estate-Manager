@@ -32,6 +32,8 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     }
 
     fun selectItem(index: Int) {
+        if (selectedItem == index)
+            return
         selectedItem = index
         notifyItemRangeChanged(0, itemCount)
     }
@@ -78,7 +80,6 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     inner class PropertiesListItemViewHolder(private val binding : PropertiesListItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
-        private var bitmap : Bitmap? = null
         private val viewModel = PropertiesListItemViewModel()
 
         fun setData(context: Context?, estate: Estate, selected: Boolean) {
@@ -103,19 +104,16 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             binding.itemRoot.setOnClickListener { clicked.invoke(estate) }
             setPlaceHolder(estate.typeIndex!!)
 
-            if (bitmap == null && context != null && estate.id != null) {
+            if (context != null) {
                 DatabaseManager(context).getImagesForEstate(
                     estate.id!!,
                     success = {
-                        bitmap = it[0]
-                        setImage(bitmap!!)
+                        setImage(it[0])
                     },
                     failure = {
                         setPlaceHolder(estate.typeIndex!!)
                     }
                 )
-            } else if (bitmap != null) {
-                setImage(bitmap!!)
             } else {
                 setPlaceHolder(estate.typeIndex!!)
             }
