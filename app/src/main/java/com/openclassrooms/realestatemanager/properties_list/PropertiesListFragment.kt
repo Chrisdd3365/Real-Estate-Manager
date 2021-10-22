@@ -128,10 +128,13 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun setupOrientation(orientation : Int) {
+        orientation
         this.orientation = orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setupEstatePreview()
             viewModel.setEstatePreview()
+            if (showEstateFragment != null)
+                showEstateFragment?.setupOrientation(orientation)
         } else {
             viewModel.removeEstatePreview()
             propertiesListAdapter.unselectItem()
@@ -149,6 +152,7 @@ class PropertiesListFragment : Fragment() {
         showEstateFragment = ShowEstateFragment.newInstance(
             selectedEstate,
             Enums.ShowEstateType.SHOW_ESTATE,
+            orientation,
             ArrayList(), ArrayList(),
             // TODO : Set a default function for this
             picturesRetrievedCallback = {},

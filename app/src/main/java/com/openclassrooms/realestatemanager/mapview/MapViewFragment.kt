@@ -26,7 +26,7 @@ import com.openclassrooms.realestatemanager.utils.Singleton
  *  Note that if you are testing this app on an emulator, the OpenGL API level should be set on 2.0.
  *  @see <a href="https://stackoverflow.com/a/48421364/8286029">StackOverflow answer</a>
  */
-class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
+class MapViewFragment() : Fragment() {
 
     // Helper classes
     private val viewModel = MapViewFragmentViewModel()
@@ -35,6 +35,7 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
     // Layout variables
     private var mapView : MapView? = null
 
+    private var estatesList: ArrayList<Estate> = ArrayList()
     private var markers = ArrayList<Marker>()
 
     override fun onCreateView(
@@ -45,6 +46,13 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
             inflater, R.layout.fragment_map_view, container, false
         )
         binding.viewModel = viewModel
+
+        if (arguments != null && requireArguments().containsKey(TAG_ESTATES)) {
+            val estatesArgs = requireArguments().getSerializable(TAG_ESTATES) as ArrayList<*>
+            for (estateArgs in estatesArgs) {
+                estatesList.add(estateArgs as Estate)
+            }
+        }
 
         mapView = binding.mapView
 
@@ -152,10 +160,18 @@ class MapViewFragment(private val estatesList: ArrayList<Estate>) : Fragment() {
 
     companion object {
 
+        @Suppress("unused")
         private const val TAG = "MapViewFragment"
 
+        private const val TAG_ESTATES = "estates"
+
         fun newInstance(estatesList : ArrayList<Estate>): MapViewFragment {
-            return MapViewFragment(estatesList)
+            val fragment = MapViewFragment()
+            val bundle = Bundle().apply {
+                putSerializable(TAG_ESTATES, estatesList)
+            }
+            fragment.arguments = bundle
+            return fragment
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.openclassrooms.realestatemanager.show_estate
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -45,6 +48,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var type : Enums.ShowEstateType? = null
     private var picturesList = ArrayList<Bitmap>()
     private var managingAgents = ArrayList<Agent>()
+    private var orientation = Configuration.ORIENTATION_UNDEFINED
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -62,8 +66,22 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 val typeOrdinal = arguments?.getInt(TAG_TYPE)
                 type = Enums.ShowEstateType.values()[typeOrdinal ?: 0]
             }
-//            picturesList = arguments?.getParcelableArray(TAG_PICTURES)
-//            managingAgents = arguments?.getSerializable()
+            if (requireArguments().containsKey(TAG_PICTURES)) {
+                val picturesArgs = arguments?.getParcelableArrayList<Parcelable>(TAG_PICTURES)
+                if (picturesArgs != null) {
+                    for (pictureArgs in picturesArgs) {
+                        picturesList.add(pictureArgs as Bitmap)
+                    }
+                }
+            }
+            if (requireArguments().containsKey(TAG_AGENTS)) {
+                val agentsArgs = arguments?.getSerializable(TAG_AGENTS) as ArrayList<*>
+                for (agentArgs in agentsArgs) {
+                    managingAgents.add(agentArgs as Agent)
+                }
+            }
+            if (requireArguments().containsKey(TAG_ORIENTATION))
+                orientation = requireArguments().getInt(TAG_ORIENTATION)
         } else {
             type = Enums.ShowEstateType.SHOW_ESTATE
         }
@@ -74,6 +92,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
+
+        setupOrientation(orientation)
 
         viewModel.setButtonsText(context, type!!)
         viewModel.setData(context, estate!!)
@@ -239,35 +259,51 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         viewModel.showManagingAgents()
     }
 
+    fun setupOrientation(orientation : Int) {
+        this.orientation = orientation
+        if (picturesViewPager != null) {
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                picturesViewPager?.layoutParams = ViewGroup.LayoutParams(
+                    MATCH_PARENT, 250)
+            } else {
+                picturesViewPager?.layoutParams = ViewGroup.LayoutParams(
+                    MATCH_PARENT, 500)
+            }
+        }
+    }
+
     companion object {
 
         @Suppress("unused")
         private const val TAG = "ShowEstateActivity"
 
+        private const val TAG_ORIENTATION = "orientation"
         private const val TAG_ESTATE = "estate"
         private const val TAG_TYPE = "type"
         private const val TAG_PICTURES = "pictures"
         private const val TAG_AGENTS = "agents"
 
         fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
+                        orientation: Int = Configuration.ORIENTATION_UNDEFINED,
                         picturesList : ArrayList<Bitmap>,
                         managingAgents : ArrayList<Agent>,
                         picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
                         managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit)
         : ShowEstateFragment {
 
-            val fragment = ShowEstateFragment()
+            val fragment = ShowEstateFragment(
+                picturesRetrievedCallback,
+                managingAgentsRetrievedCallback
+            )
             val bundle = Bundle()
             bundle.putSerializable(TAG_ESTATE, estate)
             bundle.putInt(TAG_TYPE, type.ordinal)
-//            bundle.putParcelableArray(TAG_PICTURES, picturesList) // FIXME
+            bundle.putParcelableArrayList(TAG_PICTURES, picturesList)
             bundle.putSerializable(TAG_AGENTS, managingAgents)
+            bundle.putInt(TAG_ORIENTATION, orientation)
             fragment.arguments = bundle
 
             return fragment
-//
-//            return ShowEstateFragment(estate, type, picturesList, managingAgents,
-//                picturesRetrievedCallback, managingAgentsRetrievedCallback)
         }
 
     }

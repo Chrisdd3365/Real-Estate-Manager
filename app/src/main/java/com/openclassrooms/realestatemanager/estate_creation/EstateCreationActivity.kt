@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -342,7 +343,8 @@ class EstateCreationActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type, picturesList, managingAgents,
+                ShowEstateFragment.newInstance(estate, type, Configuration.ORIENTATION_UNDEFINED,
+                    picturesList, managingAgents,
                     picturesRetrievedCallback = {
                         picturesList = it
                     },
