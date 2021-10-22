@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
@@ -21,12 +22,25 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     private var context : Context? = null
 
     private var items = ArrayList<Estate>()
+    private var selectedItem : Int? = null
 
     fun setData(context: Context?, estates : ArrayList<Estate>) {
         this.context = context
         items.clear()
         items.addAll(estates)
         notifyDataSetChanged()
+    }
+
+    fun selectItem(index: Int) {
+        if (selectedItem == index)
+            return
+        selectedItem = index
+        notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun unselectItem() {
+        selectedItem = null
+        notifyItemRangeChanged(0, itemCount)
     }
 
     fun addItem(index: Int?, toAdd : Estate) {
@@ -57,7 +71,8 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as PropertiesListItemViewHolder).setData(context, items[position])
+        (holder as PropertiesListItemViewHolder)
+            .setData(context, items[position], (position == selectedItem))
     }
 
     override fun getItemCount(): Int = items.size
@@ -65,10 +80,22 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     inner class PropertiesListItemViewHolder(private val binding : PropertiesListItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
-        private var bitmap : Bitmap? = null
         private val viewModel = PropertiesListItemViewModel()
 
-        fun setData(context: Context?, estate: Estate) {
+        fun setData(context: Context?, estate: Estate, selected: Boolean) {
+
+            if (context != null) {
+                if (selected) {
+                    binding.itemRoot.setCardBackgroundColor(
+                        ContextCompat.getColor(context, R.color.selectedCardView)
+                    )
+                } else {
+                    binding.itemRoot.setCardBackgroundColor(
+                        ContextCompat.getColor(context, R.color.cardview_dark_background)
+                    )
+                }
+            }
+
             binding.viewModel = viewModel
 
             viewModel.setLoading()
@@ -77,19 +104,16 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             binding.itemRoot.setOnClickListener { clicked.invoke(estate) }
             setPlaceHolder(estate.typeIndex!!)
 
-            if (bitmap == null && context != null && estate.id != null) {
+            if (context != null) {
                 DatabaseManager(context).getImagesForEstate(
                     estate.id!!,
                     success = {
-                        bitmap = it[0]
-                        setImage(bitmap!!)
+                        setImage(it[0])
                     },
                     failure = {
                         setPlaceHolder(estate.typeIndex!!)
                     }
                 )
-            } else if (bitmap != null) {
-                setImage(bitmap!!)
             } else {
                 setPlaceHolder(estate.typeIndex!!)
             }

@@ -15,28 +15,29 @@
         android:layout_height="match_parent"
         tools:context=".show_estate.ShowEstateFragment">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/pictures_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:background="@color/defaultElevatedBackground"
-            android:maxHeight="250dp"
-            android:visibility="@{viewModel.imagesLayoutVisibility}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toTopOf="@+id/buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pictures_view_pager">
+            app:layout_constraintTop_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="100dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/pictures_view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@color/defaultElevatedBackground"
+                    android:maxHeight="250dp"
+                    android:visibility="@{viewModel.imagesLayoutVisibility}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView"
@@ -47,7 +48,7 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pictures_view_pager"
                     tools:text="Test description" />
 
                 <LinearLayout
@@ -255,8 +256,8 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="15dp"
                     android:text="@string/managing_agents"
-                    android:textStyle="bold"
                     android:textSize="15sp"
+                    android:textStyle="bold"
                     android:visibility="@{viewModel.managingAgentsVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

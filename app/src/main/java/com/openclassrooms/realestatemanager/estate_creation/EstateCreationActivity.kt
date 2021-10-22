@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
+import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityEstateCreationBinding
@@ -34,7 +36,7 @@ import com.openclassrooms.realestatemanager.utils.Enums
  *  - BasicDetailsFragment : For the type, description, address, price & surface
  *  - Skip-able fragments with a single question on each of them (room count, etc).
  */
-class EstateCreationActivity : AppCompatActivity() {
+class EstateCreationActivity : BaseActivity() {
 
     // Helper classes
     private val viewModel = EstateCreationActivityViewModel()
@@ -48,7 +50,6 @@ class EstateCreationActivity : AppCompatActivity() {
     private var previousButton : Button? = null
     private var nextButton : Button? = null
 
-    private var estate : Estate? = null
     private var optionalDetailsFragmentPosition = -1
     private var isEditing = false
     private var isNewEstate = false
@@ -342,7 +343,8 @@ class EstateCreationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                ShowEstateFragment.newInstance(estate, type, picturesList, managingAgents,
+                ShowEstateFragment.newInstance(estate, type, Configuration.ORIENTATION_UNDEFINED,
+                    picturesList, managingAgents,
                     picturesRetrievedCallback = {
                         picturesList = it
                     },
@@ -359,7 +361,7 @@ class EstateCreationActivity : AppCompatActivity() {
      *  in the database (as the images database is using a foreign key on the [Estate] id), then
      *  delete the actual [Estate].
      */
-    fun deleteEstate() {
+    override fun deleteEstate(estateToDelete: Estate) {
         if (estate != null && estate?.id != null) {
             viewModel.setLoading()
             val databaseManager = DatabaseManager(this)
@@ -394,7 +396,7 @@ class EstateCreationActivity : AppCompatActivity() {
      *  provided data.
      *  Finally we call [showFirstFragment].
      */
-    fun handleCompleteEstateCreationCancelled() {
+    override fun handleCompleteEstateCreationCancelled(estateToEdit : Estate) {
         // Remove every fragment in the Activity
         for (fragment in supportFragmentManager.fragments) {
             supportFragmentManager.beginTransaction().remove(fragment).commit()
@@ -404,7 +406,7 @@ class EstateCreationActivity : AppCompatActivity() {
 
         setupOptionalDetailsFragmentList()
         optionalDetailsFragmentPosition = -1
-        showFirstFragment(estate)
+        showFirstFragment(estateToEdit)
     }
 
     /**

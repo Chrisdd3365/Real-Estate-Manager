@@ -1,8 +1,9 @@
 package com.openclassrooms.realestatemanager.model
 
 import android.graphics.Bitmap
+import java.io.Serializable
 
-class Agent {
+class Agent : Serializable {
 
     var id : Int? = null
     var firstName : String? = null

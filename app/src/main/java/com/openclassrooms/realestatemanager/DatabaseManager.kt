@@ -106,7 +106,7 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke()
     }
 
-    fun deleteEstate(idToDelete : Int, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
+    fun deleteEstate(idToDelete : Int, onSuccess: (() -> Unit)?, onFailure: (() -> Unit)?) {
         val database = this.writableDatabase
 
         val affectedRows = database.delete(

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 
 class PropertiesListFragmentViewModel : ViewModel() {
 
+    val estatePreviewVisibility = ObservableInt(View.GONE)
+
     val loadingVisibility = ObservableInt(View.GONE)
     val noPropertiesVisibility = ObservableInt(View.GONE)
     val propertiesListVisibility = ObservableInt(View.GONE)
@@ -26,6 +28,14 @@ class PropertiesListFragmentViewModel : ViewModel() {
         loadingVisibility.set(View.GONE)
         noPropertiesVisibility.set(View.GONE)
         propertiesListVisibility.set(View.VISIBLE)
+    }
+
+    fun setEstatePreview() {
+        estatePreviewVisibility.set(View.VISIBLE)
+    }
+
+    fun removeEstatePreview() {
+        estatePreviewVisibility.set(View.GONE)
     }
 
 }

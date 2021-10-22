@@ -1,17 +1,20 @@
 package com.openclassrooms.realestatemanager.properties_list
 
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
+import com.openclassrooms.realestatemanager.utils.Enums
 
 class PropertiesListFragment : Fragment() {
 
@@ -22,7 +25,11 @@ class PropertiesListFragment : Fragment() {
     // Layout variables
     private var propertiesListRv : RecyclerView? = null
 
-    var estatesList = ArrayList<Estate>()
+    var estatesList : ArrayList<Estate>? = null
+
+    var orientation = Configuration.ORIENTATION_UNDEFINED
+    private var showEstateFragment : ShowEstateFragment? = null
+    private var selectedEstate : Estate? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -34,14 +41,24 @@ class PropertiesListFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        if (estatesList.isEmpty()) viewModel.setNoProperties() else viewModel.setLoading()
+        if (arguments != null && arguments?.containsKey(TAG_ESTATES) == true) {
+            val estateArgs = requireArguments().getSerializable(TAG_ESTATES) as ArrayList<*>
+            estatesList = ArrayList()
+            for (estateArg in estateArgs) {
+                estatesList?.add(estateArg as Estate)
+            }
+        }
+
+        setupOrientation(resources.configuration.orientation)
+
+        if (estatesList?.isEmpty() == true) viewModel.setNoProperties() else viewModel.setLoading()
 
         propertiesListRv = binding.propertiesListRv
         propertiesListRv?.layoutManager = LinearLayoutManager(context)
         propertiesListRv?.adapter = propertiesListAdapter
 
         propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList)
+            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
         }
 
@@ -49,30 +66,50 @@ class PropertiesListFragment : Fragment() {
     }
 
     private fun estateClicked(clicked : Estate) {
-        (activity as? MainActivity)?.estateClicked(clicked)
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE && estatesList != null) {
+            selectedEstate = clicked
+            setupEstatePreview()
+            propertiesListAdapter.selectItem(estatesList!!.indexOf(clicked))
+        } else {
+            (activity as? MainActivity)?.estateClicked(clicked)
+        }
     }
 
     fun setEstateList(list : ArrayList<Estate>) {
         this.estatesList = list
         propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList)
+            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
         }
     }
 
     fun addNewEstate(estate : Estate) {
-        estatesList.add(estate)
+        if (estatesList == null)
+            estatesList = ArrayList()
+        estatesList!!.add(estate)
         propertiesListRv?.post { propertiesListAdapter.addItem(0, estate) }
     }
 
     fun editEstateAtPosition(position: Int, estate: Estate) {
-        estatesList[position] = estate
-        propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
+        if (estatesList != null && position < estatesList!!.size) {
+            estatesList!![position] = estate
+            propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
+        }
     }
 
     fun removeEstateAtPosition(position: Int) {
         propertiesListRv?.post { propertiesListAdapter.removeItem(position) }
-        estatesList.removeAt(position)
+        estatesList?.removeAt(position)
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (estatesList != null && estatesList?.isNotEmpty() == true) {
+                val newSelectedPosition = if (position == 0) position else position - 1
+                selectedEstate = estatesList!![newSelectedPosition]
+                propertiesListAdapter.selectItem(newSelectedPosition)
+                setupEstatePreview()
+            } else {
+                // TODO
+            }
+        }
     }
 
     /**
@@ -80,9 +117,59 @@ class PropertiesListFragment : Fragment() {
      */
     fun currencyChanged() {
         propertiesListAdapter.notifyItemRangeChanged(0, propertiesListAdapter.itemCount)
+        if (showEstateFragment != null)
+            setupEstatePreview()
+    }
+
+    fun unitChanged() {
+        propertiesListAdapter.notifyItemRangeChanged(0, propertiesListAdapter.itemCount)
+        if (showEstateFragment != null)
+            setupEstatePreview()
+    }
+
+    fun setupOrientation(orientation : Int) {
+        orientation
+        this.orientation = orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setupEstatePreview()
+            viewModel.setEstatePreview()
+            if (showEstateFragment != null)
+                showEstateFragment?.setupOrientation(orientation)
+        } else {
+            viewModel.removeEstatePreview()
+            propertiesListAdapter.unselectItem()
+        }
+    }
+
+    private fun setupEstatePreview() {
+        if (selectedEstate == null && (estatesList == null || estatesList!!.isEmpty()))
+            return
+        if (selectedEstate == null && estatesList != null) {
+            selectedEstate = estatesList!![0]
+            propertiesListAdapter.selectItem(0)
+        }
+
+        showEstateFragment = ShowEstateFragment.newInstance(
+            selectedEstate,
+            Enums.ShowEstateType.SHOW_ESTATE,
+            orientation,
+            ArrayList(), ArrayList(),
+            // TODO : Set a default function for this
+            picturesRetrievedCallback = {},
+            managingAgentsRetrievedCallback = {}
+        )
+
+        childFragmentManager.beginTransaction()
+            .replace(R.id.estate_preview_layout, showEstateFragment!!)
+            .commit()
     }
 
     companion object {
+
+        @Suppress("unused")
+        private const val TAG = "PropertiesListFrag"
+
+        private const val TAG_ESTATES = "estates"
 
         /**
          * Use this factory method to create a new instance of
@@ -92,8 +179,9 @@ class PropertiesListFragment : Fragment() {
          */
         fun newInstance(estateList : ArrayList<Estate>) : PropertiesListFragment {
             val fragment = PropertiesListFragment()
-            fragment.estatesList = estateList
-
+            val bundle = Bundle()
+            bundle.putSerializable(TAG_ESTATES, estateList)
+            fragment.arguments = bundle
             return fragment
         }
     }

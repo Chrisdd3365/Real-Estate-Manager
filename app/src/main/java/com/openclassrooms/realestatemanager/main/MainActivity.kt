@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -25,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.agent_creation.AgentCreationActivity
@@ -42,7 +45,7 @@ import com.openclassrooms.realestatemanager.utils.*
  *  It links a [ViewPager] with a [TabLayout] : Every time we swipe the [ViewPager], it also changes
  *  the tab name on [TabLayout], and reciprocally.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     // Helper classes
     private var mainViewPagerAdapter : MainViewPagerAdapter? = null
@@ -69,9 +72,15 @@ class MainActivity : AppCompatActivity() {
 
     private var estateList = ArrayList<Estate>()
     private var lastKnownPosition : LatLng? = null
+    private var orientation = Configuration.ORIENTATION_UNDEFINED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            val saved = savedInstanceState.getSerializable("test") as ArrayList<*>
+            estateList = saved as ArrayList<Estate>
+        }
 
         // Get the saved currency
         // TODO : Move this in the splashscreen
@@ -99,35 +108,6 @@ class MainActivity : AppCompatActivity() {
 
         // Setup NavigationDrawer
         setupNavigationDrawer()
-
-        // Init child fragments
-        propertiesListFragment = PropertiesListFragment.newInstance(estateList)
-        mapViewFragment = MapViewFragment.newInstance(estateList)
-
-        // Create adapter
-        mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
-            mapViewFragment!!)
-
-        // Configure [ViewPager]
-        viewPager?.adapter = mainViewPagerAdapter
-
-        // Configure [TabLayout]
-        TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
-            if (position == 0)
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
-            else
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
-        }.attach()
-
-        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-
-                // This disable swipe when the user is on the MapView, in order to allow him to
-                //  navigate through the map.
-                viewPager?.isUserInputEnabled = (position == 0)
-            }
-        })
 
         resultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -161,16 +141,61 @@ class MainActivity : AppCompatActivity() {
         // Ask for location permissions
         checkAndAskLocationPermissions()
 
+        // Setup orientation
+        orientation = resources.configuration.orientation
+
         // Setup estate list
-        DatabaseManager(this).getEstates({
-            // TODO : If the list is empty, show "No items" messages instead
-            estateList = if (it.isEmpty()) getStaticEstateList() else it
-            propertiesListFragment?.setEstateList(it)
-            viewModel.setFragments()
-            mapViewFragment?.updateEstates(it)
-        }, {
-            // TODO
+        if (savedInstanceState == null) {
+            DatabaseManager(this).getEstates({
+                // TODO : If the list is empty, show "No items" messages instead
+                estateList = if (it.isEmpty()) getStaticEstateList() else it
+                propertiesListFragment?.setEstateList(it)
+                viewModel.setFragments()
+                mapViewFragment?.updateEstates(it)
+                setupChildFragments()
+            }, {
+                // TODO
+            })
+        } else {
+            setupChildFragments()
+        }
+    }
+
+    private fun setupChildFragments() {
+        // Init child fragments
+        propertiesListFragment = PropertiesListFragment.newInstance(estateList)
+        mapViewFragment = MapViewFragment.newInstance(estateList)
+
+        // Create adapter
+        mainViewPagerAdapter = MainViewPagerAdapter(this, propertiesListFragment!!,
+            mapViewFragment!!)
+
+        // Configure [ViewPager]
+        viewPager?.adapter = mainViewPagerAdapter
+
+        // Configure [TabLayout]
+        TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
+
+            if (position == 0)
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
+            else
+                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
+        }.attach()
+
+        viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // This disable swipe when the user is on the MapView, in order to allow him to
+                //  navigate through the map, or when the user is in landscape mode, for smoother
+                //  navigation.
+                viewPager?.isUserInputEnabled =
+                    (position == 0 && orientation != Configuration.ORIENTATION_LANDSCAPE)
+            }
         })
+
+        viewModel.setFragments()
+//        propertiesListFragment?.setEstateList(estateList)
     }
 
     private fun setupNavigationDrawer() {
@@ -293,8 +318,33 @@ class MainActivity : AppCompatActivity() {
     private fun switchUnit() {
         Utils.switchUnits(this)
         drawerLayout?.closeDrawer(GravityCompat.START)
-//        propertiesListFragment?.unitChanged()
+        propertiesListFragment?.unitChanged()
 //        mapViewFragment?.unitChanged()
+    }
+
+    override fun deleteEstate(estateToDelete : Estate) {
+        DatabaseManager(this).deleteEstate(
+            estateToDelete.id!!,
+            onSuccess = {
+                val index = estateList.indexOf(estateToDelete)
+                estateList.removeAt(index)
+                propertiesListFragment?.removeEstateAtPosition(index)
+            },
+            onFailure = {
+                Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                    .show()
+            }
+        )
+    }
+
+    override fun handleCompleteEstateCreationCancelled(estateToEdit: Estate) {
+        estateClicked(estateToEdit)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        orientation = newConfig.orientation
+        propertiesListFragment?.setupOrientation(orientation)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -302,6 +352,11 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("test", estateList)
+        super.onSaveInstanceState(outState)
     }
 
     companion object {

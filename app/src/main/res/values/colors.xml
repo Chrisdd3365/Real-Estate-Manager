@@ -10,4 +10,6 @@
 
     <color name="defaultBackground">#2C2C2C</color>
     <color name="defaultElevatedBackground">#4A4A4A</color>
+
+    <color name="selectedCardView">#5C5C5C</color>
 </resources>
