@@ -1,18 +1,14 @@
 package com.openclassrooms.realestatemanager.model
 
-import android.graphics.Bitmap
-import com.google.android.gms.maps.model.LatLng
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
-import kotlin.collections.ArrayList
 
 class Estate : Serializable {
 
     var id : Int? = null
-    var type : String? = null   // TODO : Remove
     var typeIndex : Int? = null
     var description : String? = null
     var address : String? = null

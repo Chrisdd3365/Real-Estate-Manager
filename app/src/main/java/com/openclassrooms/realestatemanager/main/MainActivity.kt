@@ -78,8 +78,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
-            val saved = savedInstanceState.getSerializable("test") as ArrayList<*>
-            estateList = saved as ArrayList<Estate> // FIXME : Manual cast
+            val savedEstates = savedInstanceState.getSerializable("test") as ArrayList<*>
+            if (savedEstates.isNotEmpty())
+                estateList.clear()
+            for (savedEstate in savedEstates) {
+                estateList.add(savedEstate as Estate)
+            }
         }
 
         // Get the saved currency
