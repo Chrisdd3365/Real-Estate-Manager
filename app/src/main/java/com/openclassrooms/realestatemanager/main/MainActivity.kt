@@ -79,7 +79,7 @@ class MainActivity : BaseActivity() {
 
         if (savedInstanceState != null) {
             val saved = savedInstanceState.getSerializable("test") as ArrayList<*>
-            estateList = saved as ArrayList<Estate>
+            estateList = saved as ArrayList<Estate> // FIXME : Manual cast
         }
 
         // Get the saved currency

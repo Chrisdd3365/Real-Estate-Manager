@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragment
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
 
@@ -24,12 +26,14 @@ class PropertiesListFragment : Fragment() {
 
     // Layout variables
     private var propertiesListRv : RecyclerView? = null
+    private var filterButton : Button? = null
 
     var estatesList : ArrayList<Estate>? = null
 
     var orientation = Configuration.ORIENTATION_UNDEFINED
     private var showEstateFragment : ShowEstateFragment? = null
     private var selectedEstate : Estate? = null
+    private var areResultsFiltered = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -53,6 +57,8 @@ class PropertiesListFragment : Fragment() {
 
         if (estatesList?.isEmpty() == true) viewModel.setNoProperties() else viewModel.setLoading()
 
+        filterButton = binding.filterButton
+
         propertiesListRv = binding.propertiesListRv
         propertiesListRv?.layoutManager = LinearLayoutManager(context)
         propertiesListRv?.adapter = propertiesListAdapter
@@ -60,9 +66,34 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.post {
             propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
+            viewModel.setDefaultFilterButton(requireContext())
+        }
+
+        filterButton?.setOnClickListener {
+            if (areResultsFiltered) setDefaultList() else showFilterDialog()
         }
 
         return binding.root
+    }
+
+    private fun showFilterDialog() {
+        val filterDialogFragment = FilterDialogFragment.newInstance(requireContext())
+//        searchDialogFragment.customDialogInterface = object : CustomDialogInterface {
+//
+//        }
+        filterDialogFragment.show(childFragmentManager, TAG)
+    }
+
+    private fun performSearch() {
+
+    }
+
+    fun displaySearchResults(searchResults: ArrayList<Estate>) {
+
+    }
+
+    fun setDefaultList() {
+
     }
 
     private fun estateClicked(clicked : Estate) {
@@ -128,7 +159,6 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun setupOrientation(orientation : Int) {
-        orientation
         this.orientation = orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setupEstatePreview()

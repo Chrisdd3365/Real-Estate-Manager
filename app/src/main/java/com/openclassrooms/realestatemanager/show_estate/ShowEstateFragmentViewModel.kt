@@ -10,6 +10,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
+import java.util.*
 
 class ShowEstateFragmentViewModel : ViewModel() {
 
@@ -31,9 +32,9 @@ class ShowEstateFragmentViewModel : ViewModel() {
     fun setData(context: Context?, estate: Estate) {
         description.set(estate.description)
         surfaceSize.set("${estate.getSurface()} ${Singleton.unitSymbol}")
-        roomsCount.set("${estate.roomCount?.toString()} ${context?.getString(R.string.rooms)}")
-        bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context?.getString(R.string.bedrooms)}")
-        bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context?.getString(R.string.bathrooms)}")
+        roomsCount.set("${estate.roomCount?.toString()} ${context?.getString(R.string.rooms)?.lowercase()}")
+        bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context?.getString(R.string.bedrooms)?.lowercase()}")
+        bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context?.getString(R.string.bathrooms)?.lowercase()}")
         price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
         try {
             type.set(context?.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
