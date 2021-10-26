@@ -16,9 +16,6 @@ import com.openclassrooms.realestatemanager.utils.OnStartDragListener
 import java.util.*
 import kotlin.collections.ArrayList
 
-/**
- * TODO : This should take Bitmaps items
- */
 class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
                           val removePicture : (Bitmap) -> Unit)
     : RecyclerView.Adapter<PicturesListAdapter.PictureViewHolder>(), ItemTouchHelperAdapter {
