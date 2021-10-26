@@ -368,6 +368,87 @@ class DatabaseManager(context : Context)
         }
     }
 
+    fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
+                      bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
+                      playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
+                      subwayValue: Boolean, parkValue: Boolean,
+                      onSuccess: ((ArrayList<Estate>) -> Unit), onFailure: (() -> Unit)) {
+
+        val database = this.readableDatabase
+
+        val result = ArrayList<Estate>()
+
+        var selection = "$COLUMN_PRICE >= ? AND $COLUMN_PRICE <= ? " +
+                "AND $COLUMN_SURFACE >= ? AND $COLUMN_SURFACE <= ? " +
+                "AND $COLUMN_ROOMS_COUNT >= ? AND $COLUMN_ROOMS_COUNT <= ? " +
+                "AND $COLUMN_BATHROOMS_COUNT >= ? AND $COLUMN_BATHROOMS_COUNT <= ? " +
+                "AND $COLUMN_BEDROOMS_COUNT >= ? AND $COLUMN_BEDROOMS_COUNT <= ?"
+
+        if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY is true"
+        if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY is true"
+        if (shopValue) selection += " AND $COLUMN_SHOP_NEARBY is true"
+        if (busesValue) selection += " AND $COLUMN_BUSES_NEARBY is true"
+        if (subwayValue) selection += " AND $COLUMN_SUBWAY_NEARBY is true"
+        if (parkValue) selection += " AND $COLUMN_PARK_NEARBY is true"
+
+        val selectionArgs = arrayOf(
+            "${priceRange[0]}", "${priceRange[1]}",
+            "${surfaceRange[0]}", "${surfaceRange[1]}",
+            "${roomsRange[0]}", "${roomsRange[1]}",
+            "${bathroomsRange[0]}", "${bathroomsRange[1]}",
+            "${bedroomsRange[0]}", "${bedroomsRange[1]}"
+        )
+
+        try {
+            val cursor = database.query(
+                ESTATE_TABLE,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                "$COLUMN_ON_MARKET_SINCE DESC"
+            )
+
+            with(cursor) {
+                while (moveToNext()) {
+                    result.add(
+                        // TODO : Refactor this
+                        Estate().apply {
+                            id = getInt(getColumnIndex(COLUMN_ID))
+                            typeIndex = getInt(getColumnIndex(COLUMN_TYPE))
+                            description = getString(getColumnIndex(COLUMN_DESCRIPTION))
+                            address = getString(getColumnIndex(COLUMN_ADDRESS))
+                            onMarketSince = Date() // TODO
+                            setDollarPrice(getDouble(getColumnIndex(COLUMN_PRICE)))
+                            setSquareFeetSurface(getDouble(getColumnIndex(COLUMN_SURFACE)))
+                            roomCount = getInt(getColumnIndex(COLUMN_ROOMS_COUNT))
+                            bathroomsCount = getInt(getColumnIndex(COLUMN_BATHROOMS_COUNT))
+                            bedroomsCount = getInt(getColumnIndex(COLUMN_BEDROOMS_COUNT))
+                            school = getBoolean(getColumnIndex(COLUMN_SCHOOL_NEARBY))
+                            playground = getBoolean(getColumnIndex(COLUMN_PLAYGROUND_NEARBY))
+                            shop = getBoolean(getColumnIndex(COLUMN_SHOP_NEARBY))
+                            buses = getBoolean(getColumnIndex(COLUMN_BUSES_NEARBY))
+                            subway = getBoolean(getColumnIndex(COLUMN_SUBWAY_NEARBY))
+                            park = getBoolean(getColumnIndex(COLUMN_PARK_NEARBY))
+                            latitude = getDouble(getColumnIndex(COLUMN_LATITUDE))
+                            longitude = getDouble(getColumnIndex(COLUMN_LONGITURE))
+                        }
+                    )
+                }
+            }
+
+            cursor.close()
+
+            onSuccess.invoke(result)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error : ${exception.message}")
+            onFailure.invoke()
+        }
+
+    }
+
     /**
      *  Extension to handle nullable [Boolean] retrieval from [Cursor].
      *  @param columnIndex ([Int]) - The index of the column to parse in the Database.

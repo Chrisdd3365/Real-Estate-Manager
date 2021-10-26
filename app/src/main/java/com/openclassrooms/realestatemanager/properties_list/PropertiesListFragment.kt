@@ -1,7 +1,9 @@
 package com.openclassrooms.realestatemanager.properties_list
 
+import android.app.Dialog
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragment
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
+import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
 import com.openclassrooms.realestatemanager.utils.Enums
 
 class PropertiesListFragment : Fragment() {
@@ -77,19 +80,30 @@ class PropertiesListFragment : Fragment() {
     }
 
     private fun showFilterDialog() {
-        val filterDialogFragment = FilterDialogFragment.newInstance(requireContext())
-//        searchDialogFragment.customDialogInterface = object : CustomDialogInterface {
-//
-//        }
+        val filterDialogFragment = FilterDialogFragment.newInstance()
+        filterDialogFragment.customDialogInterface = object : CustomDialogInterface {
+            override fun cancelButtonClicked(dialog : Dialog) {
+                dialog.dismiss()
+            }
+
+            override fun confirmSearchClicked(priceRange: IntArray, surfaceRange: IntArray,
+                                              roomsRange: IntArray, bathroomsRange: IntArray,
+                                              bedroomsRange: IntArray, schoolValue: Boolean,
+                                              playgroundValue: Boolean, shopValue: Boolean,
+                                              busesValue: Boolean, subwayValue: Boolean,
+                                              parkValue: Boolean) {
+                (activity as MainActivity).filterEstates(priceRange, surfaceRange, roomsRange,
+                    bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue,
+                    busesValue, subwayValue, parkValue)
+            }
+        }
+
         filterDialogFragment.show(childFragmentManager, TAG)
     }
 
-    private fun performSearch() {
-
-    }
-
     fun displaySearchResults(searchResults: ArrayList<Estate>) {
-
+        // TODO
+        Log.d(TAG, "Search results count = ${searchResults.size}")
     }
 
     fun setDefaultList() {

@@ -37,6 +37,7 @@
                     android:text="@string/price_hint" />
 
                 <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/price_range_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/price_title"
@@ -67,6 +68,7 @@
                     android:text="@string/surface_hint" />
 
                 <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/surface_range_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/surface_title"
@@ -97,6 +99,7 @@
                     android:text="@string/rooms" />
 
                 <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rooms_range_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/rooms_title"
@@ -127,6 +130,7 @@
                     android:text="@string/bathrooms" />
 
                 <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/bathrooms_range_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/bathrooms_title"
@@ -157,6 +161,7 @@
                     android:text="@string/bedrooms" />
 
                 <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/bedrooms_range_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/bedrooms_title"
@@ -187,6 +192,7 @@
                     android:text="@string/school" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/school_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/school_title"/>
@@ -212,6 +218,7 @@
                     android:text="@string/playground" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/playground_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/playground_title"/>
@@ -237,6 +244,7 @@
                     android:text="@string/shop" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/shop_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/shop_title"/>
@@ -262,6 +270,7 @@
                     android:text="@string/buses" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/buses_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/buses_title"/>
@@ -287,6 +296,7 @@
                     android:text="@string/subway" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/subway_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/subway_title"/>
@@ -304,14 +314,15 @@
 
                 <TextView
                     android:id="@+id/park_title"
-                    android:padding="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="10dp"
                     android:text="@string/park" />
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/park_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/park_title"/>

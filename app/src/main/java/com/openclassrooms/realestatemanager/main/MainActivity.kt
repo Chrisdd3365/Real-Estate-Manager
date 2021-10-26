@@ -341,6 +341,22 @@ class MainActivity : BaseActivity() {
         )
     }
 
+    fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
+                      bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
+                      playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
+                      subwayValue: Boolean, parkValue: Boolean) {
+        DatabaseManager(this).filterEstates(
+            priceRange, surfaceRange, roomsRange, bathroomsRange, bedroomsRange, schoolValue,
+            playgroundValue, shopValue, busesValue, subwayValue, parkValue,
+            onSuccess = {
+                propertiesListFragment?.displaySearchResults(it)
+            },
+            onFailure = {
+
+            }
+        )
+    }
+
     override fun handleCompleteEstateCreationCancelled(estateToEdit: Estate) {
         estateClicked(estateToEdit)
     }
