@@ -359,18 +359,20 @@ class DatabaseManager(context : Context)
 
         val result = ArrayList<Estate>()
 
-        var selection = "$COLUMN_PRICE >= ? AND $COLUMN_PRICE <= ? " +
-                "AND $COLUMN_SURFACE >= ? AND $COLUMN_SURFACE <= ? " +
-                "AND $COLUMN_ROOMS_COUNT >= ? AND $COLUMN_ROOMS_COUNT <= ? " +
-                "AND $COLUMN_BATHROOMS_COUNT >= ? AND $COLUMN_BATHROOMS_COUNT <= ? " +
-                "AND $COLUMN_BEDROOMS_COUNT >= ? AND $COLUMN_BEDROOMS_COUNT <= ?"
+        var selection = "$COLUMN_PRICE BETWEEN ? AND ? " +
+                "AND $COLUMN_SURFACE BETWEEN ? AND ? " +
+                "AND $COLUMN_ROOMS_COUNT BETWEEN ? AND ? " +
+                "AND $COLUMN_BATHROOMS_COUNT BETWEEN ? AND ? " +
+                "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ?"
 
-        if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY is true"
-        if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY is true"
-        if (shopValue) selection += " AND $COLUMN_SHOP_NEARBY is true"
-        if (busesValue) selection += " AND $COLUMN_BUSES_NEARBY is true"
-        if (subwayValue) selection += " AND $COLUMN_SUBWAY_NEARBY is true"
-        if (parkValue) selection += " AND $COLUMN_PARK_NEARBY is true"
+        Log.d(TAG, "SELECTION = $selection")
+
+        if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY"
+        if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY"
+        if (shopValue) selection += " AND $COLUMN_SHOP_NEARBY"
+        if (busesValue) selection += " AND $COLUMN_BUSES_NEARBY"
+        if (subwayValue) selection += " AND $COLUMN_SUBWAY_NEARBY"
+        if (parkValue) selection += " AND $COLUMN_PARK_NEARBY"
 
         val selectionArgs = arrayOf(
             "${priceRange[0]}", "${priceRange[1]}",

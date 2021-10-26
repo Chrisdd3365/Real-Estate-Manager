@@ -30,4 +30,11 @@
             android:title="@string/loaning_simulator" />
     </group>
 
+    <group
+        android:id="@+id/testing">
+        <item
+            android:id="@+id/nav_generate_estates"
+            android:title="@string/generate_static_data" />
+    </group>
+
 </menu>

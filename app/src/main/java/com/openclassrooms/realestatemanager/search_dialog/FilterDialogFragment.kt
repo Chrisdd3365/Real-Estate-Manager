@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.search_dialog
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -97,8 +98,8 @@ class FilterDialogFragment : DialogFragment() {
 
     private fun getRange(rangeSlider: RangeSlider) : IntArray {
         return intArrayOf(
-            rangeSlider.valueFrom.toInt(),
-            rangeSlider.valueTo.toInt()
+            rangeSlider.values[0].toInt(),
+            rangeSlider.values[1].toInt(),
         )
     }
 

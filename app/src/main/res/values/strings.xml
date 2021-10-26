@@ -16,8 +16,7 @@
     <string name="button_remove_picture">Remove picture</string>
     <string name="button_filter">Filter</string>
     <string name="button_apply_filters">Apply filters</string>
-    <string name="button_search">Search</string>
-    <string name="button_cancel_search">Cancel search</string>
+    <string name="button_remove_filters">Remove filters</string>
 
     <string name="type_title">Type :</string>
     <string name="nearby_title">Nearby :</string>
@@ -85,6 +84,7 @@
     <string name="switch_currency">Switch currency (Euro / Dollar)</string>
     <string name="agents">See agents list</string>
     <string name="loaning_simulator">Loaning simulator</string>
+    <string name="generate_static_data">Generate testing estates</string>
 
     <string name="dumb_error">An error occurred</string>
     <string name="title_activity_base">BaseActivity</string>
@@ -93,9 +93,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string-array name="initial_default_range_slider_values">
         <item name="first">0</item>

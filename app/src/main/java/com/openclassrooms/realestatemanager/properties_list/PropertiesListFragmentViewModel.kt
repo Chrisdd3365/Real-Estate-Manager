@@ -46,8 +46,8 @@ class PropertiesListFragmentViewModel : ViewModel() {
         estatePreviewVisibility.set(View.GONE)
     }
 
-    fun setSearchInProgress(context: Context) {
-        filterButtonTextValue.set(context.getString(R.string.button_cancel_search))
+    fun setResultsFiltered(context: Context) {
+        filterButtonTextValue.set(context.getString(R.string.button_remove_filters))
     }
 
     fun setDefaultFilterButton(context: Context) {
