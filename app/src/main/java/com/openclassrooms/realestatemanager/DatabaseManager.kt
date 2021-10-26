@@ -11,7 +11,6 @@ import android.util.Log
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import java.io.ByteArrayOutputStream
-import java.util.*
 import kotlin.collections.ArrayList
 
 class DatabaseManager(context : Context)
@@ -40,27 +39,7 @@ class DatabaseManager(context : Context)
     fun saveEstate(estate : Estate, onSuccess: ((newId : Int) -> Any)?, onFailure: (() -> Any)?) {
         val database = this.writableDatabase
 
-        val contentValues = ContentValues().apply {
-            put(COLUMN_TYPE, estate.typeIndex)
-            put(COLUMN_DESCRIPTION, estate.description)
-            put(COLUMN_ADDRESS, estate.address)
-            put(COLUMN_ON_MARKET_SINCE, Date().toString()) // TODO
-            put(COLUMN_PRICE, estate.getDollarPrice())
-            put(COLUMN_SURFACE, estate.getSquareFeetSurface())
-            put(COLUMN_ROOMS_COUNT, estate.roomCount)
-            put(COLUMN_BATHROOMS_COUNT, estate.bathroomsCount)
-            put(COLUMN_BEDROOMS_COUNT, estate.bedroomsCount)
-            put(COLUMN_SCHOOL_NEARBY, estate.school)
-            put(COLUMN_PLAYGROUND_NEARBY, estate.playground)
-            put(COLUMN_SHOP_NEARBY, estate.shop)
-            put(COLUMN_BUSES_NEARBY, estate.buses)
-            put(COLUMN_SUBWAY_NEARBY, estate.subway)
-            put(COLUMN_PARK_NEARBY, estate.park)
-            put(COLUMN_LATITUDE, estate.latitude)
-            put(COLUMN_LONGITURE, estate.longitude)
-        }
-
-        val insertedId = database.insert(ESTATE_TABLE, null, contentValues)
+        val insertedId = database.insert(ESTATE_TABLE, null, estate.toContentValues())
         database.close()
 
         if (insertedId == -1L)
@@ -72,29 +51,9 @@ class DatabaseManager(context : Context)
     fun updateEstate(estate: Estate, onSuccess: (() -> Any)?, onFailure: (() -> Any)?) {
         val database = this.writableDatabase
 
-        val contentValues = ContentValues().apply {
-            put(COLUMN_TYPE, estate.typeIndex)
-            put(COLUMN_DESCRIPTION, estate.description)
-            put(COLUMN_ADDRESS, estate.address)
-            put(COLUMN_ON_MARKET_SINCE, Date().toString()) // TODO
-            put(COLUMN_PRICE, estate.getDollarPrice())
-            put(COLUMN_SURFACE, estate.getSquareFeetSurface())
-            put(COLUMN_ROOMS_COUNT, estate.roomCount)
-            put(COLUMN_BATHROOMS_COUNT, estate.bathroomsCount)
-            put(COLUMN_BEDROOMS_COUNT, estate.bedroomsCount)
-            put(COLUMN_SCHOOL_NEARBY, estate.school)
-            put(COLUMN_PLAYGROUND_NEARBY, estate.playground)
-            put(COLUMN_SHOP_NEARBY, estate.shop)
-            put(COLUMN_BUSES_NEARBY, estate.buses)
-            put(COLUMN_SUBWAY_NEARBY, estate.subway)
-            put(COLUMN_PARK_NEARBY, estate.park)
-            put(COLUMN_LATITUDE, estate.latitude)
-            put(COLUMN_LONGITURE, estate.longitude)
-        }
-
         val affectedRows = database.update(
             ESTATE_TABLE,
-            contentValues,
+            estate.toContentValues(),
             "$COLUMN_ID IS ?",
             arrayOf("${estate.id}")
         )
@@ -229,13 +188,8 @@ class DatabaseManager(context : Context)
         val byteArrayOutputStream = ByteArrayOutputStream()
         agent.avatar?.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
 
-        val contentValues = ContentValues().apply {
-            put(COLUMN_FIRST_NAME, agent.firstName)
-            put(COLUMN_LAST_NAME, agent.lastName)
-            put(COLUMN_EMAIL, agent.email)
-            put(COLUMN_PHONE_NUMBER, agent.phoneNumber)
-            put(COLUMN_AVATAR, byteArrayOutputStream.toByteArray())
-        }
+        val contentValues = agent.toContentValues()
+        contentValues.put(COLUMN_AVATAR, byteArrayOutputStream.toByteArray())
 
         val insertedId = database.insert(AGENTS_TABLE, null, contentValues)
         database.close()
@@ -263,18 +217,7 @@ class DatabaseManager(context : Context)
 
             with(cursor) {
                 while (moveToNext()) {
-                    result.add(
-                        Agent().apply {
-                            id = getInt(getColumnIndex(COLUMN_ID))
-                            firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
-                            lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
-                            email = getString(getColumnIndex(COLUMN_EMAIL))
-                            phoneNumber = getString(getColumnIndex(COLUMN_PHONE_NUMBER))
-
-                            val byteArray = getBlob(getColumnIndex(COLUMN_AVATAR))
-                            avatar = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                        }
-                    )
+                    result.add(Agent(cursor))
                 }
             }
             cursor.close()
@@ -325,19 +268,8 @@ class DatabaseManager(context : Context)
             val result = ArrayList<Agent>()
             val cursor = database.rawQuery(SQL_MANAGING_AGENTS_JOIN, arrayOf("$estateId"))
             with(cursor) {
-                while (cursor.moveToNext()) {
-                    result.add(
-                        Agent().apply {
-                            id = getInt(getColumnIndex(COLUMN_ID))
-                            firstName = getString(getColumnIndex(COLUMN_FIRST_NAME))
-                            lastName = getString(getColumnIndex(COLUMN_LAST_NAME))
-                            email = getString(getColumnIndex(COLUMN_EMAIL))
-                            phoneNumber = getString(getColumnIndex(COLUMN_PHONE_NUMBER))
-
-                            val byteArray = getBlob(getColumnIndex(COLUMN_AVATAR))
-                            avatar = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                        }
-                    )
+                while (moveToNext()) {
+                    result.add(Agent(cursor))
                 }
             }
             cursor.close()
@@ -450,11 +382,11 @@ class DatabaseManager(context : Context)
         private const val COLUMN_ESTATE_ID = "estate_id"
 
         // Agent table columns
-        private const val COLUMN_FIRST_NAME = "first_name"
-        private const val COLUMN_LAST_NAME = "last_name"
-        private const val COLUMN_EMAIL = "email"
-        private const val COLUMN_PHONE_NUMBER = "phone_number"
-        private const val COLUMN_AVATAR = "avatar"
+        const val COLUMN_FIRST_NAME = "first_name"
+        const val COLUMN_LAST_NAME = "last_name"
+        const val COLUMN_EMAIL = "email"
+        const val COLUMN_PHONE_NUMBER = "phone_number"
+        const val COLUMN_AVATAR = "avatar"
 
         // Managing table columns
         private const val COLUMN_AGENT_ID = "agent_id"

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.model
 
+import android.content.ContentValues
 import android.database.Cursor
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.DatabaseManager.Companion.getBoolean
@@ -141,6 +142,28 @@ class Estate : Serializable {
      */
     fun getSquareFeetSurface() : Double {
         return if (surface == null) 0.0 else surface!!
+    }
+
+    fun toContentValues() : ContentValues {
+        return ContentValues().apply {
+            put(DatabaseManager.COLUMN_TYPE, typeIndex)
+            put(DatabaseManager.COLUMN_DESCRIPTION, description)
+            put(DatabaseManager.COLUMN_ADDRESS, address)
+            put(DatabaseManager.COLUMN_ON_MARKET_SINCE, Date().toString()) // TODO
+            put(DatabaseManager.COLUMN_PRICE, getDollarPrice())
+            put(DatabaseManager.COLUMN_SURFACE, getSquareFeetSurface())
+            put(DatabaseManager.COLUMN_ROOMS_COUNT, roomCount)
+            put(DatabaseManager.COLUMN_BATHROOMS_COUNT, bathroomsCount)
+            put(DatabaseManager.COLUMN_BEDROOMS_COUNT, bedroomsCount)
+            put(DatabaseManager.COLUMN_SCHOOL_NEARBY, school)
+            put(DatabaseManager.COLUMN_PLAYGROUND_NEARBY, playground)
+            put(DatabaseManager.COLUMN_SHOP_NEARBY, shop)
+            put(DatabaseManager.COLUMN_BUSES_NEARBY, buses)
+            put(DatabaseManager.COLUMN_SUBWAY_NEARBY, subway)
+            put(DatabaseManager.COLUMN_PARK_NEARBY, park)
+            put(DatabaseManager.COLUMN_LATITUDE, latitude)
+            put(DatabaseManager.COLUMN_LONGITURE, longitude)
+        }
     }
 
     override fun toString(): String {
