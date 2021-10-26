@@ -101,8 +101,6 @@ class MapViewFragment : Fragment() {
             if (latitude != null && longitude != null) {
                 val estateType = context?.resources
                     ?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!)
-                // TODO : Marker text should be set in multiple language and in square meters or
-                //  something else
                 val marker = googleMap?.addMarker(
                     MarkerOptions()
                         .position(LatLng(latitude, longitude))
