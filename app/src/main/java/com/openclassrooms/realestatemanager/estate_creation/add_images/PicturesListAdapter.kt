@@ -74,7 +74,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
     }
 
     override fun onItemDismiss(position: Int) {
-        TODO("Not yet implemented")
+        removePicture.invoke(items[position])
     }
 
     inner class PictureViewHolder(private val binding : PicturesListItemBinding,

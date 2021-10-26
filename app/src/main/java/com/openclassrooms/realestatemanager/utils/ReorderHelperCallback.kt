@@ -19,6 +19,6 @@ class ReorderHelperCallback(val adapter : ItemTouchHelperAdapter) : ItemTouchHel
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        TODO("Not yet implemented")
+        adapter.onItemDismiss(viewHolder.adapterPosition)
     }
 }
