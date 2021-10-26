@@ -1,10 +1,12 @@
 package com.openclassrooms.realestatemanager.properties_list
 
+import android.app.Dialog
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +15,9 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentPropertiesListBinding
 import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragment
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
+import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
 import com.openclassrooms.realestatemanager.utils.Enums
 
 class PropertiesListFragment : Fragment() {
@@ -24,12 +28,15 @@ class PropertiesListFragment : Fragment() {
 
     // Layout variables
     private var propertiesListRv : RecyclerView? = null
+    private var filterButton : Button? = null
 
     var estatesList : ArrayList<Estate>? = null
+    var filteredResults : ArrayList<Estate>? = null
 
     var orientation = Configuration.ORIENTATION_UNDEFINED
     private var showEstateFragment : ShowEstateFragment? = null
     private var selectedEstate : Estate? = null
+    private var areResultsFiltered = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -53,6 +60,8 @@ class PropertiesListFragment : Fragment() {
 
         if (estatesList?.isEmpty() == true) viewModel.setNoProperties() else viewModel.setLoading()
 
+        filterButton = binding.filterButton
+
         propertiesListRv = binding.propertiesListRv
         propertiesListRv?.layoutManager = LinearLayoutManager(context)
         propertiesListRv?.adapter = propertiesListAdapter
@@ -60,9 +69,62 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.post {
             propertiesListAdapter.setData(context, estatesList ?: ArrayList())
             viewModel.setPropertiesList()
+            viewModel.setDefaultFilterButton(requireContext())
+        }
+
+        filterButton?.setOnClickListener {
+            if (areResultsFiltered) setDefaultList() else showFilterDialog()
         }
 
         return binding.root
+    }
+
+    private fun showFilterDialog() {
+        val filterDialogFragment = FilterDialogFragment.newInstance()
+        filterDialogFragment.customDialogInterface = object : CustomDialogInterface {
+            override fun cancelButtonClicked(dialog : Dialog) {
+                dialog.dismiss()
+            }
+
+            override fun confirmSearchClicked(priceRange: IntArray, surfaceRange: IntArray,
+                                              roomsRange: IntArray, bathroomsRange: IntArray,
+                                              bedroomsRange: IntArray, schoolValue: Boolean,
+                                              playgroundValue: Boolean, shopValue: Boolean,
+                                              busesValue: Boolean, subwayValue: Boolean,
+                                              parkValue: Boolean) {
+                viewModel.setLoading()
+                (activity as MainActivity).filterEstates(priceRange, surfaceRange, roomsRange,
+                    bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue,
+                    busesValue, subwayValue, parkValue)
+            }
+        }
+
+        filterDialogFragment.show(childFragmentManager, TAG)
+    }
+
+    fun displaySearchResults(results: ArrayList<Estate>) {
+        filteredResults = results
+        if (results.isEmpty()) {
+            viewModel.setNoProperties()
+        } else {
+            propertiesListAdapter.setData(requireContext(), filteredResults!!)
+            viewModel.setPropertiesList()
+            viewModel.setResultsFiltered(requireContext())
+        }
+        areResultsFiltered = true
+    }
+
+    private fun setDefaultList() {
+        filteredResults?.clear()
+        filteredResults = null
+        if (estatesList.isNullOrEmpty()) {
+            viewModel.setNoProperties()
+        } else {
+            propertiesListAdapter.setData(requireContext(), estatesList!!)
+            viewModel.setPropertiesList()
+        }
+        viewModel.setDefaultFilterButton(requireContext())
+        areResultsFiltered = false
     }
 
     private fun estateClicked(clicked : Estate) {
@@ -128,7 +190,6 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun setupOrientation(orientation : Int) {
-        orientation
         this.orientation = orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setupEstatePreview()

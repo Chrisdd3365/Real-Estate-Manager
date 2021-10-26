@@ -140,26 +140,7 @@ class DatabaseManager(context : Context)
             with(cursor) {
                 while (moveToNext()) {
                     estates.add(
-                        Estate().apply {
-                            id = getInt(getColumnIndex(COLUMN_ID))
-                            typeIndex = getInt(getColumnIndex(COLUMN_TYPE))
-                            description = getString(getColumnIndex(COLUMN_DESCRIPTION))
-                            address = getString(getColumnIndex(COLUMN_ADDRESS))
-                            onMarketSince = Date() // TODO
-                            setDollarPrice(getDouble(getColumnIndex(COLUMN_PRICE)))
-                            setSquareFeetSurface(getDouble(getColumnIndex(COLUMN_SURFACE)))
-                            roomCount = getInt(getColumnIndex(COLUMN_ROOMS_COUNT))
-                            bathroomsCount = getInt(getColumnIndex(COLUMN_BATHROOMS_COUNT))
-                            bedroomsCount = getInt(getColumnIndex(COLUMN_BEDROOMS_COUNT))
-                            school = getBoolean(getColumnIndex(COLUMN_SCHOOL_NEARBY))
-                            playground = getBoolean(getColumnIndex(COLUMN_PLAYGROUND_NEARBY))
-                            shop = getBoolean(getColumnIndex(COLUMN_SHOP_NEARBY))
-                            buses = getBoolean(getColumnIndex(COLUMN_BUSES_NEARBY))
-                            subway = getBoolean(getColumnIndex(COLUMN_SUBWAY_NEARBY))
-                            park = getBoolean(getColumnIndex(COLUMN_PARK_NEARBY))
-                            latitude = getDouble(getColumnIndex(COLUMN_LATITUDE))
-                            longitude = getDouble(getColumnIndex(COLUMN_LONGITURE))
-                        }
+                        Estate(cursor)
                     )
                 }
             }
@@ -368,16 +349,67 @@ class DatabaseManager(context : Context)
         }
     }
 
-    /**
-     *  Extension to handle nullable [Boolean] retrieval from [Cursor].
-     *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
-     *  TODO : Move to somewhere else
-     */
-    private fun Cursor.getBoolean(columnIndex: Int): Boolean? {
-        return if (isNull(columnIndex))
-            null
-        else
-            getInt(columnIndex) != 0
+    fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
+                      bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
+                      playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
+                      subwayValue: Boolean, parkValue: Boolean,
+                      onSuccess: ((ArrayList<Estate>) -> Unit), onFailure: (() -> Unit)) {
+
+        val database = this.readableDatabase
+
+        val result = ArrayList<Estate>()
+
+        var selection = "$COLUMN_PRICE BETWEEN ? AND ? " +
+                "AND $COLUMN_SURFACE BETWEEN ? AND ? " +
+                "AND $COLUMN_ROOMS_COUNT BETWEEN ? AND ? " +
+                "AND $COLUMN_BATHROOMS_COUNT BETWEEN ? AND ? " +
+                "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ?"
+
+        Log.d(TAG, "SELECTION = $selection")
+
+        if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY"
+        if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY"
+        if (shopValue) selection += " AND $COLUMN_SHOP_NEARBY"
+        if (busesValue) selection += " AND $COLUMN_BUSES_NEARBY"
+        if (subwayValue) selection += " AND $COLUMN_SUBWAY_NEARBY"
+        if (parkValue) selection += " AND $COLUMN_PARK_NEARBY"
+
+        val selectionArgs = arrayOf(
+            "${priceRange[0]}", "${priceRange[1]}",
+            "${surfaceRange[0]}", "${surfaceRange[1]}",
+            "${roomsRange[0]}", "${roomsRange[1]}",
+            "${bathroomsRange[0]}", "${bathroomsRange[1]}",
+            "${bedroomsRange[0]}", "${bedroomsRange[1]}"
+        )
+
+        try {
+            val cursor = database.query(
+                ESTATE_TABLE,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                "$COLUMN_ON_MARKET_SINCE DESC"
+            )
+
+            with(cursor) {
+                while (moveToNext()) {
+                    result.add(
+                        Estate(cursor)
+                    )
+                }
+            }
+
+            cursor.close()
+
+            onSuccess.invoke(result)
+
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error : ${exception.message}")
+            onFailure.invoke()
+        }
+
     }
 
     companion object {
@@ -392,26 +424,26 @@ class DatabaseManager(context : Context)
         private const val AGENTS_TABLE = "agents"
         private const val MANAGING_TABLE = "managing"
 
-        private const val COLUMN_ID = "id"
+        const val COLUMN_ID = "id"
 
         // Estate table columns
-        private const val COLUMN_TYPE = "typeIndex"
-        private const val COLUMN_DESCRIPTION = "description"
-        private const val COLUMN_ADDRESS = "address"
-        private const val COLUMN_ON_MARKET_SINCE = "onMarketSince"
-        private const val COLUMN_PRICE = "price"
-        private const val COLUMN_SURFACE = "surface"
-        private const val COLUMN_ROOMS_COUNT = "rooms_count"
-        private const val COLUMN_BATHROOMS_COUNT = "bathrooms_count"
-        private const val COLUMN_BEDROOMS_COUNT = "bedrooms_count"
-        private const val COLUMN_SCHOOL_NEARBY = "school_nearby"
-        private const val COLUMN_PLAYGROUND_NEARBY = "playground_nearby"
-        private const val COLUMN_SHOP_NEARBY = "shop_nearby"
-        private const val COLUMN_BUSES_NEARBY = "buses_nearby"
-        private const val COLUMN_SUBWAY_NEARBY = "subway_nearby"
-        private const val COLUMN_PARK_NEARBY = "park_nearby"
-        private const val COLUMN_LATITUDE = "latitude"
-        private const val COLUMN_LONGITURE = "longitude"
+        const val COLUMN_TYPE = "typeIndex"
+        const val COLUMN_DESCRIPTION = "description"
+        const val COLUMN_ADDRESS = "address"
+        const val COLUMN_ON_MARKET_SINCE = "onMarketSince"
+        const val COLUMN_PRICE = "price"
+        const val COLUMN_SURFACE = "surface"
+        const val COLUMN_ROOMS_COUNT = "rooms_count"
+        const val COLUMN_BATHROOMS_COUNT = "bathrooms_count"
+        const val COLUMN_BEDROOMS_COUNT = "bedrooms_count"
+        const val COLUMN_SCHOOL_NEARBY = "school_nearby"
+        const val COLUMN_PLAYGROUND_NEARBY = "playground_nearby"
+        const val COLUMN_SHOP_NEARBY = "shop_nearby"
+        const val COLUMN_BUSES_NEARBY = "buses_nearby"
+        const val COLUMN_SUBWAY_NEARBY = "subway_nearby"
+        const val COLUMN_PARK_NEARBY = "park_nearby"
+        const val COLUMN_LATITUDE = "latitude"
+        const val COLUMN_LONGITURE = "longitude"
 
         // Image table columns
         private const val COLUMN_IMAGE = "uri"
@@ -499,5 +531,18 @@ class DatabaseManager(context : Context)
                         ON $MANAGING_TABLE.$COLUMN_AGENT_ID = $AGENTS_TABLE.$COLUMN_ID
             WHERE $MANAGING_TABLE.$COLUMN_ESTATE_ID IS ?
         """
+
+
+        /**
+         *  Extension to handle nullable [Boolean] retrieval from [Cursor].
+         *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
+         *  TODO : Move to somewhere else
+         */
+        fun Cursor.getBoolean(columnIndex: Int): Boolean? {
+            return if (isNull(columnIndex))
+                null
+            else
+                getInt(columnIndex) != 0
+        }
     }
 }

@@ -78,8 +78,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
-            val saved = savedInstanceState.getSerializable("test") as ArrayList<*>
-            estateList = saved as ArrayList<Estate>
+            val savedEstates = savedInstanceState.getSerializable("test") as ArrayList<*>
+            if (savedEstates.isNotEmpty())
+                estateList.clear()
+            for (savedEstate in savedEstates) {
+                estateList.add(savedEstate as Estate)
+            }
         }
 
         // Get the saved currency
@@ -333,6 +337,22 @@ class MainActivity : BaseActivity() {
             onFailure = {
                 Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
                     .show()
+            }
+        )
+    }
+
+    fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
+                      bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
+                      playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
+                      subwayValue: Boolean, parkValue: Boolean) {
+        DatabaseManager(this).filterEstates(
+            priceRange, surfaceRange, roomsRange, bathroomsRange, bedroomsRange, schoolValue,
+            playgroundValue, shopValue, busesValue, subwayValue, parkValue,
+            onSuccess = {
+                propertiesListFragment?.displaySearchResults(it)
+            },
+            onFailure = {
+
             }
         )
     }

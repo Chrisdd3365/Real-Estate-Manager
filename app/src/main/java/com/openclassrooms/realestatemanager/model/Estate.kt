@@ -1,18 +1,17 @@
 package com.openclassrooms.realestatemanager.model
 
-import android.graphics.Bitmap
-import com.google.android.gms.maps.model.LatLng
+import android.database.Cursor
+import com.openclassrooms.realestatemanager.DatabaseManager
+import com.openclassrooms.realestatemanager.DatabaseManager.Companion.getBoolean
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
-import kotlin.collections.ArrayList
 
 class Estate : Serializable {
 
     var id : Int? = null
-    var type : String? = null   // TODO : Remove
     var typeIndex : Int? = null
     var description : String? = null
     var address : String? = null
@@ -33,6 +32,31 @@ class Estate : Serializable {
 
     var latitude : Double? = null
     var longitude : Double? = null
+
+    constructor()
+
+    constructor(cursor: Cursor) {
+        with (cursor) {
+            id = getInt(getColumnIndex(DatabaseManager.COLUMN_ID))
+            typeIndex = getInt(getColumnIndex(DatabaseManager.COLUMN_TYPE))
+            description = getString(getColumnIndex(DatabaseManager.COLUMN_DESCRIPTION))
+            address = getString(getColumnIndex(DatabaseManager.COLUMN_ADDRESS))
+            onMarketSince = Date() // TODO
+            setDollarPrice(getDouble(getColumnIndex(DatabaseManager.COLUMN_PRICE)))
+            setSquareFeetSurface(getDouble(getColumnIndex(DatabaseManager.COLUMN_SURFACE)))
+            roomCount = getInt(getColumnIndex(DatabaseManager.COLUMN_ROOMS_COUNT))
+            bathroomsCount = getInt(getColumnIndex(DatabaseManager.COLUMN_BATHROOMS_COUNT))
+            bedroomsCount = getInt(getColumnIndex(DatabaseManager.COLUMN_BEDROOMS_COUNT))
+            school = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SCHOOL_NEARBY))
+            playground = getBoolean(getColumnIndex(DatabaseManager.COLUMN_PLAYGROUND_NEARBY))
+            shop = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SHOP_NEARBY))
+            buses = getBoolean(getColumnIndex(DatabaseManager.COLUMN_BUSES_NEARBY))
+            subway = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SUBWAY_NEARBY))
+            park = getBoolean(getColumnIndex(DatabaseManager.COLUMN_PARK_NEARBY))
+            latitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LATITUDE))
+            longitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LONGITURE))
+        }
+    }
 
     /**
      *  Saves the price in this [Estate] instance.
