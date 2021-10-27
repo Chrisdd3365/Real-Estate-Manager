@@ -151,8 +151,7 @@ class MainActivity : BaseActivity() {
         // Setup estate list
         if (savedInstanceState == null) {
             DatabaseManager(this).getEstates({
-                // TODO : If the list is empty, show "No items" messages instead
-                estateList = if (it.isEmpty()) getStaticEstateList() else it
+                estateList = it
                 propertiesListFragment?.setEstateList(it)
                 viewModel.setFragments()
                 mapViewFragment?.updateEstates(it)

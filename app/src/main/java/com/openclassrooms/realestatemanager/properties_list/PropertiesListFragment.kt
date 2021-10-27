@@ -138,6 +138,7 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun setEstateList(list : ArrayList<Estate>) {
+        // TODO : If the list is empty, show "No items" messages
         this.estatesList = list
         propertiesListRv?.post {
             propertiesListAdapter.setData(context, estatesList ?: ArrayList())

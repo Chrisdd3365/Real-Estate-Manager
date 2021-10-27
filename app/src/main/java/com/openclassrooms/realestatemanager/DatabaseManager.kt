@@ -96,13 +96,10 @@ class DatabaseManager(context : Context)
                 "$COLUMN_ON_MARKET_SINCE DESC"
             )
 
-            with(cursor) {
-                while (moveToNext()) {
-                    estates.add(
-                        Estate(cursor)
-                    )
-                }
+            while (cursor.moveToNext()) {
+                estates.add(Estate(cursor))
             }
+
             cursor.close()
 
             success.invoke(estates)
@@ -215,10 +212,8 @@ class DatabaseManager(context : Context)
                 null
             )
 
-            with(cursor) {
-                while (moveToNext()) {
-                    result.add(Agent(cursor))
-                }
+            while (cursor.moveToNext()) {
+                result.add(Agent(cursor))
             }
             cursor.close()
 
@@ -267,10 +262,8 @@ class DatabaseManager(context : Context)
         try {
             val result = ArrayList<Agent>()
             val cursor = database.rawQuery(SQL_MANAGING_AGENTS_JOIN, arrayOf("$estateId"))
-            with(cursor) {
-                while (moveToNext()) {
-                    result.add(Agent(cursor))
-                }
+            while (cursor.moveToNext()) {
+                result.add(Agent(cursor))
             }
             cursor.close()
             success.invoke(result)
@@ -325,12 +318,8 @@ class DatabaseManager(context : Context)
                 "$COLUMN_ON_MARKET_SINCE DESC"
             )
 
-            with(cursor) {
-                while (moveToNext()) {
-                    result.add(
-                        Estate(cursor)
-                    )
-                }
+            while (cursor.moveToNext()) {
+                result.add(Estate(cursor))
             }
 
             cursor.close()
