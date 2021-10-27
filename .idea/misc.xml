@@ -9,7 +9,7 @@
         <entry key="app/src/main/res/drawable/rounded_corner.xml" value="0.3921875" />
         <entry key="app/src/main/res/layout/activity_agent_creation.xml" value="0.1388888888888889" />
         <entry key="app/src/main/res/layout/activity_estate_creation.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_loaning_simulator.xml" value="0.22327898550724637" />
+        <entry key="app/src/main/res/layout/activity_loaning_simulator.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15979381443298968" />
         <entry key="app/src/main/res/layout/activity_show_estate.xml" value="0.25" />
         <entry key="app/src/main/res/layout/agents_list_item.xml" value="0.5" />

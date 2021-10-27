@@ -92,6 +92,14 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <!-- Loaning simulator -->
+    <string name="mortgage_amount_hint">Mortgage amount</string>
+    <string name="bring_amount_hint">Bring amount</string>
+    <string name="mortgage_duration_hint">Duration (in months)</string>
+    <string name="interest_rate_title">Interest rate :</string>
+    <string name="mortgage_total_cost_title">Mortgage total cost :</string>
+    <string name="mortgage_monthly_payments_title">Monthly payments :</string>
+
     <string-array name="initial_default_range_slider_values">
         <item name="first">0</item>
         <item name="second">10</item>
