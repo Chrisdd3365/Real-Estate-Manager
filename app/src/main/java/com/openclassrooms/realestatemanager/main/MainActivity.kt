@@ -33,6 +33,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.agent_creation.AgentCreationActivity
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding
 import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
+import com.openclassrooms.realestatemanager.loaning_simulator.LoaningSimulatorActivity
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
@@ -226,6 +227,7 @@ class MainActivity : BaseActivity() {
                 }
                 R.id.nav_loaning_simulator -> {
                     Log.d(TAG, "Loaning simulator !")
+                    launchLoaningSimulator()
                 }
                 else -> {
                     Log.d(TAG, "OTHER")
@@ -323,6 +325,10 @@ class MainActivity : BaseActivity() {
         drawerLayout?.closeDrawer(GravityCompat.START)
         propertiesListFragment?.unitChanged()
 //        mapViewFragment?.unitChanged()
+    }
+
+    private fun launchLoaningSimulator() {
+        startActivity(LoaningSimulatorActivity.newInstance(this))
     }
 
     override fun deleteEstate(estateToDelete : Estate) {
