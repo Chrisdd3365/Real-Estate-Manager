@@ -21,6 +21,7 @@
             android:layout_margin="25dp"
             android:hint="@string/mortgage_amount_hint"
             android:textAlignment="center"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,6 +33,7 @@
             android:layout_margin="25dp"
             android:hint="@string/bring_amount_hint"
             android:textAlignment="center"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mortgage_amount_edit_text" />
@@ -43,6 +45,7 @@
             android:layout_margin="25dp"
             android:hint="@string/mortgage_duration_hint"
             android:textAlignment="center"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bring_amount_edit_text" />
@@ -64,6 +67,7 @@
                 android:text="@string/interest_rate_title" />
 
             <com.google.android.material.slider.Slider
+                android:id="@+id/interest_rate_slider"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -83,6 +87,7 @@
             android:text="@string/mortgage_total_cost_title"
             android:textAlignment="center"
             android:textSize="25sp"
+            android:visibility="@{viewModel.resultsVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/interest_rate_layout" />
@@ -94,6 +99,8 @@
             android:layout_marginTop="15dp"
             android:textAlignment="center"
             android:textSize="25sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            android:text="@{viewModel.mortgageTotalCostValue}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mortgage_total_cost_title"
@@ -107,6 +114,7 @@
             android:text="@string/mortgage_monthly_payments_title"
             android:textAlignment="center"
             android:textSize="20sp"
+            android:visibility="@{viewModel.resultsVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mortgage_total_cost" />
@@ -118,6 +126,8 @@
             android:layout_marginTop="15dp"
             android:textAlignment="center"
             android:textSize="20sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            android:text="@{viewModel.mortgageMonthlyPaymentsValue}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mortgage_monthly_payments_title"
