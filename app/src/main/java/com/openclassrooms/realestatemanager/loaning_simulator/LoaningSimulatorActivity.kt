@@ -2,18 +2,17 @@ package com.openclassrooms.realestatemanager.loaning_simulator
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.ActivityLoaningSimulatorBinding
-import java.math.BigDecimal
-import java.math.RoundingMode
+import com.openclassrooms.realestatemanager.utils.Utils
 
 class LoaningSimulatorActivity : AppCompatActivity() {
 
@@ -108,15 +107,8 @@ class LoaningSimulatorActivity : AppCompatActivity() {
      */
     private fun displayResults(totalCost : Double, monthlyPayments : Double) {
 
-        // TODO : We might set BigDecimal in a separate function
-        val roundedTotalCost = BigDecimal(totalCost)
-            .setScale(2, RoundingMode.UP)
-            .stripTrailingZeros()
-            .toPlainString()
-        val roundedMonthlyPayments = BigDecimal(monthlyPayments)
-            .setScale(2, RoundingMode.UP)
-            .stripTrailingZeros()
-            .toPlainString()
+        val roundedTotalCost = Utils.getRoundedBigDecimal(totalCost).toPlainString()
+        val roundedMonthlyPayments = Utils.getRoundedBigDecimal(monthlyPayments).toPlainString()
 
         viewModel.updateTotalCostValue(roundedTotalCost)
         viewModel.updateMonthlyPaymentsValue(roundedMonthlyPayments)

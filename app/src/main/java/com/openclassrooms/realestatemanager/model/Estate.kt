@@ -74,14 +74,15 @@ class Estate : Serializable {
     /**
      *  As we are always saving the price in Dollars, if the user is currently using Euro currency,
      *  we need to convert the price before returning it.
-     *  @return [Double] - The price of this [Estate], as it in Dollars, or converted in Euros.
+     *  @return [String] - The price of this [Estate], as it in Dollars, or converted in Euros.
      */
-    fun getPrice() : Double {
-        return when {
+    fun getPrice() : String {
+        val price = when {
             price == null -> 0.0
             Singleton.currency == Enums.Currency.DOLLAR -> price!!
             else -> Utils.convertDollarToEuroDouble(price!!)
         }
+        return Utils.getRoundedBigDecimal(price).toPlainString()
     }
 
     /**
@@ -116,15 +117,16 @@ class Estate : Serializable {
     /**
      *  As we are always saving the surface in square feet, if the user is currently using square
      *  meters, we first need to convert the surface before returning it.
-     *  @return [Double] - The surface of this [Estate], as it in square feet, or converted in
+     *  @return [String] - The surface of this [Estate], as it in square feet, or converted in
      *  square meters.
      */
-    fun getSurface() : Double {
-        return when {
+    fun getSurface() : String {
+        val surface = when {
             surface == null -> 0.0
             Singleton.unit ==  Enums.Unit.FEET  -> surface!!
             else -> Utils.convertSquareFeetToSquareMeter(surface!!)
         }
+        return Utils.getRoundedBigDecimal(surface).toPlainString()
     }
 
     /**

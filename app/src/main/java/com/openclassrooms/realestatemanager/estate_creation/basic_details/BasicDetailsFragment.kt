@@ -58,8 +58,8 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
             if (estate?.typeIndex != null) typeSpinner?.setSelection(estate?.typeIndex!!)
             else typeSpinner?.setSelection(0)
             addressEditText?.setText(estate?.address)
-            priceEditText?.setText(estate?.getPrice().toString())
-            surfaceEditText?.setText(estate?.getSurface().toString())
+            priceEditText?.setText(estate?.getPrice())
+            surfaceEditText?.setText(estate?.getSurface())
             descriptionEditText?.setText(estate?.description)
 
             checkIfAllFieldsAreFilled()

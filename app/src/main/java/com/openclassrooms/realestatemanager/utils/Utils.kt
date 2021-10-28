@@ -25,6 +25,9 @@ object Utils {
     @Suppress("unused")
     private const val TAG = "Utils"
 
+    private const val SQUARE_SYMBOl = "m²"
+    private const val FEET_SYMBOL = "ft²"
+
     /**
      * Conversion d'un prix d'un bien immobilier (Dollars vers Euros)
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -36,23 +39,19 @@ object Utils {
     }
 
     fun convertDollarToEuroDouble(dollars : Double) : Double {
-        val bigDecimal = BigDecimal(dollars.times(0.812))
-        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+        return getRoundedBigDecimal(dollars.times(0.812)).toDouble()
     }
 
     fun convertEuroToDollarDouble(euros : Double) : Double {
-        val bigDecimal = BigDecimal(euros / 0.812)
-        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+        return getRoundedBigDecimal(euros / 0.812).toDouble()
     }
 
     fun convertSquareMetersToSquareFeet(squareMeters: Double) : Double {
-        val bigDecimal = BigDecimal(squareMeters * 10.76391)
-        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+        return getRoundedBigDecimal(squareMeters * 10.76391).toDouble()
     }
 
     fun convertSquareFeetToSquareMeter(squareFeet: Double) : Double {
-        val bigDecimal = BigDecimal(squareFeet / 10.76391)
-        return bigDecimal.setScale(1, RoundingMode.UP).toDouble()
+        return getRoundedBigDecimal(squareFeet / 10.76391).toDouble()
     }
 
     /**
@@ -138,7 +137,13 @@ object Utils {
 
     fun changeUnit(context: Context, newUnit : Enums.Unit) {
         Singleton.unit = newUnit
-        Singleton.unitSymbol = if (newUnit == Enums.Unit.FEET) "ft²" else "m²"
+        Singleton.unitSymbol = if (newUnit == Enums.Unit.FEET) FEET_SYMBOL else SQUARE_SYMBOl
         SharedPreferencesManager.saveUnit(context, newUnit)
+    }
+
+    fun getRoundedBigDecimal(value : Double) : BigDecimal {
+        return BigDecimal(value)
+            .setScale(2, RoundingMode.HALF_UP)
+            .stripTrailingZeros()
     }
 }
