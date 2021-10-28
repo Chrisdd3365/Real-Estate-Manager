@@ -59,6 +59,7 @@
                 android:autofillHints=""
                 android:gravity="center"
                 android:hint="@string/empty_hint"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:visibility="@{viewModel.editTextVisibility}"
                 android:inputType="number" />

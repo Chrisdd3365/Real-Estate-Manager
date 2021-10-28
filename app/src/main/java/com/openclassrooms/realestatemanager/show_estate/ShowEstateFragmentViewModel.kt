@@ -10,7 +10,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
-import java.util.*
+import com.openclassrooms.realestatemanager.utils.Utils
 
 class ShowEstateFragmentViewModel : ViewModel() {
 
@@ -25,6 +25,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val bathroomsCount = ObservableField("")
     val price = ObservableField("")
     val type = ObservableField("")
+    val onMarketSince = ObservableField("")
 
     val buttonLeftString = ObservableField("")
     val buttonRightString = ObservableField("")
@@ -40,6 +41,12 @@ class ShowEstateFragmentViewModel : ViewModel() {
             type.set(context?.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
         } catch (exception : Exception) {
             Log.e(TAG, "ERROR : ${exception.message}")
+        }
+        if (estate.onMarketSince != null) {
+            onMarketSince.set(
+                "${context?.getString(R.string.on_market_since_title)} " +
+                        Utils.parseDate(estate.onMarketSince!!)
+            )
         }
     }
 

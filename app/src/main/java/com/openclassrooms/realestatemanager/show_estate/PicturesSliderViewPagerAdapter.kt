@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
@@ -45,6 +46,7 @@ class PicturesSliderViewPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHol
 
         fun setData(item : Bitmap) {
             binding.pictureImageView.setImageBitmap(item)
+            binding.pictureImageView.scaleType = ImageView.ScaleType.FIT_XY
         }
     }
 

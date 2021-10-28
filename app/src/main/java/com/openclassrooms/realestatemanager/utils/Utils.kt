@@ -146,4 +146,9 @@ object Utils {
             .setScale(2, RoundingMode.HALF_UP)
             .stripTrailingZeros()
     }
+
+    fun parseDate(date : Date) : String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        return dateFormat.format(date)
+    }
 }
