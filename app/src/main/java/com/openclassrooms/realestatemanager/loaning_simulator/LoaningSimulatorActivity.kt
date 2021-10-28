@@ -59,6 +59,13 @@ class LoaningSimulatorActivity : AppCompatActivity() {
         setupChangesListeners()
     }
 
+    /**
+     *  Setups [TextWatcher] on [EditText]s, and a [Slider.OnChangeListener] on the [Slider].
+     *  We use the same [TextWatcher] for every [EditText], as we only need to know when its text is
+     *  changed.
+     *  When one of the value is changed, we call for [calculateResults], which will retrieve each
+     *  data we need and perform the calculation.
+     */
     private fun setupChangesListeners() {
         mortgageAmountEt?.addTextChangedListener(textWatcher)
         bringAmountEt?.addTextChangedListener(textWatcher)
