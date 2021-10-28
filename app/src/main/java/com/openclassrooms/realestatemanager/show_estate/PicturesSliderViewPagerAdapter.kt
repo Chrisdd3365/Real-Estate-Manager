@@ -18,7 +18,7 @@ class PicturesSliderViewPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHol
         Log.d(TAG, "Setting ${pictures.size} items in the viewPager adapter")
         items.clear()
         items.addAll(pictures)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     override fun getItemCount(): Int = items.size

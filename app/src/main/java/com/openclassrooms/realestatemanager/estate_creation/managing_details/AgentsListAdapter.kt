@@ -20,7 +20,7 @@ class AgentsListAdapter(val changed : (() -> Unit)?, val isSelecting : Boolean)
     fun setItems(items : ArrayList<Agent>) {
         agents.clear()
         agents.addAll(items)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     fun selectAgents(selectedAgents : ArrayList<Agent>) {

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.properties_list
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.LayoutInflater
@@ -24,9 +25,11 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     private var items = ArrayList<Estate>()
     private var selectedItem : Int? = null
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(context: Context?, estates : ArrayList<Estate>) {
         this.context = context
         items.clear()
+        notifyItemRangeRemoved(0, itemCount)
         items.addAll(estates)
         notifyDataSetChanged()
     }

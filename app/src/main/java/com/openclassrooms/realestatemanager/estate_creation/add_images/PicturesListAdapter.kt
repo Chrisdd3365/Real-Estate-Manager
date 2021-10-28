@@ -25,7 +25,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
     fun addItems(pictures : ArrayList<Bitmap>) {
         items.clear()
         items.addAll(pictures)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     fun getItems() : ArrayList<Bitmap> {
