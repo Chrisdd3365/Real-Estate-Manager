@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
-import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -102,7 +101,7 @@ class DatabaseManager(context : Context)
             while (cursor.moveToNext()) {
                 val newEstate = Estate(cursor)
                 if (newEstate.onMarketSince != null)
-                    Utils.checkOldestEstate(newEstate.onMarketSince!!)
+                    Utils.checkEstatesTimeOnMarket(newEstate.onMarketSince!!)
                 estates.add(newEstate)
             }
 

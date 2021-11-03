@@ -19,6 +19,7 @@ import com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragment
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
 import com.openclassrooms.realestatemanager.utils.Enums
+import com.openclassrooms.realestatemanager.utils.Utils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -157,8 +158,13 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun addTestingEstates(testingEstates : ArrayList<Estate>) {
+        // TODO : Sort estates by timeOnMarket first
+        for (testingEstate in testingEstates) {
+            Utils.checkEstatesTimeOnMarket(testingEstate.onMarketSince!!)
+        }
         estatesList?.addAll(testingEstates)
-        propertiesListRv?.post { propertiesListAdapter.addItems(testingEstates) }
+        estatesList?.sortByDescending { it.onMarketSince?.timeInMillis }
+        propertiesListRv?.post { propertiesListAdapter.setData(requireContext(), estatesList!!) }
     }
 
     fun editEstateAtPosition(position: Int, estate: Estate) {

@@ -152,7 +152,7 @@ object Utils {
         return dateFormat.format(calendar.time)
     }
 
-    fun checkOldestEstate(currentEstateDate : Calendar) {
+    fun checkEstatesTimeOnMarket(currentEstateDate : Calendar) {
         if (currentEstateDate.before(Singleton.oldestEstate))
             Singleton.oldestEstate = currentEstateDate
         if (currentEstateDate.after(Singleton.mostRecentEstate))
