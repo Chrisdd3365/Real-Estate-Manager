@@ -239,6 +239,7 @@ class MainActivity : BaseActivity() {
                     Log.d(TAG, "OTHER")
                 }
             }
+            drawerLayout?.closeDrawers()
             true
         }
     }
