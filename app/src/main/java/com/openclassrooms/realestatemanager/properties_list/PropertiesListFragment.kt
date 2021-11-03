@@ -20,7 +20,6 @@ import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Utils
-import java.util.*
 import kotlin.collections.ArrayList
 
 class PropertiesListFragment : Fragment() {
@@ -89,12 +88,13 @@ class PropertiesListFragment : Fragment() {
                 dialog.dismiss()
             }
 
-            override fun confirmSearchClicked(priceRange: IntArray, surfaceRange: IntArray,
-                                              roomsRange: IntArray, bathroomsRange: IntArray,
-                                              bedroomsRange: IntArray, schoolValue: Boolean,
-                                              playgroundValue: Boolean, shopValue: Boolean,
-                                              busesValue: Boolean, subwayValue: Boolean,
-                                              parkValue: Boolean, fromDate: Date
+            override fun confirmSearchClicked(
+                priceRange: IntArray, surfaceRange: IntArray,
+                roomsRange: IntArray, bathroomsRange: IntArray,
+                bedroomsRange: IntArray, schoolValue: Boolean,
+                playgroundValue: Boolean, shopValue: Boolean,
+                busesValue: Boolean, subwayValue: Boolean,
+                parkValue: Boolean, fromDate: Long
             ) {
                 viewModel.setLoading()
                 (activity as MainActivity).filterEstates(priceRange, surfaceRange, roomsRange,
@@ -113,8 +113,8 @@ class PropertiesListFragment : Fragment() {
         } else {
             propertiesListAdapter.setData(requireContext(), filteredResults!!)
             viewModel.setPropertiesList()
-            viewModel.setResultsFiltered(requireContext())
         }
+        viewModel.setResultsFiltered(requireContext())
         areResultsFiltered = true
     }
 
@@ -158,7 +158,6 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun addTestingEstates(testingEstates : ArrayList<Estate>) {
-        // TODO : Sort estates by timeOnMarket first
         for (testingEstate in testingEstates) {
             Utils.checkEstatesTimeOnMarket(testingEstate.onMarketSince!!)
         }

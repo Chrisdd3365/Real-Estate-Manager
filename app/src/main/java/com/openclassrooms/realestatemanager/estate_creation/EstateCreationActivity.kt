@@ -29,6 +29,8 @@ import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.Enums
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  *  This [AppCompatActivity] will handle numerous [androidx.fragment.app.Fragment] that will handle
@@ -429,6 +431,7 @@ class EstateCreationActivity : BaseActivity() {
             return
         estateToSave.latitude = estatePosition?.latitude
         estateToSave.longitude = estatePosition?.longitude
+        estateToSave.onMarketSince = Calendar.getInstance()
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->

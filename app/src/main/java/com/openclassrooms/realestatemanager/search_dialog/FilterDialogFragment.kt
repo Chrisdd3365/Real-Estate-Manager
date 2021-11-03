@@ -21,12 +21,14 @@ class FilterDialogFragment : DialogFragment() {
             dialog.dismiss()
         }
 
-        override fun confirmSearchClicked(priceRange: IntArray, surfaceRange: IntArray,
-                                          roomsRange: IntArray, bathroomsRange: IntArray,
-                                          bedroomsRange: IntArray, schoolValue: Boolean,
-                                          playgroundValue: Boolean, shopValue: Boolean,
-                                          busesValue: Boolean, subwayValue: Boolean,
-                                          parkValue: Boolean, fromDate: Date) {
+        override fun confirmSearchClicked(
+            priceRange: IntArray, surfaceRange: IntArray,
+            roomsRange: IntArray, bathroomsRange: IntArray,
+            bedroomsRange: IntArray, schoolValue: Boolean,
+            playgroundValue: Boolean, shopValue: Boolean,
+            busesValue: Boolean, subwayValue: Boolean,
+            parkValue: Boolean, fromDate: Long
+        ) {
 
         }
 
@@ -119,7 +121,7 @@ class FilterDialogFragment : DialogFragment() {
 
         customDialogInterface.confirmSearchClicked(priceRange, surfaceRange, roomsRange,
             bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue, busesValue,
-            subwayValue, parkValue, calendar.time)
+            subwayValue, parkValue, calendar.timeInMillis)
     }
 
     private fun getRange(rangeSlider: RangeSlider) : IntArray {

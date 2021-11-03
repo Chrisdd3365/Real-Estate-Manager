@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.app.Dialog
-import java.util.*
 
 interface CustomDialogInterface {
 
@@ -11,5 +10,5 @@ interface CustomDialogInterface {
                              bathroomsRange : IntArray, bedroomsRange : IntArray,
                              schoolValue : Boolean, playgroundValue : Boolean, shopValue : Boolean,
                              busesValue : Boolean, subwayValue : Boolean, parkValue : Boolean,
-                             fromDate : Date)
+                             fromDate : Long)
 }

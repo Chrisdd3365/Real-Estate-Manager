@@ -48,17 +48,18 @@ class PropertiesListFragmentViewModel : ViewModel() {
 
     fun setResultsFiltered(context: Context) {
         filterButtonTextValue.set(context.getString(R.string.button_remove_filters))
+        showFilterButton()
     }
 
     fun setDefaultFilterButton(context: Context) {
         filterButtonTextValue.set(context.getString(R.string.button_filter))
     }
 
-    fun showFilterButton() {
+    private fun showFilterButton() {
         filterButtonVisibility.set(View.VISIBLE)
     }
 
-    fun hideFilterButton() {
+    private fun hideFilterButton() {
         filterButtonVisibility.set(View.GONE)
     }
 

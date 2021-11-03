@@ -12,8 +12,6 @@ import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.ByteArrayOutputStream
-import java.util.*
-import kotlin.collections.ArrayList
 
 class DatabaseManager(context : Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -25,9 +23,7 @@ class DatabaseManager(context : Context)
         db?.execSQL(SQL_CREATE_MANAGING_TABLE)
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
 
     /**
      *  Saves an [Estate] instance in the Database.
@@ -282,7 +278,7 @@ class DatabaseManager(context : Context)
     fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
                       bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
                       playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
-                      subwayValue: Boolean, parkValue: Boolean, fromDate: Date,
+                      subwayValue: Boolean, parkValue: Boolean, fromDate: Long,
                       onSuccess: ((ArrayList<Estate>) -> Unit), onFailure: (() -> Unit)) {
 
         val database = this.readableDatabase
@@ -295,8 +291,6 @@ class DatabaseManager(context : Context)
                 "AND $COLUMN_BATHROOMS_COUNT BETWEEN ? AND ? " +
                 "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ? " +
                 "AND $COLUMN_ON_MARKET_SINCE >= ?"
-
-        Log.d(TAG, "SELECTION = $selection")
 
         if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY"
         if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY"
@@ -394,7 +388,7 @@ class DatabaseManager(context : Context)
                 $COLUMN_TYPE INTEGER NOT NULL,
                 $COLUMN_DESCRIPTION TEXT,
                 $COLUMN_ADDRESS TEXT NOT NULL,
-                $COLUMN_ON_MARKET_SINCE DATE NOT NULL,
+                $COLUMN_ON_MARKET_SINCE LONG NOT NULL,
                 $COLUMN_PRICE REAL NOT NULL,
                 $COLUMN_SURFACE REAL NOT NULL,
                 $COLUMN_ROOMS_COUNT INT,
