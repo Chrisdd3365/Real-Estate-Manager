@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.properties_list
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,13 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
         if (index != null) items.add(index, toAdd)
         else items.add(toAdd)
         notifyItemInserted(items.indexOf(toAdd))
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addItems(toAddItems : ArrayList<Estate>) {
+        Log.d(TAG, "To add items size = ${toAddItems.size}")
+        items.addAll(toAddItems)
+        notifyDataSetChanged()
     }
 
     fun changeItem(index: Int, toEdit : Estate) {
@@ -107,7 +115,7 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             binding.itemRoot.setOnClickListener { clicked.invoke(estate) }
             setPlaceHolder(estate.typeIndex!!)
 
-            if (context != null) {
+            if (context != null && estate.id != null) {
                 DatabaseManager(context).getImagesForEstate(
                     estate.id!!,
                     success = {

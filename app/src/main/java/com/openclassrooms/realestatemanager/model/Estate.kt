@@ -16,7 +16,7 @@ class Estate : Serializable {
     var typeIndex : Int? = null
     var description : String? = null
     var address : String? = null
-    var onMarketSince : Date? = null
+    var onMarketSince : Calendar? = null
 
     private var price : Double? = null
     private var surface : Double? = null
@@ -42,7 +42,9 @@ class Estate : Serializable {
             typeIndex = getInt(getColumnIndex(DatabaseManager.COLUMN_TYPE))
             description = getString(getColumnIndex(DatabaseManager.COLUMN_DESCRIPTION))
             address = getString(getColumnIndex(DatabaseManager.COLUMN_ADDRESS))
-            onMarketSince = Date() // TODO
+            onMarketSince = Calendar.getInstance().apply {
+                timeInMillis = getLong(getColumnIndex(DatabaseManager.COLUMN_ON_MARKET_SINCE))
+            }
             setDollarPrice(getDouble(getColumnIndex(DatabaseManager.COLUMN_PRICE)))
             setSquareFeetSurface(getDouble(getColumnIndex(DatabaseManager.COLUMN_SURFACE)))
             roomCount = getInt(getColumnIndex(DatabaseManager.COLUMN_ROOMS_COUNT))
@@ -151,7 +153,8 @@ class Estate : Serializable {
             put(DatabaseManager.COLUMN_TYPE, typeIndex)
             put(DatabaseManager.COLUMN_DESCRIPTION, description)
             put(DatabaseManager.COLUMN_ADDRESS, address)
-            put(DatabaseManager.COLUMN_ON_MARKET_SINCE, Date().toString()) // TODO
+            put(DatabaseManager.COLUMN_ON_MARKET_SINCE,
+                onMarketSince?.timeInMillis ?: Calendar.getInstance().timeInMillis)
             put(DatabaseManager.COLUMN_PRICE, getDollarPrice())
             put(DatabaseManager.COLUMN_SURFACE, getSquareFeetSurface())
             put(DatabaseManager.COLUMN_ROOMS_COUNT, roomCount)

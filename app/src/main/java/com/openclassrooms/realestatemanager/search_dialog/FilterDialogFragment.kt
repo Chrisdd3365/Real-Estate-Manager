@@ -3,7 +3,7 @@ package com.openclassrooms.realestatemanager.search_dialog
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
+import android.widget.DatePicker
 import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -11,6 +11,8 @@ import com.google.android.material.slider.RangeSlider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentFilterDialogBinding
 import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
+import com.openclassrooms.realestatemanager.utils.Singleton
+import java.util.*
 
 class FilterDialogFragment : DialogFragment() {
 
@@ -24,7 +26,7 @@ class FilterDialogFragment : DialogFragment() {
                                           bedroomsRange: IntArray, schoolValue: Boolean,
                                           playgroundValue: Boolean, shopValue: Boolean,
                                           busesValue: Boolean, subwayValue: Boolean,
-                                          parkValue: Boolean) {
+                                          parkValue: Boolean, fromDate: Date) {
 
         }
 
@@ -44,6 +46,7 @@ class FilterDialogFragment : DialogFragment() {
     private var busesSwitch : SwitchCompat? = null
     private var subwaySwitch : SwitchCompat? = null
     private var parkSwitch : SwitchCompat? = null
+    private var onMarketSinceDp : DatePicker? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -64,6 +67,22 @@ class FilterDialogFragment : DialogFragment() {
         busesSwitch = binding.busesSwitch
         subwaySwitch = binding.subwaySwitch
         parkSwitch = binding.parkSwitch
+        onMarketSinceDp = binding.onMarketSinceDatePicker
+
+        onMarketSinceDp?.minDate = Singleton.oldestEstate.time.time
+        if (Singleton.oldestEstate == Singleton.mostRecentEstate)
+            onMarketSinceDp?.maxDate = Date().time
+        else
+            onMarketSinceDp?.maxDate = Singleton.mostRecentEstate.time.time
+
+        val calendar = Calendar.getInstance()
+        calendar.time = Singleton.oldestEstate.time
+        onMarketSinceDp?.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
+            null
+        )
 
         dialogBuilder.setPositiveButton(R.string.button_apply_filters) { _, _ ->
             prepareSearch()
@@ -90,10 +109,17 @@ class FilterDialogFragment : DialogFragment() {
         val busesValue = busesSwitch?.isChecked!!
         val subwayValue = subwaySwitch?.isChecked!!
         val parkValue = parkSwitch?.isChecked!!
+        val calendar = Calendar.getInstance().apply {
+            if (onMarketSinceDp != null) {
+                set(Calendar.YEAR, onMarketSinceDp!!.year)
+                set(Calendar.MONTH, onMarketSinceDp!!.month)
+                set(Calendar.DAY_OF_YEAR, onMarketSinceDp!!.dayOfMonth)
+            }
+        }
 
         customDialogInterface.confirmSearchClicked(priceRange, surfaceRange, roomsRange,
             bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue, busesValue,
-            subwayValue, parkValue)
+            subwayValue, parkValue, calendar.time)
     }
 
     private fun getRange(rangeSlider: RangeSlider) : IntArray {
@@ -105,6 +131,7 @@ class FilterDialogFragment : DialogFragment() {
 
     companion object {
 
+        @Suppress("unused")
         private const val TAG = "FilterDialogFrag"
 
         fun newInstance(): FilterDialogFragment {

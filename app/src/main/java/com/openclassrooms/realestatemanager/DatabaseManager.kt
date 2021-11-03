@@ -10,7 +10,10 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.utils.Singleton
+import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.ByteArrayOutputStream
+import java.util.*
 import kotlin.collections.ArrayList
 
 class DatabaseManager(context : Context)
@@ -97,7 +100,10 @@ class DatabaseManager(context : Context)
             )
 
             while (cursor.moveToNext()) {
-                estates.add(Estate(cursor))
+                val newEstate = Estate(cursor)
+                if (newEstate.onMarketSince != null)
+                    Utils.checkOldestEstate(newEstate.onMarketSince!!)
+                estates.add(newEstate)
             }
 
             cursor.close()
@@ -277,7 +283,7 @@ class DatabaseManager(context : Context)
     fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
                       bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
                       playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
-                      subwayValue: Boolean, parkValue: Boolean,
+                      subwayValue: Boolean, parkValue: Boolean, fromDate: Date,
                       onSuccess: ((ArrayList<Estate>) -> Unit), onFailure: (() -> Unit)) {
 
         val database = this.readableDatabase
@@ -288,7 +294,8 @@ class DatabaseManager(context : Context)
                 "AND $COLUMN_SURFACE BETWEEN ? AND ? " +
                 "AND $COLUMN_ROOMS_COUNT BETWEEN ? AND ? " +
                 "AND $COLUMN_BATHROOMS_COUNT BETWEEN ? AND ? " +
-                "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ?"
+                "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ? " +
+                "AND $COLUMN_ON_MARKET_SINCE >= ?"
 
         Log.d(TAG, "SELECTION = $selection")
 
@@ -304,7 +311,8 @@ class DatabaseManager(context : Context)
             "${surfaceRange[0]}", "${surfaceRange[1]}",
             "${roomsRange[0]}", "${roomsRange[1]}",
             "${bathroomsRange[0]}", "${bathroomsRange[1]}",
-            "${bedroomsRange[0]}", "${bedroomsRange[1]}"
+            "${bedroomsRange[0]}", "${bedroomsRange[1]}",
+            "$fromDate"
         )
 
         try {

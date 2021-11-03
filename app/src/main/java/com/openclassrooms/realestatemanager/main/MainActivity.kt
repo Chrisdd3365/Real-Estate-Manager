@@ -38,6 +38,8 @@ import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
 import com.openclassrooms.realestatemanager.utils.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO : Add a splash screen before this activity
 
@@ -229,6 +231,10 @@ class MainActivity : BaseActivity() {
                     Log.d(TAG, "Loaning simulator !")
                     launchLoaningSimulator()
                 }
+                R.id.nav_generate_estates -> {
+                    Log.d(TAG, "Generate estates !")
+                    generateTestingEstates()
+                }
                 else -> {
                     Log.d(TAG, "OTHER")
                 }
@@ -268,10 +274,6 @@ class MainActivity : BaseActivity() {
     fun estateClicked(estateClicked : Estate) {
         resultLauncher?.launch(EstateCreationActivity.newInstance(this, estateClicked,
             false, null))
-    }
-
-    private fun getStaticEstateList() : ArrayList<Estate> {
-        return StaticData.staticEstatesList
     }
 
     fun getUserLastPosition(onLastLocationSuccess : ((LatLng) -> Unit)?) {
@@ -331,6 +333,11 @@ class MainActivity : BaseActivity() {
         startActivity(LoaningSimulatorActivity.newInstance(this))
     }
 
+    private fun generateTestingEstates() {
+        estateList.addAll(StaticData.staticEstatesList)
+        propertiesListFragment?.addTestingEstates(StaticData.staticEstatesList)
+    }
+
     override fun deleteEstate(estateToDelete : Estate) {
         DatabaseManager(this).deleteEstate(
             estateToDelete.id!!,
@@ -349,10 +356,10 @@ class MainActivity : BaseActivity() {
     fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
                       bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
                       playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
-                      subwayValue: Boolean, parkValue: Boolean) {
+                      subwayValue: Boolean, parkValue: Boolean, fromDate: Date) {
         DatabaseManager(this).filterEstates(
             priceRange, surfaceRange, roomsRange, bathroomsRange, bedroomsRange, schoolValue,
-            playgroundValue, shopValue, busesValue, subwayValue, parkValue,
+            playgroundValue, shopValue, busesValue, subwayValue, parkValue, fromDate,
             onSuccess = {
                 propertiesListFragment?.displaySearchResults(it)
             },

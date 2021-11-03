@@ -147,8 +147,15 @@ object Utils {
             .stripTrailingZeros()
     }
 
-    fun parseDate(date : Date) : String {
+    fun parseDate(calendar: Calendar) : String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-        return dateFormat.format(date)
+        return dateFormat.format(calendar.time)
+    }
+
+    fun checkOldestEstate(currentEstateDate : Calendar) {
+        if (currentEstateDate.before(Singleton.oldestEstate))
+            Singleton.oldestEstate = currentEstateDate
+        if (currentEstateDate.after(Singleton.mostRecentEstate))
+            Singleton.mostRecentEstate = currentEstateDate
     }
 }

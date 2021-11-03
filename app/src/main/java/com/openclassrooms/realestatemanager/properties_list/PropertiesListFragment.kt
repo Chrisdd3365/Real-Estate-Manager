@@ -19,6 +19,8 @@ import com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragment
 import com.openclassrooms.realestatemanager.show_estate.ShowEstateFragment
 import com.openclassrooms.realestatemanager.utils.CustomDialogInterface
 import com.openclassrooms.realestatemanager.utils.Enums
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PropertiesListFragment : Fragment() {
 
@@ -91,11 +93,12 @@ class PropertiesListFragment : Fragment() {
                                               bedroomsRange: IntArray, schoolValue: Boolean,
                                               playgroundValue: Boolean, shopValue: Boolean,
                                               busesValue: Boolean, subwayValue: Boolean,
-                                              parkValue: Boolean) {
+                                              parkValue: Boolean, fromDate: Date
+            ) {
                 viewModel.setLoading()
                 (activity as MainActivity).filterEstates(priceRange, surfaceRange, roomsRange,
                     bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue,
-                    busesValue, subwayValue, parkValue)
+                    busesValue, subwayValue, parkValue, fromDate)
             }
         }
 
@@ -151,6 +154,11 @@ class PropertiesListFragment : Fragment() {
             estatesList = ArrayList()
         estatesList!!.add(estate)
         propertiesListRv?.post { propertiesListAdapter.addItem(0, estate) }
+    }
+
+    fun addTestingEstates(testingEstates : ArrayList<Estate>) {
+        estatesList?.addAll(testingEstates)
+        propertiesListRv?.post { propertiesListAdapter.addItems(testingEstates) }
     }
 
     fun editEstateAtPosition(position: Int, estate: Estate) {

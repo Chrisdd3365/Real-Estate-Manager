@@ -204,6 +204,12 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     }
 
     private fun setPicturesCarousel() {
+
+        if (estate?.id == null) {
+            viewModel.hideImagesLayout()
+            return
+        }
+
         var pictures = ArrayList<Bitmap>()
 
         if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate!!.id != null) {
@@ -233,6 +239,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     }
 
     private fun getManagingAgents() {
+        if (estate?.id == null)
+            return
         managingAgents.clear()
         DatabaseManager(requireContext()).getEstateManagers(
             estate!!.id!!,
