@@ -34,6 +34,8 @@ class Estate : Serializable {
     var latitude : Double? = null
     var longitude : Double? = null
 
+    var sold : Boolean? = null
+
     constructor()
 
     constructor(cursor: Cursor) {
@@ -58,6 +60,7 @@ class Estate : Serializable {
             park = getBoolean(getColumnIndex(DatabaseManager.COLUMN_PARK_NEARBY))
             latitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LATITUDE))
             longitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LONGITUDE))
+            sold = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SOLD))
         }
     }
 
@@ -168,6 +171,7 @@ class Estate : Serializable {
             put(DatabaseManager.COLUMN_PARK_NEARBY, park)
             put(DatabaseManager.COLUMN_LATITUDE, latitude)
             put(DatabaseManager.COLUMN_LONGITUDE, longitude)
+            put(DatabaseManager.COLUMN_SOLD, sold)
         }
     }
 

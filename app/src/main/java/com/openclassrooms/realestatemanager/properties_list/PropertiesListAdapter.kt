@@ -160,6 +160,7 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
 
         val imageVisibility = ObservableInt(View.GONE)
         val loadingImageVisibility = ObservableInt(View.VISIBLE)
+        val soldVisibility = ObservableInt(View.GONE)
 
         fun setData(context: Context?, estate: Estate) {
 
@@ -169,6 +170,9 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
 
             city.set(estate.address)
             price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
+
+            if (estate.sold == true)
+                soldVisibility.set(View.VISIBLE)
         }
 
         fun setImage() {

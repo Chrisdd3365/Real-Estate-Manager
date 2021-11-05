@@ -27,71 +27,92 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <FrameLayout
-                    android:id="@+id/image_layout"
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:layout_margin="15dp">
-
-                    <ImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="@{viewModel.imageVisibility}"/>
-
-                    <ProgressBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="@{viewModel.loadingImageVisibility}" />
-
-                </FrameLayout>
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="125dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_toEndOf="@id/image_layout"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginTop="8dp"
-                        android:text="@{viewModel.type}"
-                        android:textSize="20sp"
-                        tools:text="TEST" />
+                    <FrameLayout
+                        android:id="@+id/image_layout"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_margin="15dp">
 
-                    <TextView
-                        android:id="@+id/city"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@{viewModel.city}"
-                        android:textColor="@android:color/darker_gray"
-                        tools:text="POSITION" />
+                        <ImageView
+                            android:id="@+id/image_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="@{viewModel.imageVisibility}"/>
 
-                    <TextView
-                        android:id="@+id/price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@{viewModel.price}"
-                        android:textColor="@color/teal_700"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        tools:text="PRICE" />
+                        <ProgressBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="@{viewModel.loadingImageVisibility}" />
 
-                </LinearLayout>
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="125dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_toEndOf="@id/image_layout"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginTop="8dp"
+                            android:text="@{viewModel.type}"
+                            android:textSize="20sp"
+                            tools:text="TEST" />
+
+                        <TextView
+                            android:id="@+id/city"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="@{viewModel.city}"
+                            android:textColor="@android:color/darker_gray"
+                            tools:text="POSITION" />
+
+                        <TextView
+                            android:id="@+id/price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="@{viewModel.price}"
+                            android:textColor="@color/teal_700"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="PRICE" />
+
+                    </LinearLayout>
 
 
-            </RelativeLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/sold_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.75"
+                    android:gravity="center"
+                    android:rotation="-15"
+                    android:text="@string/sold"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="64sp"
+                    android:textStyle="bold"
+                    android:visibility="@{viewModel.soldVisibility}" />
+
+            </FrameLayout>
 
         </androidx.cardview.widget.CardView>
 
