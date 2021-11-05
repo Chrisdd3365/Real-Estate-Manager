@@ -51,7 +51,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.pictures_list_item,
-                null,
+                parent,
                 false
             ),
             dragStartListener
