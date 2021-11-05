@@ -11,13 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.FragmentMapViewBinding
-import com.openclassrooms.realestatemanager.main.MainActivity
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Singleton
 
@@ -37,6 +33,7 @@ class MapViewFragment : Fragment() {
 
     private var estatesList: ArrayList<Estate> = ArrayList()
     private var markers = ArrayList<Marker>()
+    private var latLngBoundsBuilder = LatLngBounds.Builder()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,16 +72,11 @@ class MapViewFragment : Fragment() {
 
             addMarkers()
 
-            (activity as? MainActivity)?.getUserLastPosition {
-                googleMap?.animateCamera(
-                    CameraUpdateFactory.newCameraPosition(
-                        CameraPosition.Builder().target(it).zoom(20f)
-                            .build()
-                    )
-                )
+            if (markers.isNotEmpty()) {
+                val cameraUpdate =
+                    CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), PADDING)
+                googleMap?.animateCamera(cameraUpdate)
             }
-
-            // TODO : Animate camera on current user position
             mapView?.onResume()
         }
 
@@ -107,8 +99,10 @@ class MapViewFragment : Fragment() {
                         .title("$estateType (${estate.getSurface()} ${Singleton.unitSymbol} " +
                                 "at ${estate.getPrice()} ${Singleton.currencySymbol})")
                 )
-                if (marker != null)
+                if (marker != null) {
                     markers.add(marker)
+                    latLngBoundsBuilder.include(marker.position)
+                }
             }
         }
     }
@@ -162,6 +156,8 @@ class MapViewFragment : Fragment() {
         private const val TAG = "MapViewFragment"
 
         private const val TAG_ESTATES = "estates"
+
+        private const val PADDING = 25
 
         fun newInstance(estatesList : ArrayList<Estate>): MapViewFragment {
             val fragment = MapViewFragment()
