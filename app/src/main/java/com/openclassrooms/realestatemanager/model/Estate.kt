@@ -57,7 +57,7 @@ class Estate : Serializable {
             subway = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SUBWAY_NEARBY))
             park = getBoolean(getColumnIndex(DatabaseManager.COLUMN_PARK_NEARBY))
             latitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LATITUDE))
-            longitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LONGITURE))
+            longitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LONGITUDE))
         }
     }
 
@@ -167,7 +167,7 @@ class Estate : Serializable {
             put(DatabaseManager.COLUMN_SUBWAY_NEARBY, subway)
             put(DatabaseManager.COLUMN_PARK_NEARBY, park)
             put(DatabaseManager.COLUMN_LATITUDE, latitude)
-            put(DatabaseManager.COLUMN_LONGITURE, longitude)
+            put(DatabaseManager.COLUMN_LONGITUDE, longitude)
         }
     }
 
