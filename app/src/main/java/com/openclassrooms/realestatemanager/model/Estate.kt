@@ -35,6 +35,7 @@ class Estate : Serializable {
     var longitude : Double? = null
 
     var sold : Boolean? = false
+    var soldDate : Calendar? = null
 
     constructor()
 
@@ -61,6 +62,9 @@ class Estate : Serializable {
             latitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LATITUDE))
             longitude = getDouble(getColumnIndex(DatabaseManager.COLUMN_LONGITUDE))
             sold = getBoolean(getColumnIndex(DatabaseManager.COLUMN_SOLD))
+            soldDate = Calendar.getInstance().apply {
+                timeInMillis = getLong(getColumnIndex(DatabaseManager.COLUMN_SELL_DATE))
+            }
         }
     }
 
@@ -172,6 +176,7 @@ class Estate : Serializable {
             put(DatabaseManager.COLUMN_LATITUDE, latitude)
             put(DatabaseManager.COLUMN_LONGITUDE, longitude)
             put(DatabaseManager.COLUMN_SOLD, sold)
+            put(DatabaseManager.COLUMN_SELL_DATE, soldDate?.timeInMillis ?: 0)
         }
     }
 

@@ -27,6 +27,8 @@ import com.openclassrooms.realestatemanager.estate_creation.managing_details.Age
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
                          private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit = {})
@@ -98,7 +100,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         setupOrientation(orientation)
 
         viewModel.setButtonsText(context, type!!)
-        viewModel.setData(context, estate!!)
+        viewModel.setData(requireContext(), estate!!)
 
         setTypeIcon()
 
@@ -151,6 +153,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 }
                 markAsSoldButton?.setOnClickListener {
                     estate?.sold = (estate?.sold != true)
+                    estate?.soldDate = Calendar.getInstance()
+                    viewModel.setSellDate(requireContext(), estate!!)
                     (activity as? BaseActivity)?.changeEstateSoldState(estate!!)
                 }
             }

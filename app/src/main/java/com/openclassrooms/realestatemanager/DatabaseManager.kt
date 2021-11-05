@@ -368,6 +368,7 @@ class DatabaseManager(context : Context)
         const val COLUMN_LATITUDE = "latitude"
         const val COLUMN_LONGITUDE = "longitude"
         const val COLUMN_SOLD = "sold"
+        const val COLUMN_SELL_DATE = "sell_date"
 
         // Image table columns
         private const val COLUMN_IMAGE = "uri"
@@ -404,7 +405,8 @@ class DatabaseManager(context : Context)
                 $COLUMN_PARK_NEARBY BOOLEAN,
                 $COLUMN_LATITUDE REAL,
                 $COLUMN_LONGITUDE REAL,
-                $COLUMN_SOLD BOOLEAN
+                $COLUMN_SOLD BOOLEAN,
+                $COLUMN_SELL_DATE LONG
             );
         """
 

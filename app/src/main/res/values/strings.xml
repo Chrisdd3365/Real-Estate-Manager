@@ -68,6 +68,7 @@
     <string name="managing_agents">Managing agents :</string>
     <string name="on_market_since_title">On market since :</string>
     <string name="sold">Sold</string>
+    <string name="sold_at">Sold at : </string>
 
     <string name="add_picture">Add a picture</string>
     <string name="new_picture">New picture</string>

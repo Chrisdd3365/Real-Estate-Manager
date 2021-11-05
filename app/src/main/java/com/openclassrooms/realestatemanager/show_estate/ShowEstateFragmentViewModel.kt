@@ -11,6 +11,7 @@ import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
+import java.util.*
 
 class ShowEstateFragmentViewModel : ViewModel() {
 
@@ -18,6 +19,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val imagesLayoutVisibility = ObservableInt(View.GONE)
     val managingAgentsVisibility = ObservableInt(View.GONE)
     val markAsSoldButtonVisibility = ObservableInt(View.GONE)
+    val sellDateVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -27,33 +29,44 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val price = ObservableField("")
     val type = ObservableField("")
     val onMarketSince = ObservableField("")
+    val sellDate = ObservableField("")
 
     val buttonLeftString = ObservableField("")
     val buttonRightString = ObservableField("")
     val buttonMarkAsSoldString = ObservableField("")
 
-    fun setData(context: Context?, estate: Estate) {
+    fun setData(context: Context, estate: Estate) {
         description.set(estate.description)
         surfaceSize.set("${estate.getSurface()} ${Singleton.unitSymbol}")
-        roomsCount.set("${estate.roomCount?.toString()} ${context?.getString(R.string.rooms)?.lowercase()}")
-        bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context?.getString(R.string.bedrooms)?.lowercase()}")
-        bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context?.getString(R.string.bathrooms)?.lowercase()}")
+        roomsCount.set("${estate.roomCount?.toString()} ${context.getString(R.string.rooms).lowercase()}")
+        bedroomsCount.set("${estate.bedroomsCount?.toString()} ${context.getString(R.string.bedrooms).lowercase()}")
+        bathroomsCount.set("${estate.bathroomsCount?.toString()} ${context.getString(R.string.bathrooms).lowercase()}")
         price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
         try {
-            type.set(context?.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
+            type.set(context.resources?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!))
         } catch (exception : Exception) {
             Log.e(TAG, "ERROR : ${exception.message}")
         }
         if (estate.onMarketSince != null) {
             onMarketSince.set(
-                "${context?.getString(R.string.on_market_since_title)} " +
+                "${context.getString(R.string.on_market_since_title)} " +
                         Utils.parseDate(estate.onMarketSince!!)
             )
         }
+
+        setSellDate(context, estate)
+    }
+
+    fun setSellDate(context : Context, estate: Estate) {
         if (estate.sold == true) {
-            buttonMarkAsSoldString.set(context?.getString(R.string.button_mark_as_not_sold))
+            sellDate.set(
+                "${context.getString(R.string.sold_at)} " + Utils.parseDate(estate.soldDate!!)
+            )
+            sellDateVisibility.set(View.VISIBLE)
+            buttonMarkAsSoldString.set(context.getString(R.string.button_mark_as_not_sold))
         } else {
-            buttonMarkAsSoldString.set(context?.getString(R.string.button_mark_as_sold))
+            sellDateVisibility.set(View.GONE)
+            buttonMarkAsSoldString.set(context.getString(R.string.button_mark_as_sold))
         }
     }
 
