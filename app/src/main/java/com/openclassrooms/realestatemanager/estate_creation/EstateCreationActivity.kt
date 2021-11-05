@@ -411,6 +411,10 @@ class EstateCreationActivity : BaseActivity() {
         showFirstFragment(estateToEdit)
     }
 
+    override fun estateSoldStateChanged(estateToEdit: Estate) {
+        finishWithResult(estateToEdit.id!!, estateToEdit)
+    }
+
     /**
      *  This function is used when the user clicked on "Confirm" button in [ShowEstateFragment].
      *  If the user is editing an existing [Estate] ([isEditing] is true), we call

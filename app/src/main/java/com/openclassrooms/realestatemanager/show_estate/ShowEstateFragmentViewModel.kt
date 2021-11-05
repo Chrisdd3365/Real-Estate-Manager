@@ -17,6 +17,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val nearbyLayoutVisibility = ObservableInt(View.GONE)
     val imagesLayoutVisibility = ObservableInt(View.GONE)
     val managingAgentsVisibility = ObservableInt(View.GONE)
+    val markAsSoldButtonVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -29,6 +30,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     val buttonLeftString = ObservableField("")
     val buttonRightString = ObservableField("")
+    val buttonMarkAsSoldString = ObservableField("")
 
     fun setData(context: Context?, estate: Estate) {
         description.set(estate.description)
@@ -48,6 +50,11 @@ class ShowEstateFragmentViewModel : ViewModel() {
                         Utils.parseDate(estate.onMarketSince!!)
             )
         }
+        if (estate.sold == true) {
+            buttonMarkAsSoldString.set(context?.getString(R.string.button_mark_as_not_sold))
+        } else {
+            buttonMarkAsSoldString.set(context?.getString(R.string.button_mark_as_sold))
+        }
     }
 
     fun setButtonsText(context: Context?, showEstateType: Enums.ShowEstateType) {
@@ -61,6 +68,14 @@ class ShowEstateFragmentViewModel : ViewModel() {
                 buttonRightString.set(context?.getString(R.string.button_edit))
             }
         }
+    }
+
+    fun showMarkAsSoldButton() {
+        markAsSoldButtonVisibility.set(View.VISIBLE)
+    }
+
+    fun hideMarkAsSoldButton() {
+        markAsSoldButtonVisibility.set(View.GONE)
     }
 
     fun hideNearbyLayout() {

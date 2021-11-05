@@ -16,6 +16,7 @@
         tools:context=".show_estate.ShowEstateFragment">
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toTopOf="@+id/buttons"
@@ -279,38 +280,46 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/managing_agents_title" />
 
+                <Button
+                    android:id="@+id/mark_as_sold_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="25dp"
+                    android:background="@drawable/round_shape_button"
+                    android:text="@{viewModel.buttonMarkAsSoldString}"
+                    android:visibility="@{viewModel.markAsSoldButtonVisibility}"
+                    app:layout_constraintTop_toBottomOf="@+id/managing_agents_rv" />
+
+                <LinearLayout
+                    android:id="@+id/buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/mark_as_sold_button">
+
+                    <Button
+                        android:id="@+id/left_button"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="25dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_shape_button"
+                        android:text="@{viewModel.buttonLeftString}" />
+
+                    <Button
+                        android:id="@+id/right_button"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="25dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_shape_button"
+                        android:text="@{viewModel.buttonRightString}" />
+
+                </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
-
-        <LinearLayout
-            android:id="@+id/buttons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <Button
-                android:id="@+id/left_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="25dp"
-                android:layout_weight="1"
-                android:background="@drawable/round_shape_button"
-                android:text="@{viewModel.buttonLeftString}" />
-
-            <Button
-                android:id="@+id/right_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="25dp"
-                android:layout_weight="1"
-                android:background="@drawable/round_shape_button"
-                android:text="@{viewModel.buttonRightString}" />
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

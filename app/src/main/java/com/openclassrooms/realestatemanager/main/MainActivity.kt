@@ -374,6 +374,14 @@ class MainActivity : BaseActivity() {
         estateClicked(estateToEdit)
     }
 
+    override fun estateSoldStateChanged(estateToEdit: Estate) {
+        val editedIndex = estateList.indexOf(estateToEdit)
+        if (editedIndex != -1) {
+            estateList[editedIndex] = estateToEdit
+            propertiesListFragment?.editEstateAtPosition(editedIndex, estateToEdit)
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         orientation = newConfig.orientation

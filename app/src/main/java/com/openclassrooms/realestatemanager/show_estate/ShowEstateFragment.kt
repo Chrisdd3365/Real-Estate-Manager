@@ -40,6 +40,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var typeIcon : ImageView? = null
     private var leftButton : Button? = null
     private var rightButton : Button? = null
+    private var markAsSoldButton : Button? = null
     private var nearbyImagesFlexbox : FlexboxLayout? = null
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
@@ -89,6 +90,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         typeIcon = binding.typeIcon
         leftButton = binding.leftButton
         rightButton = binding.rightButton
+        markAsSoldButton = binding.markAsSoldButton
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
@@ -127,6 +129,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private fun setButtonsBehaviors() {
         when (type) {
             Enums.ShowEstateType.ASK_FOR_CONFIRMATION -> {
+                viewModel.hideMarkAsSoldButton()
                 leftButton?.setOnClickListener {
                     // The user wants to edit the data he provided, so we send him back to the
                     //  first fragment of EstateCreationActivity.
@@ -139,11 +142,16 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 }
             }
             Enums.ShowEstateType.SHOW_ESTATE -> {
+                viewModel.showMarkAsSoldButton()
                 leftButton?.setOnClickListener {
                     (activity as? BaseActivity)?.deleteEstate(estate!!)
                 }
                 rightButton?.setOnClickListener {
                     (activity as? BaseActivity)?.handleCompleteEstateCreationCancelled(estate!!)
+                }
+                markAsSoldButton?.setOnClickListener {
+                    estate?.sold = (estate?.sold != true)
+                    (activity as? BaseActivity)?.changeEstateSoldState(estate!!)
                 }
             }
         }
