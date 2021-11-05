@@ -167,10 +167,9 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun editEstateAtPosition(position: Int, estate: Estate) {
-        if (estatesList != null && position < estatesList!!.size) {
+        if (estatesList != null && position < estatesList!!.size)
             estatesList!![position] = estate
-            propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
-        }
+        propertiesListRv?.post { propertiesListAdapter.changeItem(position, estate) }
     }
 
     fun removeEstateAtPosition(position: Int) {

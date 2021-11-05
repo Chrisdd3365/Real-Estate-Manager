@@ -61,6 +61,8 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
     }
 
     fun changeItem(index: Int, toEdit : Estate) {
+        if (index >= items.size)
+            return
         items[index] = toEdit
         notifyItemChanged(index)
     }

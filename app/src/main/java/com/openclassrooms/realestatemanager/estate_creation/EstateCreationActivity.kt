@@ -467,10 +467,7 @@ class EstateCreationActivity : BaseActivity() {
                     saveManagingAgents(
                         estateToSave.id!!,
                         success = {
-                            if (picturesList.isNotEmpty())
-                                saveImages(estateToSave.id!!, estateToSave)
-                            else
-                                finishWithResult(estateToSave.id!!, estateToSave)
+                            saveImages(estateToSave.id!!, estateToSave)
                         }
                     )
                 }
