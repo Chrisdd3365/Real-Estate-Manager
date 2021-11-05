@@ -94,12 +94,12 @@ class PropertiesListFragment : Fragment() {
                 bedroomsRange: IntArray, schoolValue: Boolean,
                 playgroundValue: Boolean, shopValue: Boolean,
                 busesValue: Boolean, subwayValue: Boolean,
-                parkValue: Boolean, fromDate: Long
+                parkValue: Boolean, fromDate: Long, sold: Boolean
             ) {
                 viewModel.setLoading()
                 (activity as MainActivity).filterEstates(priceRange, surfaceRange, roomsRange,
                     bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue,
-                    busesValue, subwayValue, parkValue, fromDate)
+                    busesValue, subwayValue, parkValue, fromDate, sold)
             }
         }
 

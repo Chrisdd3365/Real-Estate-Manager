@@ -278,7 +278,7 @@ class DatabaseManager(context : Context)
     fun filterEstates(priceRange: IntArray, surfaceRange: IntArray, roomsRange: IntArray,
                       bathroomsRange: IntArray, bedroomsRange: IntArray, schoolValue: Boolean,
                       playgroundValue: Boolean, shopValue: Boolean, busesValue: Boolean,
-                      subwayValue: Boolean, parkValue: Boolean, fromDate: Long,
+                      subwayValue: Boolean, parkValue: Boolean, fromDate: Long, sold: Boolean,
                       onSuccess: ((ArrayList<Estate>) -> Unit), onFailure: (() -> Unit)) {
 
         val database = this.readableDatabase
@@ -290,7 +290,8 @@ class DatabaseManager(context : Context)
                 "AND $COLUMN_ROOMS_COUNT BETWEEN ? AND ? " +
                 "AND $COLUMN_BATHROOMS_COUNT BETWEEN ? AND ? " +
                 "AND $COLUMN_BEDROOMS_COUNT BETWEEN ? AND ? " +
-                "AND $COLUMN_ON_MARKET_SINCE >= ?"
+                "AND $COLUMN_ON_MARKET_SINCE >= ? " +
+                "AND $COLUMN_SOLD == ?"
 
         if (schoolValue) selection += " AND $COLUMN_SCHOOL_NEARBY"
         if (playgroundValue) selection += " AND $COLUMN_PLAYGROUND_NEARBY"
@@ -305,7 +306,7 @@ class DatabaseManager(context : Context)
             "${roomsRange[0]}", "${roomsRange[1]}",
             "${bathroomsRange[0]}", "${bathroomsRange[1]}",
             "${bedroomsRange[0]}", "${bedroomsRange[1]}",
-            "$fromDate"
+            "$fromDate", if (sold) "1" else "0"
         )
 
         try {

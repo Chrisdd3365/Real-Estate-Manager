@@ -10,5 +10,5 @@ interface CustomDialogInterface {
                              bathroomsRange : IntArray, bedroomsRange : IntArray,
                              schoolValue : Boolean, playgroundValue : Boolean, shopValue : Boolean,
                              busesValue : Boolean, subwayValue : Boolean, parkValue : Boolean,
-                             fromDate : Long)
+                             fromDate : Long, sold : Boolean)
 }

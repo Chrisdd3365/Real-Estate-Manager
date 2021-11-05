@@ -34,7 +34,7 @@ class Estate : Serializable {
     var latitude : Double? = null
     var longitude : Double? = null
 
-    var sold : Boolean? = null
+    var sold : Boolean? = false
 
     constructor()
 

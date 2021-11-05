@@ -27,7 +27,7 @@ class FilterDialogFragment : DialogFragment() {
             bedroomsRange: IntArray, schoolValue: Boolean,
             playgroundValue: Boolean, shopValue: Boolean,
             busesValue: Boolean, subwayValue: Boolean,
-            parkValue: Boolean, fromDate: Long
+            parkValue: Boolean, fromDate: Long, sold: Boolean
         ) {
 
         }
@@ -48,6 +48,7 @@ class FilterDialogFragment : DialogFragment() {
     private var busesSwitch : SwitchCompat? = null
     private var subwaySwitch : SwitchCompat? = null
     private var parkSwitch : SwitchCompat? = null
+    private var soldSwitch : SwitchCompat? = null
     private var onMarketSinceDp : DatePicker? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -69,6 +70,7 @@ class FilterDialogFragment : DialogFragment() {
         busesSwitch = binding.busesSwitch
         subwaySwitch = binding.subwaySwitch
         parkSwitch = binding.parkSwitch
+        soldSwitch = binding.soldSwitch
         onMarketSinceDp = binding.onMarketSinceDatePicker
 
         onMarketSinceDp?.minDate = Singleton.oldestEstate.time.time
@@ -111,6 +113,7 @@ class FilterDialogFragment : DialogFragment() {
         val busesValue = busesSwitch?.isChecked!!
         val subwayValue = subwaySwitch?.isChecked!!
         val parkValue = parkSwitch?.isChecked!!
+        val sold = soldSwitch?.isChecked!!
         val calendar = Calendar.getInstance().apply {
             if (onMarketSinceDp != null) {
                 set(Calendar.YEAR, onMarketSinceDp!!.year)
@@ -121,7 +124,7 @@ class FilterDialogFragment : DialogFragment() {
 
         customDialogInterface.confirmSearchClicked(priceRange, surfaceRange, roomsRange,
             bathroomsRange, bedroomsRange, schoolValue, playgroundValue, shopValue, busesValue,
-            subwayValue, parkValue, calendar.timeInMillis)
+            subwayValue, parkValue, calendar.timeInMillis, sold)
     }
 
     private fun getRange(rangeSlider: RangeSlider) : IntArray {
