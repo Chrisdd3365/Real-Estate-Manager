@@ -124,7 +124,7 @@ class PropertiesListFragment : Fragment() {
         if (estatesList.isNullOrEmpty()) {
             viewModel.setNoProperties()
         } else {
-            propertiesListAdapter.setData(requireContext(), estatesList!!)
+            propertiesListRv?.post { propertiesListAdapter.setData(requireContext(), estatesList!!) }
             viewModel.setPropertiesList()
         }
         viewModel.setDefaultFilterButton(requireContext())

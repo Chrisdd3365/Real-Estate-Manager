@@ -171,8 +171,7 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             city.set(estate.address)
             price.set("${estate.getPrice()} ${Singleton.currencySymbol}")
 
-            if (estate.sold == true)
-                soldVisibility.set(View.VISIBLE)
+            soldVisibility.set(if (estate.sold == true) View.VISIBLE else View.GONE)
         }
 
         fun setImage() {
