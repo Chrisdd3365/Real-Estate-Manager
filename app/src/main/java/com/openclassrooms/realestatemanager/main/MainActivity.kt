@@ -392,6 +392,11 @@ class MainActivity : BaseActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onResume() {
+        setupChildFragments()
+        super.onResume()
+    }
+
     companion object {
 
         @Suppress("unused")
