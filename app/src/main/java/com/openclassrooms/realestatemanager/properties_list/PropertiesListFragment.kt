@@ -109,6 +109,7 @@ class PropertiesListFragment : Fragment() {
         } else {
             propertiesListAdapter.setData(requireContext(), filteredResults!!)
             viewModel.setPropertiesList()
+            estateClicked(filteredResults!![0], showIfPortrait = false)
         }
         viewModel.setResultsFiltered(requireContext())
         areResultsFiltered = true
@@ -123,17 +124,18 @@ class PropertiesListFragment : Fragment() {
         } else {
             propertiesListRv?.post { propertiesListAdapter.setData(requireContext(), estatesList!!) }
             viewModel.setPropertiesList()
+            estateClicked(estatesList!![0], showIfPortrait = false)
         }
         viewModel.setDefaultFilterButton(requireContext())
         areResultsFiltered = false
     }
 
-    private fun estateClicked(clicked : Estate) {
+    private fun estateClicked(clicked : Estate, showIfPortrait : Boolean = true) {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE && estatesList != null) {
             selectedEstate = clicked
             setupEstatePreview()
             propertiesListAdapter.selectItem(estatesList!!.indexOf(clicked))
-        } else {
+        } else if (showIfPortrait) {
             (activity as? MainActivity)?.estateClicked(clicked)
         }
     }
