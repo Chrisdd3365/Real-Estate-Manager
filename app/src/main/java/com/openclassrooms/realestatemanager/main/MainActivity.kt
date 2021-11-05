@@ -153,14 +153,15 @@ class MainActivity : BaseActivity() {
 
         // Setup estate list
         if (savedInstanceState == null) {
+            setupChildFragments()
             DatabaseManager(this).getEstates({
                 estateList = it
                 propertiesListFragment?.setEstateList(it)
                 viewModel.setFragments()
                 mapViewFragment?.updateEstates(it)
-                setupChildFragments()
             }, {
-                // TODO
+                Toast.makeText(this, getString(R.string.dumb_error), Toast.LENGTH_LONG)
+                    .show()
             })
         } else {
             setupChildFragments()

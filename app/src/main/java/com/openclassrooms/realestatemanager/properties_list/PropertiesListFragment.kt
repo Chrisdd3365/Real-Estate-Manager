@@ -68,11 +68,7 @@ class PropertiesListFragment : Fragment() {
         propertiesListRv?.layoutManager = LinearLayoutManager(context)
         propertiesListRv?.adapter = propertiesListAdapter
 
-        propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
-            viewModel.setPropertiesList()
-            viewModel.setDefaultFilterButton(requireContext())
-        }
+        setEstateList(estatesList ?: ArrayList())
 
         filterButton?.setOnClickListener {
             if (areResultsFiltered) setDefaultList() else showFilterDialog()
@@ -123,6 +119,7 @@ class PropertiesListFragment : Fragment() {
         filteredResults = null
         if (estatesList.isNullOrEmpty()) {
             viewModel.setNoProperties()
+            viewModel.hideFilterButton()
         } else {
             propertiesListRv?.post { propertiesListAdapter.setData(requireContext(), estatesList!!) }
             viewModel.setPropertiesList()
@@ -142,11 +139,16 @@ class PropertiesListFragment : Fragment() {
     }
 
     fun setEstateList(list : ArrayList<Estate>) {
-        // TODO : If the list is empty, show "No items" messages
         this.estatesList = list
-        propertiesListRv?.post {
-            propertiesListAdapter.setData(context, estatesList ?: ArrayList())
-            viewModel.setPropertiesList()
+        if (list.isEmpty()) {
+            viewModel.setNoProperties()
+            viewModel.hideFilterButton()
+        } else {
+            propertiesListRv?.post {
+                propertiesListAdapter.setData(context, estatesList ?: ArrayList())
+                viewModel.setPropertiesList()
+                viewModel.setDefaultFilterButton(requireContext())
+            }
         }
     }
 

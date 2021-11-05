@@ -59,7 +59,7 @@ class PropertiesListFragmentViewModel : ViewModel() {
         filterButtonVisibility.set(View.VISIBLE)
     }
 
-    private fun hideFilterButton() {
+    fun hideFilterButton() {
         filterButtonVisibility.set(View.GONE)
     }
 
