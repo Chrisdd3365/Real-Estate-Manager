@@ -184,9 +184,9 @@ class MainActivity : BaseActivity() {
         TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
 
             if (position == 0)
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_list, theme)
+                tab.setIcon(R.drawable.ic_list)
             else
-                tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_building_map, theme)
+                tab.setIcon(R.drawable.ic_building_map)
         }.attach()
 
         viewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -282,8 +282,10 @@ class MainActivity : BaseActivity() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                lastKnownPosition = LatLng(it.latitude, it.longitude)
-                onLastLocationSuccess?.invoke(LatLng(it.latitude, it.longitude))
+                if (it != null) {
+                    lastKnownPosition = LatLng(it.latitude, it.longitude)
+                    onLastLocationSuccess?.invoke(LatLng(it.latitude, it.longitude))
+                }
             }
         }
     }
