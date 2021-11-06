@@ -27,6 +27,7 @@ import com.openclassrooms.realestatemanager.estate_creation.managing_details.Age
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
+import com.openclassrooms.realestatemanager.utils.Singleton
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -46,6 +47,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var nearbyImagesFlexbox : FlexboxLayout? = null
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
+    private var priceIcon : ImageView? = null
 
     private var estate : Estate? = null
     private var type : Enums.ShowEstateType? = null
@@ -96,6 +98,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         nearbyImagesFlexbox = binding.nearbyImagesFlexbox
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
+        priceIcon = binding.priceIcon
 
         setupOrientation(orientation)
 
@@ -114,6 +117,11 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
             getManagingAgents()
         else
             setManagingAgents()
+
+        priceIcon?.setImageResource(
+            if (Singleton.currency == Enums.Currency.DOLLAR) R.drawable.ic_dollar
+            else R.drawable.ic_euro
+        )
 
         return binding.root
     }

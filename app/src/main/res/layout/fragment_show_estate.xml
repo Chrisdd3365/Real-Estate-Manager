@@ -172,8 +172,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <!-- TODO : Change icon to dollar when needed -->
-
                             <ImageView
                                 android:id="@+id/price_icon"
                                 android:layout_width="50dp"

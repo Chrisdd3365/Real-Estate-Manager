@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.39114583333333336" />
+        <entry key="app/src/main/res/drawable/ic_dollar.xml" value="0.17109375" />
+        <entry key="app/src/main/res/drawable/ic_euro.xml" value="0.17109375" />
         <entry key="app/src/main/res/drawable/ic_list.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/round_shape_button.xml" value="0.3921875" />
         <entry key="app/src/main/res/drawable/rounded_corner.xml" value="0.3921875" />
@@ -20,7 +22,7 @@
         <entry key="app/src/main/res/layout/fragment_filter_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_managing.xml" value="0.2684729064039409" />
         <entry key="app/src/main/res/layout/fragment_map_view.xml" value="0.17258883248730963" />
-        <entry key="app/src/main/res/layout/fragment_properties_list.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_properties_list.xml" value="0.19458128078817735" />
         <entry key="app/src/main/res/layout/fragment_search_dialog.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_show_estate.xml" value="0.33" />
         <entry key="app/src/main/res/layout/picture_slider_item.xml" value="0.23596014492753623" />
