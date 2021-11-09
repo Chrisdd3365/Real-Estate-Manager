@@ -231,10 +231,7 @@ class PropertiesListFragment : Fragment() {
             selectedEstate,
             Enums.ShowEstateType.SHOW_ESTATE,
             orientation,
-            ArrayList(), ArrayList(),
-            // TODO : Set a default function for this
-            picturesRetrievedCallback = {},
-            managingAgentsRetrievedCallback = {}
+            ArrayList(), ArrayList()
         )
 
         childFragmentManager.beginTransaction()

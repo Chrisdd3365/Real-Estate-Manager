@@ -314,8 +314,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                         orientation: Int = Configuration.ORIENTATION_UNDEFINED,
                         picturesList : ArrayList<Bitmap>,
                         managingAgents : ArrayList<Agent>,
-                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit,
-                        managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit)
+                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
+                        managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit = {})
         : ShowEstateFragment {
 
             val fragment = ShowEstateFragment(
