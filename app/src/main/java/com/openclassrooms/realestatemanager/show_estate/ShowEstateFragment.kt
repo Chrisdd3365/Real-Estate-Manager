@@ -180,9 +180,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
             return
         }
 
-        // TODO : Check null
-        if (estate!!.school == false && estate!!.playground == false && estate!!.shop == false
-            && estate!!.buses == false && estate!!.subway == false && estate!!.park == false) {
+        if (estate?.school == false && estate?.playground == false && estate?.shop == false
+            && estate?.buses == false && estate?.subway == false && estate?.park == false) {
             // If there are nothing nearby, hide the "Nearby:" layout
             viewModel.hideNearbyLayout()
             return
