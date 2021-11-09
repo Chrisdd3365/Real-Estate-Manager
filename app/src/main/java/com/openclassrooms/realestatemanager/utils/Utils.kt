@@ -1,14 +1,18 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.Settings
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.openclassrooms.realestatemanager.BuildConfig
+import com.openclassrooms.realestatemanager.R
 import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -157,5 +161,52 @@ object Utils {
             Singleton.oldestEstate = currentEstateDate
         if (currentEstateDate.after(Singleton.mostRecentEstate))
             Singleton.mostRecentEstate = currentEstateDate
+    }
+
+    /**
+     *  Shows an [AlertDialog] to explain to the user that the app needs the permissions he just
+     *  denied, and how to enable them.
+     *  If [Build.VERSION.SDK_INT] is >= [Build.VERSION_CODES.R], we cannot ask for permissions more
+     *  than twice, so we give to the user a way to go to the app settings.
+     *  In the previous versions however, we only re-ask for permissions.
+     *  @param context [Context]
+     *  @param content [String] - The message to display inside the [AlertDialog].
+     *  @param goToSettings [Unit] - The function to execute if the user clicks on the
+     *  "Go to settings" option.
+     *  @param reAskPermissions [Unit] - The function to execute if the user clicks on the "Re-ask
+     *  permissions" option.
+     */
+    fun showPermissionsDeniedDialog(context: Context,
+                                    content: String,
+                                    goToSettings: () -> Unit,
+                                    reAskPermissions: () -> Unit) {
+        val dialogBuilder = AlertDialog.Builder(context)
+        val message: String
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            message = "$content\n${context.getString(R.string.permissions_not_granted_solution_new)}"
+            dialogBuilder.setPositiveButton(R.string.go_to_settings) { _, _ ->
+                goToSettings.invoke()
+                context.startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                )
+            }
+        } else {
+            message = "$content\n${context.getString(R.string.permissions_not_granted_solution_old)}"
+            dialogBuilder.setPositiveButton(R.string.allow_permissions) { dialog, _ ->
+                dialog.dismiss()
+                reAskPermissions.invoke()
+            }
+        }
+
+        dialogBuilder.setNegativeButton(R.string.button_confirm) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        dialogBuilder.setTitle(R.string.permissions_not_granted_title)
+        dialogBuilder.setMessage(message)
+        dialogBuilder.create().show()
     }
 }

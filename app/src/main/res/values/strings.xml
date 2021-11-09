@@ -33,8 +33,9 @@
 
     <!-- Permissions -->
     <string name="permissions_not_granted_title">Permissions not granted</string>
-    <string name="permissions_not_granted_dialog">Location permission is not granted.
+    <string name="location_permissions_not_granted_dialog">Location permission is not granted.
         Your estates will not be displayed on the map.</string>
+    <string name="pictures_permissions_not_granted_dialog">Storage and/or camera permissions are missing.</string>
     <string name="permissions_not_granted_solution_old">You can enable them by clicking on the
         button below.</string>
     <string name="permissions_not_granted_solution_new">You can enable them in the Settings.</string>

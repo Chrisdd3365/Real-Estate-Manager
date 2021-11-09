@@ -49,6 +49,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
 
     private var pictures = ArrayList<Bitmap>()
     private var newUri : Uri? = null
+    private var isAskingForPermissions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -57,6 +58,17 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         ) {
             if (!it.containsValue(false)) {
                 addPictureButton?.performClick()
+            } else {
+                Utils.showPermissionsDeniedDialog(
+                    requireContext(),
+                    getString(R.string.pictures_permissions_not_granted_dialog),
+                    goToSettings = {
+                        isAskingForPermissions = true
+                    },
+                    reAskPermissions = {
+                        checkAndAskPermissions()
+                    }
+                )
             }
         }
 
@@ -208,6 +220,14 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         }
 
         alertDialogBuilder.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isAskingForPermissions) {
+            isAskingForPermissions = false
+            checkAndAskPermissions()
+        }
     }
 
     companion object {

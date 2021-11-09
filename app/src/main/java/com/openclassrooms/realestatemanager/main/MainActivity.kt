@@ -5,17 +5,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -88,7 +84,16 @@ class MainActivity : BaseActivity() {
             ActivityResultContracts.RequestPermission()
         ) {
             if (!it) {
-                showPermissionsDeniedDialog()
+                Utils.showPermissionsDeniedDialog(
+                    this,
+                    getString(R.string.location_permissions_not_granted_dialog),
+                    goToSettings = {
+                        isAskingForPermissions = true
+                    },
+                    reAskPermissions = {
+                        checkAndAskLocationPermissions()
+                    }
+                )
             }
         }
 
@@ -315,37 +320,6 @@ class MainActivity : BaseActivity() {
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-    }
-
-    private fun showPermissionsDeniedDialog() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        var message = getString(R.string.permissions_not_granted_dialog)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            message = "$message\n${getString(R.string.permissions_not_granted_solution_new)}"
-            dialogBuilder.setPositiveButton(R.string.go_to_settings) { _, _ ->
-                isAskingForPermissions = true
-                startActivity(
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", packageName, null)
-                    }
-                )
-            }
-        } else {
-            message = "$message\n${getString(R.string.permissions_not_granted_solution_old)}"
-            dialogBuilder.setPositiveButton(R.string.allow_permissions) { dialog, _ ->
-                checkAndAskLocationPermissions()
-                dialog.dismiss()
-            }
-        }
-
-        dialogBuilder.setNegativeButton(R.string.button_confirm) { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        dialogBuilder.setTitle(R.string.permissions_not_granted_title)
-        dialogBuilder.setMessage(message)
-        dialogBuilder.create().show()
     }
 
     /**
