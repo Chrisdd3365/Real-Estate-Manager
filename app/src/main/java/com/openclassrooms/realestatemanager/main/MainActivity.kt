@@ -5,16 +5,19 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -37,9 +40,9 @@ import com.openclassrooms.realestatemanager.loaning_simulator.LoaningSimulatorAc
 import com.openclassrooms.realestatemanager.mapview.MapViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.properties_list.PropertiesListFragment
-import com.openclassrooms.realestatemanager.utils.*
-import java.util.*
-import kotlin.collections.ArrayList
+import com.openclassrooms.realestatemanager.utils.SharedPreferencesManager
+import com.openclassrooms.realestatemanager.utils.StaticData
+import com.openclassrooms.realestatemanager.utils.Utils
 
 // TODO : Add a splash screen before this activity
 
@@ -76,9 +79,18 @@ class MainActivity : BaseActivity() {
     private var estateList = ArrayList<Estate>()
     private var lastKnownPosition : LatLng? = null
     private var orientation = Configuration.ORIENTATION_UNDEFINED
+    private var isAskingForPermissions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        permissionRequestLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (!it) {
+                showPermissionsDeniedDialog()
+            }
+        }
 
         if (savedInstanceState != null) {
             val savedEstates = savedInstanceState.getSerializable("test") as ArrayList<*>
@@ -300,17 +312,40 @@ class MainActivity : BaseActivity() {
             return
         }
 
-        permissionRequestLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) {
-            if (!it) {
-                // TODO
-            }
-        }
-
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionRequestLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    private fun showPermissionsDeniedDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        var message = getString(R.string.permissions_not_granted_dialog)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            message = "$message\n${getString(R.string.permissions_not_granted_solution_new)}"
+            dialogBuilder.setPositiveButton(R.string.go_to_settings) { _, _ ->
+                isAskingForPermissions = true
+                startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    }
+                )
+            }
+        } else {
+            message = "$message\n${getString(R.string.permissions_not_granted_solution_old)}"
+            dialogBuilder.setPositiveButton(R.string.allow_permissions) { dialog, _ ->
+                checkAndAskLocationPermissions()
+                dialog.dismiss()
+            }
+        }
+
+        dialogBuilder.setNegativeButton(R.string.button_confirm) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        dialogBuilder.setTitle(R.string.permissions_not_granted_title)
+        dialogBuilder.setMessage(message)
+        dialogBuilder.create().show()
     }
 
     /**
@@ -406,6 +441,10 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         setupChildFragments()
         super.onResume()
+        if (isAskingForPermissions) {
+            isAskingForPermissions = false
+            checkAndAskLocationPermissions()
+        }
     }
 
     companion object {

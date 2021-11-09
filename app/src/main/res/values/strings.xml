@@ -31,6 +31,16 @@
     <string name="subway">Subway</string>
     <string name="park">Park</string>
 
+    <!-- Permissions -->
+    <string name="permissions_not_granted_title">Permissions not granted</string>
+    <string name="permissions_not_granted_dialog">Location permission is not granted.
+        Your estates will not be displayed on the map.</string>
+    <string name="permissions_not_granted_solution_old">You can enable them by clicking on the
+        button below.</string>
+    <string name="permissions_not_granted_solution_new">You can enable them in the Settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="allow_permissions">Allow permissions</string>
+
     <!-- Validators -->
     <string name="mandatory_field">This field is mandatory</string>
     <string name="incorrect_format">Incorrect format</string>
