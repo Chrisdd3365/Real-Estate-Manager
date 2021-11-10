@@ -83,28 +83,38 @@ class MapViewFragment : Fragment() {
         return binding.root
     }
 
+    private fun addMarker(marker: Marker?) {
+        if (marker != null) {
+            markers.add(marker)
+            latLngBoundsBuilder.include(marker.position)
+        }
+    }
+
     private fun addMarkers() {
 
         removeMarkers()
 
         for (estate : Estate in estatesList) {
-            val latitude = estate.latitude
-            val longitude = estate.longitude
-            if (latitude != null && longitude != null) {
-                val estateType = context?.resources
-                    ?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!)
-                val marker = googleMap?.addMarker(
-                    MarkerOptions()
-                        .position(LatLng(latitude, longitude))
-                        .title("$estateType (${estate.getSurface()} ${Singleton.unitSymbol} " +
-                                "at ${estate.getPrice()} ${Singleton.currencySymbol})")
-                )
-                if (marker != null) {
-                    markers.add(marker)
-                    latLngBoundsBuilder.include(marker.position)
-                }
-            }
+            addMarker(createMarker(estate))
         }
+    }
+
+    private fun createMarker(estate: Estate) : Marker? {
+        var marker : Marker? = null
+
+        val latitude = estate.latitude
+        val longitude = estate.longitude
+        if (latitude != null && longitude != null) {
+            val estateType = context?.resources
+                ?.getStringArray(R.array.estate_types)?.get(estate.typeIndex!!)
+            marker = googleMap?.addMarker(
+                MarkerOptions()
+                    .position(LatLng(latitude, longitude))
+                    .title("$estateType (${estate.getSurface()} ${Singleton.unitSymbol} " +
+                            "at ${estate.getPrice()} ${Singleton.currencySymbol})")
+            )
+        }
+        return marker
     }
 
     /**
@@ -116,11 +126,15 @@ class MapViewFragment : Fragment() {
         }
     }
 
-    // TODO : Create a function to add only one estate
     fun updateEstates(estatesList: ArrayList<Estate>) {
         this.estatesList.clear()
         this.estatesList.addAll(estatesList)
         addMarkers()
+    }
+
+    fun addNewEstate(estate : Estate) {
+        this.estatesList.add(estate)
+        addMarker(createMarker(estate))
     }
 
     /**

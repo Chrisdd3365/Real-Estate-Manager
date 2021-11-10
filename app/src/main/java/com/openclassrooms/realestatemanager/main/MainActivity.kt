@@ -279,7 +279,7 @@ class MainActivity : BaseActivity() {
             if (isNewEstate) {
                 estateList.add(0, resultEstate)
                 propertiesListFragment?.addNewEstate(resultEstate)
-                mapViewFragment?.updateEstates(estateList)
+                mapViewFragment?.addNewEstate(resultEstate)
             } else {
                 val editedIndex = estateList.indexOf(resultEstate)
                 if (editedIndex != -1) {
