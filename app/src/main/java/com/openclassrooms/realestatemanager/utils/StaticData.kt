@@ -18,11 +18,11 @@ object StaticData {
 
         add(Estate().apply {
             val calendarDate = Calendar.getInstance().apply { set(2021, Calendar.APRIL, 8) }
-            typeIndex = 1 ;
+            typeIndex = 1
             description = "Second test house with a very long description Second test house with " +
                     "a very long description Second test house with a very long description " +
                     "Second test house with a very long description Second test house with a " +
-                    "very long description " ;
+                    "very long description "
             address = "456 rue Cerise"
             onMarketSince = calendarDate ; setPrice(110000.0) ; setSurface(400.0) ; roomCount = 3
             bathroomsCount = 2 ; bedroomsCount = 4 ; school = true ; playground = true

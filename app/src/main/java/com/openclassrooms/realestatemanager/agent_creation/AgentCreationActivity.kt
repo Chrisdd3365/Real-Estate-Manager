@@ -7,9 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.ColorFilter
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.telephony.PhoneNumberUtils

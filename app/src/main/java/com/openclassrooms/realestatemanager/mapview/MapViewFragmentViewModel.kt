@@ -1,4 +1,3 @@
 package com.openclassrooms.realestatemanager.mapview
 
-class MapViewFragmentViewModel {
-}
+class MapViewFragmentViewModel

@@ -11,7 +11,6 @@ import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
-import java.util.*
 
 class ShowEstateFragmentViewModel : ViewModel() {
 

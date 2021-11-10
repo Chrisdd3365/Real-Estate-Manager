@@ -38,6 +38,7 @@ object Utils {
      * @param dollars
      * @return
      */
+    @Suppress("unused")
     fun convertDollarToEuro(dollars: Int): Int {
         return Math.round(dollars * 0.812).toInt()
     }
@@ -63,6 +64,7 @@ object Utils {
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
      * @return
      */
+    @Suppress("unused")
     val todayDate: String
         get() {
             val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd")
@@ -75,6 +77,7 @@ object Utils {
      * @param context
      * @return
      */
+    @Suppress("unused")
     fun isInternetAvailable(context: Context): Boolean {
         val wifi = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         return wifi.isWifiEnabled
@@ -125,6 +128,7 @@ object Utils {
         SharedPreferencesManager.saveCurrency(context, newCurrency)
     }
 
+    @Suppress("unused")
     fun getPriceWithCurrency(price : Double) : Double {
         return if (Singleton.currency == Enums.Currency.DOLLAR)
             price

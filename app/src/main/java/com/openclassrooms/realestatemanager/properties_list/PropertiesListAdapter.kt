@@ -53,13 +53,6 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
         notifyItemInserted(items.indexOf(toAdd))
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun addItems(toAddItems : ArrayList<Estate>) {
-        Log.d(TAG, "To add items size = ${toAddItems.size}")
-        items.addAll(toAddItems)
-        notifyDataSetChanged()
-    }
-
     fun changeItem(index: Int, toEdit : Estate) {
         if (index >= items.size)
             return
