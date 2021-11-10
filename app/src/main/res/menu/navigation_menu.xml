@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/units">
+    <group>
 
         <item
             android:id="@+id/nav_switch_units"
@@ -14,8 +13,7 @@
 
     </group>
 
-    <group
-        android:id="@+id/agents">
+    <group>
 
         <item
             android:id="@+id/nav_agents"
@@ -23,15 +21,13 @@
 
     </group>
 
-    <group
-        android:id="@+id/bonus">
+    <group>
         <item
             android:id="@+id/nav_loaning_simulator"
             android:title="@string/loaning_simulator" />
     </group>
 
-    <group
-        android:id="@+id/testing">
+    <group>
         <item
             android:id="@+id/nav_generate_estates"
             android:title="@string/generate_static_data" />

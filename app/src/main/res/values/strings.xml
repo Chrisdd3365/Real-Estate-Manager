@@ -106,10 +106,6 @@
     <string name="bitmap_already_added_error">This bitmap was already added.</string>
 
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
     <!-- Loaning simulator -->
     <string name="mortgage_amount_hint">Mortgage amount</string>
