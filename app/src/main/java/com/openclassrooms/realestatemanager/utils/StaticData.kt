@@ -6,9 +6,6 @@ import kotlin.collections.ArrayList
 
 object StaticData {
 
-    // TODO : We need to set date, and pass on each of these estates to apply the date to
-    //  Singleton.oldestEstate and Singleton.mostRecentEstate
-
     var staticEstatesList : ArrayList<Estate> = ArrayList<Estate>().apply {
 
         add(Estate().apply {
