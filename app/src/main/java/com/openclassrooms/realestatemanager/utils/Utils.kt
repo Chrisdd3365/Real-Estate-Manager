@@ -29,7 +29,7 @@ object Utils {
     @Suppress("unused")
     private const val TAG = "Utils"
 
-    private const val SQUARE_SYMBOl = "m²"
+    private const val SQUARE_SYMBOL = "m²"
     private const val FEET_SYMBOL = "ft²"
 
     /**
@@ -141,7 +141,7 @@ object Utils {
 
     fun changeUnit(context: Context, newUnit : Enums.Unit) {
         Singleton.unit = newUnit
-        Singleton.unitSymbol = if (newUnit == Enums.Unit.FEET) FEET_SYMBOL else SQUARE_SYMBOl
+        Singleton.unitSymbol = if (newUnit == Enums.Unit.FEET) FEET_SYMBOL else SQUARE_SYMBOL
         SharedPreferencesManager.saveUnit(context, newUnit)
     }
 
