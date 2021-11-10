@@ -185,8 +185,6 @@ class PropertiesListFragment : Fragment() {
                 selectedEstate = estatesList!![newSelectedPosition]
                 propertiesListAdapter.selectItem(newSelectedPosition)
                 setupEstatePreview()
-            } else {
-                // TODO
             }
         }
     }
