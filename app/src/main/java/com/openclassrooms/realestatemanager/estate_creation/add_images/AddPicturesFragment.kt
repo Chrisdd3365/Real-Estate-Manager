@@ -30,7 +30,6 @@ import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.Utils.getTmpFileUri
 
-// FIXME : Pass as arguments
 class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                           private val editingEstateId: Int?,
                           private val picturesListChanged : (ArrayList<Bitmap>) -> Unit)
