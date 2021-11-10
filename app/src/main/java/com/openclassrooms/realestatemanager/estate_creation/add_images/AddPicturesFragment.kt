@@ -138,7 +138,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
             DatabaseManager(requireContext()).getImagesForEstate(
                 editingEstateId,
                 {
-                    // TODO : Add these bitmaps in the list
+                    picturesListChanged.invoke(it)
                 },
                 failure = {}
             )
