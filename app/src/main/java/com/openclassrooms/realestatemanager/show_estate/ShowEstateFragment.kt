@@ -267,9 +267,6 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 managingAgents = it
                 managingAgentsRetrievedCallback.invoke(it)
                 setManagingAgents()
-            },
-            failure = {
-                // TODO : Touch to retry ?
             }
         )
     }

@@ -257,7 +257,7 @@ class DatabaseManager(context : Context)
             success.invoke()
     }
 
-    fun getEstateManagers(estateId: Int, success: (ArrayList<Agent>) -> Unit, failure: () -> Unit) {
+    fun getEstateManagers(estateId: Int, success: (ArrayList<Agent>) -> Unit) {
         val database = this.readableDatabase
 
         try {
@@ -271,7 +271,6 @@ class DatabaseManager(context : Context)
 
         } catch (exception : Exception) {
             Log.e(TAG, "ERROR : $exception")
-            failure.invoke()
         }
     }
 
