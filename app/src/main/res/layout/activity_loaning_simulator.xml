@@ -22,6 +22,7 @@
             android:hint="@string/mortgage_amount_hint"
             android:textAlignment="center"
             android:inputType="number"
+            android:importantForAutofill="no"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +35,7 @@
             android:hint="@string/bring_amount_hint"
             android:textAlignment="center"
             android:inputType="number"
+            android:importantForAutofill="no"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mortgage_amount_edit_text" />
@@ -46,6 +48,7 @@
             android:hint="@string/mortgage_duration_hint"
             android:textAlignment="center"
             android:inputType="number"
+            android:importantForAutofill="no"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bring_amount_edit_text" />
