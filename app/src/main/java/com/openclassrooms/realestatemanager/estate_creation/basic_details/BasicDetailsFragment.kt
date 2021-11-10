@@ -65,47 +65,8 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
             checkIfAllFieldsAreFilled()
         }
 
-        // Setup text validators
-        // TODO : Put this in common, set auto validate() function in TextValidator
-        addressEditText?.addTextChangedListener(
-            object : TextValidator(addressEditText) {
-                override fun validate(editText: EditText?, text: String?) {
-                    if (text.isNullOrBlank()) {
-                        addressEditText?.error = getString(R.string.mandatory_field)
-                    } else {
-                        addressEditText?.error = null
-                        checkIfAllFieldsAreFilled()
-                    }
-                }
-            }
-        )
-        priceEditText?.addTextChangedListener(
-            object : TextValidator(priceEditText) {
-                override fun validate(editText: EditText?, text: String?) {
-                    val regex = Regex("[0-9]+[.,]{0,1}[0-9]{0,2}")
-                    if (text.isNullOrBlank()) {
-                        priceEditText?.error = getString(R.string.mandatory_field)
-                    } else if (!regex.matches(text)) {
-                        priceEditText?.error = getString(R.string.incorrect_format)
-                    } else {
-                        priceEditText?.error = null
-                        checkIfAllFieldsAreFilled()
-                    }
-                }
-            }
-        )
-        surfaceEditText?.addTextChangedListener(
-            object : TextValidator(surfaceEditText) {
-                override fun validate(editText: EditText?, text: String?) {
-                    if (text.isNullOrBlank()) {
-                        surfaceEditText?.error = getString(R.string.mandatory_field)
-                    } else {
-                        surfaceEditText?.error = null
-                        checkIfAllFieldsAreFilled()
-                    }
-                }
-            }
-        )
+        setupValidators()
+
         return binding.root
     }
 
@@ -139,6 +100,50 @@ class BasicDetailsFragment(private var estate: Estate?) : Fragment() {
             description = descriptionEditText?.text.toString()
         }
         return estate
+    }
+
+    /**
+     *  Adds validators on [addressEditText], [surfaceEditText] and [priceEditText].
+     */
+    private fun setupValidators() {
+        addBasicTextChangedValidator(addressEditText)
+        addBasicTextChangedValidator(surfaceEditText)
+
+        priceEditText?.addTextChangedListener(
+            object : TextValidator(priceEditText) {
+                override fun validate(editText: EditText?, text: String?) {
+                    val regex = Regex("[0-9]+[.,]{0,1}[0-9]{0,2}")
+                    if (text.isNullOrBlank()) {
+                        priceEditText?.error = getString(R.string.mandatory_field)
+                    } else if (!regex.matches(text)) {
+                        priceEditText?.error = getString(R.string.incorrect_format)
+                    } else {
+                        priceEditText?.error = null
+                        checkIfAllFieldsAreFilled()
+                    }
+                }
+            }
+        )
+    }
+
+    /**
+     *  Adds a basic [TextValidator] on the provided [EditText], that will check the input at each
+     *  change.
+     *  @param editText [EditText] - The [EditText] to validate.
+     */
+    private fun addBasicTextChangedValidator(editText : EditText?) {
+        editText?.addTextChangedListener(
+            object : TextValidator(editText) {
+                override fun validate(editText: EditText?, text: String?) {
+                    if (text.isNullOrBlank()) {
+                        editText?.error = getString(R.string.mandatory_field)
+                    } else {
+                        editText?.error = null
+                        checkIfAllFieldsAreFilled()
+                    }
+                }
+            }
+        )
     }
 
     companion object {
