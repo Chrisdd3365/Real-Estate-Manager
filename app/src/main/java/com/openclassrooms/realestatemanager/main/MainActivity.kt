@@ -40,8 +40,6 @@ import com.openclassrooms.realestatemanager.utils.SharedPreferencesManager
 import com.openclassrooms.realestatemanager.utils.StaticData
 import com.openclassrooms.realestatemanager.utils.Utils
 
-// TODO : Add a splash screen before this activity
-
 /**
  *  This [AppCompatActivity] handles the main view, with 2 tabs : a list of properties, and a map.
  *  It links a [ViewPager] with a [TabLayout] : Every time we swipe the [ViewPager], it also changes
@@ -107,7 +105,6 @@ class MainActivity : BaseActivity() {
         }
 
         // Get the saved currency
-        // TODO : Move this in the splashscreen
         Utils.changeCurrency(this, SharedPreferencesManager.getCurrency(this))
         Utils.changeUnit(this, SharedPreferencesManager.getUnit(this))
 
