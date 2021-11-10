@@ -420,7 +420,6 @@ class DatabaseManager(context : Context)
             );
         """
 
-        // TODO : REPLACE TEXT WITH VARCHAR
         private const val SQL_CREATE_AGENTS_TABLE = """
             CREATE TABLE IF NOT EXISTS $AGENTS_TABLE (
                 $COLUMN_ID INTEGER PRIMARY KEY,
@@ -463,7 +462,6 @@ class DatabaseManager(context : Context)
         /**
          *  Extension to handle nullable [Boolean] retrieval from [Cursor].
          *  @param columnIndex ([Int]) - The index of the column to parse in the Database.
-         *  TODO : Move to somewhere else
          */
         fun Cursor.getBoolean(columnIndex: Int): Boolean? {
             return if (isNull(columnIndex))
