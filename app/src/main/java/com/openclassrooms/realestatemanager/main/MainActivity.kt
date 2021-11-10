@@ -152,6 +152,7 @@ class MainActivity : BaseActivity() {
         }
 
         addPropertyFab?.setOnClickListener {
+            getUserLastPosition()
             resultLauncher?.launch(
                 EstateCreationActivity.newInstance(this, null, true,
                     lastKnownPosition)
@@ -295,13 +296,12 @@ class MainActivity : BaseActivity() {
             false, null))
     }
 
-    fun getUserLastPosition(onLastLocationSuccess : ((LatLng) -> Unit)?) {
+    private fun getUserLastPosition() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
                 if (it != null) {
                     lastKnownPosition = LatLng(it.latitude, it.longitude)
-                    onLastLocationSuccess?.invoke(LatLng(it.latitude, it.longitude))
                 }
             }
         }
@@ -313,7 +313,7 @@ class MainActivity : BaseActivity() {
         )
 
         if (locationPermission == PackageManager.PERMISSION_GRANTED) {
-            getUserLastPosition(null)
+            getUserLastPosition()
             return
         }
 
