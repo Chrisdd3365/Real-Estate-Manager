@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.39114583333333336" />
+        <entry key="app/src/main/res/drawable/ic_bathroom.xml" value="0.17109375" />
+        <entry key="app/src/main/res/drawable/ic_building_map.xml" value="0.17109375" />
         <entry key="app/src/main/res/drawable/ic_dollar.xml" value="0.17109375" />
         <entry key="app/src/main/res/drawable/ic_euro.xml" value="0.17109375" />
         <entry key="app/src/main/res/drawable/ic_list.xml" value="0.175" />
