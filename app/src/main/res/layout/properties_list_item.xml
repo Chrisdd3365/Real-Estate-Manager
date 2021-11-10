@@ -45,7 +45,8 @@
                             android:id="@+id/image_view"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="@{viewModel.imageVisibility}"/>
+                            android:visibility="@{viewModel.imageVisibility}"
+                            android:contentDescription="@string/default_images_content_description" />
 
                         <ProgressBar
                             android:layout_width="wrap_content"

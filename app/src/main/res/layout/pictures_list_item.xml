@@ -35,6 +35,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:contentDescription="@string/default_images_content_description"
                     app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
                 <ImageView
@@ -44,13 +45,15 @@
                     android:maxHeight="125dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:layout_weight="10"/>
+                    android:layout_weight="10"
+                    android:contentDescription="@string/default_images_content_description" />
 
                 <ImageView
                     android:id="@+id/reorder_button"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:contentDescription="@string/default_images_content_description"
                     app:srcCompat="@drawable/ic_reorder" />
 
             </LinearLayout>

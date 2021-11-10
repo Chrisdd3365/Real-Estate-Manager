@@ -44,6 +44,7 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:scaleType="fitXY"
+                        android:contentDescription="@string/default_images_content_description"
                         app:srcCompat="@drawable/ic_profile" />
 
                 </androidx.cardview.widget.CardView>

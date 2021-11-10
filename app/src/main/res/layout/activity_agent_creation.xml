@@ -30,6 +30,7 @@
                 android:id="@+id/avatar_image_view"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
+                android:contentDescription="@string/default_images_content_description"
                 app:srcCompat="@drawable/ic_profile" />
 
         </androidx.cardview.widget.CardView>

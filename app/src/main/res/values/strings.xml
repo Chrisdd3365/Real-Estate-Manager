@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">RealEstateManager</string>
 
+    <string name="default_images_content_description">Default images content description</string>
+
     <string name="no_properties">No properties were found !</string>
     <string name="no_agents">No agents found !</string>
 

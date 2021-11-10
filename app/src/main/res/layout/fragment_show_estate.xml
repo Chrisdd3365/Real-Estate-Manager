@@ -80,6 +80,7 @@
                                 android:id="@+id/surface_icon"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:srcCompat="@drawable/ic_surface_size"
                                 app:tint="@color/white" />
 
@@ -102,6 +103,7 @@
                                 android:id="@+id/rooms_icon"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:srcCompat="@drawable/ic_room"
                                 app:tint="@color/white" />
 
@@ -124,6 +126,7 @@
                                 android:id="@+id/bedrooms_icon"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:srcCompat="@drawable/ic_bedroom"
                                 app:tint="@color/white" />
 
@@ -146,6 +149,7 @@
                                 android:id="@+id/bathrooms_icon"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:srcCompat="@drawable/ic_bathroom"
                                 app:tint="@color/white" />
 
@@ -178,6 +182,7 @@
                                 android:layout_height="50dp"
                                 android:maxWidth="25dp"
                                 android:maxHeight="25dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:srcCompat="@drawable/ic_euro"
                                 app:tint="@color/white" />
 
@@ -202,6 +207,7 @@
                                 android:layout_height="50dp"
                                 android:maxWidth="25dp"
                                 android:maxHeight="25dp"
+                                android:contentDescription="@string/default_images_content_description"
                                 app:tint="@color/white"
                                 tools:srcCompat="@drawable/ic_house" />
 
