@@ -32,10 +32,14 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
         return items
     }
 
-    // TODO : Make sure the image is unique
-    fun addNewItem(newPicture : Bitmap) {
+    fun addNewItem(newPicture : Bitmap) : Boolean {
+        for (item : Bitmap in items) {
+            if (newPicture.sameAs(item))
+                return false
+        }
         items.add(newPicture)
         notifyItemInserted(items.indexOf(newPicture))
+        return true
     }
 
     fun removeItem(toRemove : Bitmap) {

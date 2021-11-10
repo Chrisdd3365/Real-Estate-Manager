@@ -465,16 +465,12 @@ class EstateCreationActivity : BaseActivity() {
         DatabaseManager(this).updateEstate(
             estateToSave,
             onSuccess = {
-                if (picturesList.isEmpty() && managingAgents.isEmpty())
-                    finishWithResult(estateToSave.id!!, estateToSave)
-                else {
-                    saveManagingAgents(
-                        estateToSave.id!!,
-                        success = {
-                            saveImages(estateToSave.id!!, estateToSave)
-                        }
-                    )
-                }
+                saveManagingAgents(
+                    estateToSave.id!!,
+                    success = {
+                        saveImages(estateToSave.id!!, estateToSave)
+                    }
+                )
             },
             onFailure = {
                 Log.e(TAG, "An error occurred with the database.")

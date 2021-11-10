@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -81,8 +82,10 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                     val uri = (it.data!!.data as Uri).toString()
                     if (uri.isNotEmpty()) {
                         val bitmap = Utils.getBitmapFromUri(requireContext(), uri)
-                        picturesAdapter?.addNewItem(bitmap)
-                        notifyEstateCreationActivity()
+                        if (picturesAdapter?.addNewItem(bitmap) == true)
+                            notifyEstateCreationActivity()
+                        else
+                            showBitmapAlreadyInListError()
                     }
                 }
             }
@@ -220,6 +223,14 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         }
 
         alertDialogBuilder.show()
+    }
+
+    private fun showBitmapAlreadyInListError() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.bitmap_already_added_error ),
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     override fun onResume() {
