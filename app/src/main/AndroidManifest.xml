@@ -23,7 +23,6 @@
         <activity
             android:name=".BaseActivity"
             android:exported="true"
-            android:label="@string/title_activity_base"
             android:theme="@style/Theme.RealEstateManager.NoActionBar" />
 
         <meta-data

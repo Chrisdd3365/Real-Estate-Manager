@@ -103,8 +103,6 @@
     <string name="dumb_error">An error occurred</string>
     <string name="bitmap_already_added_error">This bitmap was already added.</string>
 
-    <string name="title_activity_base">BaseActivity</string>
-
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
