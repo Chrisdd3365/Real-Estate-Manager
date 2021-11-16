@@ -156,7 +156,10 @@ object Utils {
     }
 
     fun parseDate(calendar: Calendar) : String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val dateFormat = SimpleDateFormat(
+            if (Locale.getDefault().displayCountry == "FR_fr") "dd/MM/yyyy" else "MM/dd/yyyy",
+            Locale.getDefault()
+        )
         return dateFormat.format(calendar.time)
     }
 
