@@ -11,6 +11,30 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/defaultBackground</item>
+        <item name="android:colorBackground">@color/defaultBackground</item>
+        <item name="android:textColor">@color/white</item>
+
+        <item name="cardViewStyle">@style/RealEstateManagerCardView</item>
+    </style>
+
+    <style name="RealEstateManagerCardView">
+        <item name="cardBackgroundColor">@color/defaultElevatedBackground</item>
+    </style>
+
+    <style name="AppTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@color/defaultElevatedBackground</item>
+    </style>
+
+    <style name="RealEstateManagerEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Theme.RealEstateManager.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>
