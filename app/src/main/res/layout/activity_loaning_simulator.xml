@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".loaning_simulator.LoaningSimulatorActivity">
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="com.openclassrooms.realestatemanager.loaning_simulator.LoaningSimulatorActivityViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/mortgage_amount_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:hint="@string/mortgage_amount_hint"
+            android:textAlignment="center"
+            android:inputType="number"
+            android:importantForAutofill="no"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/bring_amount_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:hint="@string/bring_amount_hint"
+            android:textAlignment="center"
+            android:inputType="number"
+            android:importantForAutofill="no"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mortgage_amount_edit_text" />
+
+        <EditText
+            android:id="@+id/mortgage_duration_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:hint="@string/mortgage_duration_hint"
+            android:textAlignment="center"
+            android:inputType="number"
+            android:importantForAutofill="no"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bring_amount_edit_text" />
+
+        <RelativeLayout
+            android:id="@+id/interest_rate_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mortgage_duration_edit_text">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/interest_rate_title" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/interest_rate_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="25dp"
+                android:layout_toEndOf="@+id/textView4"
+                android:stepSize="0.1"
+                android:valueFrom="0"
+                android:valueTo="5" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/mortgage_total_cost_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/mortgage_total_cost_title"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/interest_rate_layout" />
+
+        <TextView
+            android:id="@+id/mortgage_total_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            android:text="@{viewModel.mortgageTotalCostValue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mortgage_total_cost_title"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/mortgage_monthly_payments_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/mortgage_monthly_payments_title"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mortgage_total_cost" />
+
+        <TextView
+            android:id="@+id/mortgage_monthly_payments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:visibility="@{viewModel.resultsVisibility}"
+            android:text="@{viewModel.mortgageMonthlyPaymentsValue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mortgage_monthly_payments_title"
+            tools:text="0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+</layout>

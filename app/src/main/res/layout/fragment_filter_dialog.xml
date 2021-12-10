@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.openclassrooms.realestatemanager.search_dialog.FilterDialogFragmentViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="25dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/price_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/price_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/price_hint"
+                    android:textColor="@color/black"/>
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/price_range_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/price_title"
+                    android:stepSize="25000"
+                    android:valueFrom="0"
+                    android:valueTo="1000000"
+                    app:minSeparation="25dp"
+                    app:values="@array/initial_price_range_slider_values"
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/surface_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/price_layout">
+
+                <TextView
+                    android:id="@+id/surface_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/surface_hint"
+                    android:textColor="@color/black"/>
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/surface_range_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/surface_title"
+                    android:stepSize="50"
+                    android:valueFrom="0"
+                    android:valueTo="1000"
+                    app:minSeparation="25dp"
+                    app:values="@array/initial_surface_range_slider_values"
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rooms_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/surface_layout">
+
+                <TextView
+                    android:id="@+id/rooms_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/rooms"
+                    android:textColor="@color/black"/>
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rooms_range_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/rooms_title"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="10"
+                    app:minSeparation="25dp"
+                    app:values="@array/initial_default_range_slider_values"
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bathrooms_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rooms_layout">
+
+                <TextView
+                    android:id="@+id/bathrooms_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/bathrooms"
+                    android:textColor="@color/black"/>
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/bathrooms_range_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/bathrooms_title"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="10"
+                    app:minSeparation="25dp"
+                    app:values="@array/initial_default_range_slider_values"
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bedrooms_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bathrooms_layout">
+
+                <TextView
+                    android:id="@+id/bedrooms_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/bedrooms"
+                    android:textColor="@color/black"/>
+
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/bedrooms_range_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/bedrooms_title"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="10"
+                    app:minSeparation="25dp"
+                    app:values="@array/initial_default_range_slider_values"
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/school_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bedrooms_layout">
+
+                <TextView
+                    android:id="@+id/school_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/school"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/school_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/school_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/playground_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/school_layout">
+
+                <TextView
+                    android:id="@+id/playground_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/playground"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/playground_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/playground_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/shop_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/playground_layout">
+
+                <TextView
+                    android:id="@+id/shop_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/shop"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/shop_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/shop_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/buses_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/shop_layout">
+
+                <TextView
+                    android:id="@+id/buses_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/buses"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/buses_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/buses_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/subway_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buses_layout">
+
+                <TextView
+                    android:id="@+id/subway_title"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:text="@string/subway"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/subway_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/subway_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/park_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/subway_layout">
+
+                <TextView
+                    android:id="@+id/park_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/park"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/park_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/park_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/sold_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/park_layout">
+
+                <TextView
+                    android:id="@+id/sold_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/sold"
+                    android:textColor="@color/black"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/sold_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/sold_title"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/on_market_since_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sold_layout">
+
+                <TextView
+                    android:id="@+id/on_market_since_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/on_market_since_title"
+                    android:textColor="@color/black"/>
+
+                <DatePicker
+                    android:id="@+id/on_market_since_date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</layout>

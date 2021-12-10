@@ -1,0 +1,133 @@
+<resources>
+    <string name="app_name" translatable="false">RealEstateManager</string>
+
+    <string name="default_images_content_description" translatable="false">Default images content description</string>
+
+    <string name="no_properties">No properties were found !</string>
+    <string name="no_agents">No agents found !</string>
+
+    <string name="skip">Skip</string>
+    <string name="button_previous">Previous</string>
+    <string name="button_next">Next</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_edit">Edit</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_remove_picture">Remove picture</string>
+    <string name="button_filter">Filter</string>
+    <string name="button_apply_filters">Apply filters</string>
+    <string name="button_remove_filters">Remove filters</string>
+    <string name="button_mark_as_sold">Mark as sold</string>
+    <string name="button_mark_as_not_sold">Mark as not sold</string>
+
+    <string name="type_title">Type :</string>
+    <string name="nearby_title">Nearby :</string>
+    <string name="address_hint">Address</string>
+    <string name="price_hint">Price</string>
+    <string name="surface_hint">Surface</string>
+    <string name="description_hint">Description</string>
+    <string name="school">School</string>
+    <string name="playground">Playground</string>
+    <string name="shop">Shop</string>
+    <string name="buses">Buses</string>
+    <string name="subway">Subway</string>
+    <string name="park">Park</string>
+
+    <!-- Permissions -->
+    <string name="permissions_not_granted_title">Permissions not granted</string>
+    <string name="location_permissions_not_granted_dialog">Location permission is not granted.
+        Your estates will not be displayed on the map.</string>
+    <string name="pictures_permissions_not_granted_dialog">Storage and/or camera permissions are missing.</string>
+    <string name="permissions_not_granted_solution_old">You can enable them by clicking on the
+        button below.</string>
+    <string name="permissions_not_granted_solution_new">You can enable them in the Settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="allow_permissions">Allow permissions</string>
+
+    <!-- Validators -->
+    <string name="mandatory_field">This field is mandatory</string>
+    <string name="incorrect_format">Incorrect format</string>
+
+    <!-- Estate types -->
+    <string-array name="estate_types">
+        <item name="type_flat">Flat</item>
+        <item name="type_townhouse">Townhouse</item>
+        <item name="type_penthouse">Penthouse</item>
+        <item name="type_house">House</item>
+        <item name="type_duplex">Duplex</item>
+    </string-array>
+
+    <!-- Estate creation questions -->
+    <string name="rooms_count_question">How many rooms ?</string>
+    <string name="bathrooms_count_question">How many bathrooms ?</string>
+    <string name="bedrooms_count_question">How many bedrooms ?</string>
+    <string name="school_question">Is there a school nearby ?</string>
+    <string name="playground_question">Is there a playground nearby ?</string>
+    <string name="shop_question">Is there a shop nearby ?</string>
+    <string name="park_question">Is there a park nearby ?</string>
+    <string name="buses_question">Are there buses nearby ?</string>
+    <string name="subway_question">Is there a subway station nearby ?</string>
+
+    <string name="minus" translatable="false">-</string>
+    <string name="plus" translatable="false">+</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="empty_hint" translatable="false"> </string>
+
+    <!-- Show estate display -->
+    <string name="rooms">Rooms</string>
+    <string name="bathrooms">Bathrooms</string>
+    <string name="bedrooms">Bedrooms</string>
+    <string name="managing_agents">Managing agents :</string>
+    <string name="on_market_since_title">On market since :</string>
+    <string name="sold">Sold</string>
+    <string name="sold_at">Sold at : </string>
+
+    <string name="add_picture">Add a picture</string>
+    <string name="new_picture">New picture</string>
+    <string name="pick_from_gallery">Pick from gallery</string>
+
+    <!-- Agent creation fields -->
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone number</string>
+
+    <!-- Navigation drawer -->
+    <string name="open_nav_bar">Open</string>
+    <string name="close_nav_bar">Close</string>
+    <string name="switch_units">Switch units (Square / Feet meters)</string>
+    <string name="switch_currency">Switch currency (Euro / Dollar)</string>
+    <string name="agents">See agents list</string>
+    <string name="loaning_simulator">Loaning simulator</string>
+    <string name="generate_static_data">Generate testing estates</string>
+
+    <string name="dumb_error">An error occurred</string>
+    <string name="bitmap_already_added_error">This bitmap was already added.</string>
+
+    <!-- Strings used for fragments for navigation -->
+
+    <!-- Loaning simulator -->
+    <string name="mortgage_amount_hint">Mortgage amount</string>
+    <string name="bring_amount_hint">Bring amount</string>
+    <string name="mortgage_duration_hint">Duration (in months)</string>
+    <string name="interest_rate_title">Interest rate :</string>
+    <string name="mortgage_total_cost_title">Mortgage total cost :</string>
+    <string name="mortgage_monthly_payments_title">Monthly payments :</string>
+
+    <string-array name="initial_default_range_slider_values">
+        <item name="first">0</item>
+        <item name="second">10</item>
+    </string-array>
+
+    <string-array name="initial_price_range_slider_values">
+        <item name="first">50000</item>
+        <item name="second">250000</item>
+    </string-array>
+
+    <string-array name="initial_surface_range_slider_values">
+        <item name="first">0</item>
+        <item name="second">1000</item>
+    </string-array>
+
+</resources>
