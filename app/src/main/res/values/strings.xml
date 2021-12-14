@@ -3,8 +3,8 @@
 
     <string name="default_images_content_description" translatable="false">Default images content description</string>
 
-    <string name="no_properties">No properties were found !</string>
-    <string name="no_agents">No agents found !</string>
+    <string name="no_properties">No properties were found!</string>
+    <string name="no_agents">No agents found!</string>
 
     <string name="skip">Skip</string>
     <string name="button_previous">Previous</string>
@@ -20,8 +20,8 @@
     <string name="button_mark_as_sold">Mark as sold</string>
     <string name="button_mark_as_not_sold">Mark as not sold</string>
 
-    <string name="type_title">Type :</string>
-    <string name="nearby_title">Nearby :</string>
+    <string name="type_title">Type:</string>
+    <string name="nearby_title">Nearby:</string>
     <string name="address_hint">Address</string>
     <string name="price_hint">Price</string>
     <string name="surface_hint">Surface</string>
@@ -58,15 +58,15 @@
     </string-array>
 
     <!-- Estate creation questions -->
-    <string name="rooms_count_question">How many rooms ?</string>
-    <string name="bathrooms_count_question">How many bathrooms ?</string>
-    <string name="bedrooms_count_question">How many bedrooms ?</string>
-    <string name="school_question">Is there a school nearby ?</string>
-    <string name="playground_question">Is there a playground nearby ?</string>
-    <string name="shop_question">Is there a shop nearby ?</string>
-    <string name="park_question">Is there a park nearby ?</string>
-    <string name="buses_question">Are there buses nearby ?</string>
-    <string name="subway_question">Is there a subway station nearby ?</string>
+    <string name="rooms_count_question">How many rooms?</string>
+    <string name="bathrooms_count_question">How many bathrooms?</string>
+    <string name="bedrooms_count_question">How many bedrooms?</string>
+    <string name="school_question">Is there a school nearby?</string>
+    <string name="playground_question">Is there a playground nearby?</string>
+    <string name="shop_question">Is there a shop nearby?</string>
+    <string name="park_question">Is there a park nearby?</string>
+    <string name="buses_question">Are there buses nearby?</string>
+    <string name="subway_question">Is there a subway station nearby?</string>
 
     <string name="minus" translatable="false">-</string>
     <string name="plus" translatable="false">+</string>
@@ -78,10 +78,11 @@
     <string name="rooms">Rooms</string>
     <string name="bathrooms">Bathrooms</string>
     <string name="bedrooms">Bedrooms</string>
-    <string name="managing_agents">Managing agents :</string>
-    <string name="on_market_since_title">On market since :</string>
+    <string name="estate_localisation_title">Estate\'s localisation:</string>
+    <string name="managing_agents">Managing agents:</string>
+    <string name="on_market_since_title">On market since:</string>
     <string name="sold">Sold</string>
-    <string name="sold_at">Sold at : </string>
+    <string name="sold_at">Sold at: </string>
 
     <string name="add_picture">Add a picture</string>
     <string name="new_picture">New picture</string>
@@ -111,9 +112,9 @@
     <string name="mortgage_amount_hint">Mortgage amount</string>
     <string name="bring_amount_hint">Bring amount</string>
     <string name="mortgage_duration_hint">Duration (in months)</string>
-    <string name="interest_rate_title">Interest rate :</string>
-    <string name="mortgage_total_cost_title">Mortgage total cost :</string>
-    <string name="mortgage_monthly_payments_title">Monthly payments :</string>
+    <string name="interest_rate_title">Interest rate:</string>
+    <string name="mortgage_total_cost_title">Mortgage total cost:</string>
+    <string name="mortgage_monthly_payments_title">Monthly payments:</string>
 
     <string-array name="initial_default_range_slider_values">
         <item name="first">0</item>

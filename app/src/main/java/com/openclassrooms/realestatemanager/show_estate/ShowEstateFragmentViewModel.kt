@@ -6,11 +6,13 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.Circle
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
+import kotlin.math.ln
 
 class ShowEstateFragmentViewModel : ViewModel() {
 
@@ -80,6 +82,12 @@ class ShowEstateFragmentViewModel : ViewModel() {
                 buttonRightString.set(context?.getString(R.string.button_edit))
             }
         }
+    }
+
+    fun getZoomLevel(circle: Circle): Float {
+        val radius = circle.radius
+        val scale = radius / 500
+        return (16 - ln(scale) / ln(2.0)).toFloat()
     }
 
     fun showMarkAsSoldButton() {

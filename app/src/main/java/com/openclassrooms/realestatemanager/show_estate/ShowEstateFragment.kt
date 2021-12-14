@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
@@ -48,6 +56,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
     private var priceIcon : ImageView? = null
+    private var mapView : MapView? = null
 
     private var estate : Estate? = null
     private var type : Enums.ShowEstateType? = null
@@ -100,6 +109,15 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         managingAgentsRv = binding.managingAgentsRv
         priceIcon = binding.priceIcon
 
+        mapView = binding.mapView
+        mapView?.onCreate(savedInstanceState)
+
+        try {
+            MapsInitializer.initialize(requireContext())
+        } catch (exception : Exception) {
+            Log.e(TAG, "Error : ${exception.message}")
+        }
+
         setupOrientation(orientation)
 
         viewModel.setButtonsText(context, type!!)
@@ -112,6 +130,8 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         setNearbyData()
 
         setPicturesCarousel()
+
+        setMapView()
 
         if (type == Enums.ShowEstateType.SHOW_ESTATE)
             getManagingAgents()
@@ -126,8 +146,28 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         return binding.root
     }
 
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView?.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
+    }
+
     private fun setTypeIcon() {
-        when (estate!!.typeIndex) {
+        when (estate?.typeIndex) {
             0 -> { typeIcon?.setImageResource(R.drawable.ic_flat) }
             1 -> { typeIcon?.setImageResource(R.drawable.ic_townhouse) }
             2 -> { typeIcon?.setImageResource(R.drawable.ic_penthouse) }
@@ -173,8 +213,13 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
      *  Shows or hide "Nearby:" icons, given the [estate] data.
      */
     private fun setNearbyData() {
-        if (estate!!.school == null && estate!!.playground == null && estate!!.shop == null
-            && estate!!.buses == null && estate!!.subway == null && estate!!.park == null) {
+        if (estate == null) {
+            Log.d("ESTATE", "estate is null")
+            return
+        }
+
+        if (estate?.school == null && estate?.playground == null && estate?.shop == null
+            && estate?.buses == null && estate?.subway == null && estate?.park == null) {
             // The user did not provide data, hide the "Nearby:" layout
             viewModel.hideNearbyLayout()
             return
@@ -188,17 +233,17 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         }
 
         // Setting "Nearby:" icons given [estate] data
-        if (estate!!.school == true)
+        if (estate?.school == true)
             addNearbyIconInFlexbox(R.drawable.ic_school)
-        if (estate!!.playground == true)
+        if (estate?.playground == true)
             addNearbyIconInFlexbox(R.drawable.ic_playground)
-        if (estate!!.shop == true)
+        if (estate?.shop == true)
             addNearbyIconInFlexbox(R.drawable.ic_shop)
-        if (estate!!.buses == true)
+        if (estate?.buses == true)
             addNearbyIconInFlexbox(R.drawable.ic_bus_station)
-        if (estate!!.subway == true)
+        if (estate?.subway == true)
             addNearbyIconInFlexbox(R.drawable.ic_subway_station)
-        if (estate!!.park == true)
+        if (estate?.park == true)
             addNearbyIconInFlexbox(R.drawable.ic_park)
 
         viewModel.showNearbyLayout()
@@ -231,9 +276,9 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
 
         var pictures = ArrayList<Bitmap>()
 
-        if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate!!.id != null) {
+        if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate?.id != null) {
             DatabaseManager(requireContext()).getImagesForEstate(
-                estate!!.id!!,
+                estate?.id!!,
                 success = {
                     pictures = it
                     picturesRetrievedCallback.invoke(it)
@@ -257,12 +302,29 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
             viewModel.hideImagesLayout()
     }
 
+
+    private fun setMapView() {
+        val coordinates = LatLng(estate?.latitude!!, estate?.longitude!!)
+        mapView?.getMapAsync { googleMap ->
+            val circle = CircleOptions().center(coordinates).radius(1000.0).visible(false)
+            googleMap.moveCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    CameraPosition.Builder().target(coordinates)
+                        .zoom(viewModel.getZoomLevel(googleMap.addCircle(circle)))
+                        .build()
+                )
+            )
+            googleMap.addMarker(MarkerOptions().position(coordinates))
+            mapView?.onResume()
+        }
+    }
+
     private fun getManagingAgents() {
         if (estate?.id == null)
             return
         managingAgents.clear()
         DatabaseManager(requireContext()).getEstateManagers(
-            estate!!.id!!,
+            estate?.id!!,
             success = {
                 managingAgents = it
                 managingAgentsRetrievedCallback.invoke(it)

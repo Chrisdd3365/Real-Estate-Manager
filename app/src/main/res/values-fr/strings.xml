@@ -50,6 +50,7 @@
     <string name="rooms">Salles</string>
     <string name="bathrooms">Salles de bain</string>
     <string name="bedrooms">Chambres</string>
+    <string name="estate_localisation_title">Localisation de la propriété :</string>
     <string name="managing_agents">Agents gestionnaires :</string>
     <string name="on_market_since_title">Sur le marché depuis :</string>
     <string name="sold">Vendu</string>
