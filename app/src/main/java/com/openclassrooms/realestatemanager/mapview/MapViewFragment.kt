@@ -65,8 +65,7 @@ class MapViewFragment : Fragment() {
             // Called when map is ready
             googleMap = map
 
-            if (ContextCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 googleMap?.isMyLocationEnabled = true
             }
 

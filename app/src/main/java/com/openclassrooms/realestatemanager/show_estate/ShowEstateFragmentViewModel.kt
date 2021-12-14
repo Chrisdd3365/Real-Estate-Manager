@@ -6,7 +6,6 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.maps.model.LatLng
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
@@ -30,7 +29,6 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val type = ObservableField("")
     val onMarketSince = ObservableField("")
     val sellDate = ObservableField("")
-    val latLng = ObservableField("")
 
     val buttonLeftString = ObservableField("")
     val buttonRightString = ObservableField("")
@@ -54,7 +52,6 @@ class ShowEstateFragmentViewModel : ViewModel() {
                         Utils.parseDate(estate.onMarketSince!!)
             )
         }
-        latLng.set("${LatLng(estate.latitude ?: 0.0, estate.longitude ?: 0.0)}")
 
         setSellDate(context, estate)
     }

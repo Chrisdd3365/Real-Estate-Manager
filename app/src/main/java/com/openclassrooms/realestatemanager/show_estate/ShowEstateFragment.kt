@@ -18,9 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.flexbox.FlexboxLayout
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.*
 import com.openclassrooms.realestatemanager.BaseActivity
 import com.openclassrooms.realestatemanager.DatabaseManager
 import com.openclassrooms.realestatemanager.R
@@ -33,7 +30,6 @@ import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.ln
 
 class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
                          private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit = {})
@@ -52,7 +48,6 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
     private var priceIcon : ImageView? = null
-    private var mapView: MapView? = null
 
     private var estate : Estate? = null
     private var type : Enums.ShowEstateType? = null
@@ -104,7 +99,6 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
         priceIcon = binding.priceIcon
-        mapView = binding.mapView
 
         setupOrientation(orientation)
 
@@ -118,8 +112,6 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         setNearbyData()
 
         setPicturesCarousel()
-
-        setMap()
 
         if (type == Enums.ShowEstateType.SHOW_ESTATE)
             getManagingAgents()
@@ -277,27 +269,6 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 setManagingAgents()
             }
         )
-    }
-
-    private fun setMap() {
-        val coordinates = LatLng(estate?.latitude ?: 0.0, estate?.longitude ?: 0.0)
-        mapView?.getMapAsync { googleMap ->
-            val circle = CircleOptions().center(coordinates).radius(1000.0).visible(false)
-            googleMap.moveCamera(
-                CameraUpdateFactory.newCameraPosition(
-                    CameraPosition.Builder().target(coordinates)
-                        .zoom(getZoomLevel(googleMap.addCircle(circle)))
-                        .build()
-                )
-            )
-            googleMap.addMarker(MarkerOptions().position(coordinates))
-        }
-    }
-
-    private fun getZoomLevel(circle: Circle): Float {
-        val radius = circle.radius
-        val scale = radius / 500
-        return (16 - ln(scale) / ln(2.0)).toFloat()
     }
 
     private fun setManagingAgents() {

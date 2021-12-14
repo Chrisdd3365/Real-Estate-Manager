@@ -3,7 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group>
-
         <item
             android:id="@+id/nav_switch_units"
             android:title="@string/switch_units" />
@@ -11,23 +10,18 @@
         <item
             android:id="@+id/nav_switch_currency"
             android:title="@string/switch_currency" />
-
     </group>
 
     <group>
-
         <item
             android:id="@+id/nav_loaning_simulator"
             android:title="@string/loaning_simulator" />
-
     </group>
 
     <group>
-
         <item
             android:id="@+id/nav_generate_estates"
             android:title="@string/generate_static_data" />
-
     </group>
 
 </menu>
