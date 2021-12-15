@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Button
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -56,6 +57,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
     private var picturesViewPager : ViewPager2? = null
     private var managingAgentsRv : RecyclerView? = null
     private var priceIcon : ImageView? = null
+    private var mapCardView : CardView? = null
     private var mapView : MapView? = null
 
     private var estate : Estate? = null
@@ -108,7 +110,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
         picturesViewPager = binding.picturesViewPager
         managingAgentsRv = binding.managingAgentsRv
         priceIcon = binding.priceIcon
-
+        mapCardView = binding.mapContainerCardView
         mapView = binding.mapView
         mapView?.onCreate(savedInstanceState)
 
@@ -304,7 +306,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
 
 
     private fun setMapView() {
-        val coordinates = LatLng(estate?.latitude!!, estate?.longitude!!)
+        val coordinates = LatLng(estate?.latitude ?: 0.0, estate?.longitude ?: 0.0)
         mapView?.getMapAsync { googleMap ->
             val circle = CircleOptions().center(coordinates).radius(1000.0).visible(false)
             googleMap.moveCamera(

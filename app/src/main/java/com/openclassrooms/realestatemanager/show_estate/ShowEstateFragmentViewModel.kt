@@ -21,6 +21,7 @@ class ShowEstateFragmentViewModel : ViewModel() {
     val managingAgentsVisibility = ObservableInt(View.GONE)
     val markAsSoldButtonVisibility = ObservableInt(View.GONE)
     val sellDateVisibility = ObservableInt(View.GONE)
+    val mapLayoutVisibility = ObservableInt(View.GONE)
 
     val description = ObservableField("")
     val surfaceSize = ObservableField("")
@@ -56,6 +57,8 @@ class ShowEstateFragmentViewModel : ViewModel() {
         }
 
         setSellDate(context, estate)
+
+        setMapView(estate)
     }
 
     fun setSellDate(context : Context, estate: Estate) {
@@ -81,6 +84,14 @@ class ShowEstateFragmentViewModel : ViewModel() {
                 buttonLeftString.set(context?.getString(R.string.button_delete))
                 buttonRightString.set(context?.getString(R.string.button_edit))
             }
+        }
+    }
+
+    fun setMapView(estate : Estate) {
+        if (estate.latitude != null && estate.longitude != null) {
+            mapLayoutVisibility.set(View.VISIBLE)
+        } else {
+            mapLayoutVisibility.set(View.GONE)
         }
     }
 
@@ -120,6 +131,14 @@ class ShowEstateFragmentViewModel : ViewModel() {
 
     fun hideManagingAgents() {
         managingAgentsVisibility.set(View.GONE)
+    }
+
+    fun showMap() {
+        mapLayoutVisibility.set(View.VISIBLE)
+    }
+
+    fun hideMap() {
+        mapLayoutVisibility.set(View.GONE)
     }
 
     companion object {
