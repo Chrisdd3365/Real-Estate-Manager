@@ -22,6 +22,11 @@ class PicturesSliderViewPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHol
         notifyItemRangeChanged(0, itemCount)
     }
 
+    fun addItem(picture : Bitmap) {
+        items.add(picture)
+        notifyItemInserted(items.indexOf(picture))
+    }
+
     override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

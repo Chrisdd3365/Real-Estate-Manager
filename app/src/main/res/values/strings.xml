@@ -103,6 +103,7 @@
     <string name="generate_static_data">Generate testing estates</string>
 
     <string name="dumb_error">An error occurred</string>
+    <string name="wrong_type_error">This type is not supported.</string>
     <string name="bitmap_already_added_error">This bitmap was already added.</string>
 
     <!-- Strings used for fragments for navigation -->

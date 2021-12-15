@@ -1,10 +1,8 @@
 package com.openclassrooms.realestatemanager.show_estate
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,16 +26,18 @@ import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Enums
 import com.openclassrooms.realestatemanager.utils.Singleton
+import com.openclassrooms.realestatemanager.utils.Utils
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
+class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<String>) -> Unit = {},
                          private val managingAgentsRetrievedCallback: (ArrayList<Agent>) -> Unit = {})
     : Fragment() {
 
     // Helper classes
     private val viewModel = ShowEstateFragmentViewModel()
     private val managingAgentsAdapter = AgentsListAdapter(null, false)
+    private val picturesSliderViewPagerAdapter = PicturesSliderViewPagerAdapter()
 
     // Layout variables
     private var typeIcon : ImageView? = null
@@ -51,7 +51,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
 
     private var estate : Estate? = null
     private var type : Enums.ShowEstateType? = null
-    private var picturesList = ArrayList<Bitmap>()
+    private var picturesList = ArrayList<String>()
     private var managingAgents = ArrayList<Agent>()
     private var orientation = Configuration.ORIENTATION_UNDEFINED
 
@@ -72,10 +72,10 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 type = Enums.ShowEstateType.values()[typeOrdinal ?: 0]
             }
             if (requireArguments().containsKey(TAG_PICTURES)) {
-                val picturesArgs = arguments?.getParcelableArrayList<Parcelable>(TAG_PICTURES)
+                val picturesArgs = arguments?.getStringArrayList(TAG_PICTURES)
                 if (picturesArgs != null) {
                     for (pictureArgs in picturesArgs) {
-                        picturesList.add(pictureArgs as Bitmap)
+                        picturesList.add(pictureArgs as String)
                     }
                 }
             }
@@ -224,12 +224,9 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
 
     private fun setPicturesCarousel() {
 
-        if (estate?.id == null) {
-            viewModel.hideImagesLayout()
-            return
-        }
+        picturesViewPager?.adapter = picturesSliderViewPagerAdapter
 
-        var pictures = ArrayList<Bitmap>()
+        var pictures = ArrayList<String>()
 
         if (type == Enums.ShowEstateType.SHOW_ESTATE && estate != null && estate!!.id != null) {
             DatabaseManager(requireContext()).getImagesForEstate(
@@ -243,15 +240,16 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
                 }
             )
         } else if (type == Enums.ShowEstateType.ASK_FOR_CONFIRMATION && estate != null && picturesList.isNotEmpty()) {
-            for (picture : Bitmap in picturesList) {
+            for (picture : String in picturesList) {
                 pictures.add(picture)
             }
         }
 
         if (pictures.isNotEmpty()) {
-            val picturesViewPagerAdapter = PicturesSliderViewPagerAdapter()
-            picturesViewPager?.adapter = picturesViewPagerAdapter
-            picturesViewPager?.post { picturesViewPagerAdapter.setItems(pictures) }
+            pictures.forEach {
+                val bitmap = Utils.getBitmapFromUri(requireContext(), it)
+                picturesSliderViewPagerAdapter.addItem(bitmap)
+            }
             viewModel.showImagesLayout()
         } else
             viewModel.hideImagesLayout()
@@ -309,9 +307,9 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
 
         fun newInstance(estate : Estate?, type : Enums.ShowEstateType,
                         orientation: Int = Configuration.ORIENTATION_UNDEFINED,
-                        picturesList : ArrayList<Bitmap>,
+                        picturesList : ArrayList<String>,
                         managingAgents : ArrayList<Agent>,
-                        picturesRetrievedCallback : (ArrayList<Bitmap>) -> Unit = {},
+                        picturesRetrievedCallback : (ArrayList<String>) -> Unit = {},
                         managingAgentsRetrievedCallback : (ArrayList<Agent>) -> Unit = {})
         : ShowEstateFragment {
 
@@ -322,7 +320,7 @@ class ShowEstateFragment(private val picturesRetrievedCallback : (ArrayList<Bitm
             val bundle = Bundle()
             bundle.putSerializable(TAG_ESTATE, estate)
             bundle.putInt(TAG_TYPE, type.ordinal)
-            bundle.putParcelableArrayList(TAG_PICTURES, picturesList)
+            bundle.putStringArrayList(TAG_PICTURES, picturesList)
             bundle.putSerializable(TAG_AGENTS, managingAgents)
             bundle.putInt(TAG_ORIENTATION, orientation)
             fragment.arguments = bundle

@@ -5,13 +5,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -30,9 +30,9 @@ import com.openclassrooms.realestatemanager.utils.ReorderHelperCallback
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.Utils.getTmpFileUri
 
-class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
+class AddPicturesFragment(private var picturesList: ArrayList<String>?,
                           private val editingEstateId: Int?,
-                          private val picturesListChanged : (ArrayList<Bitmap>) -> Unit)
+                          private val picturesListChanged : (ArrayList<String>) -> Unit)
     : Fragment(), OnStartDragListener {
 
     // Helper classes
@@ -47,7 +47,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
     private var addPictureButton : Button? = null
     private var picturesRv : RecyclerView? = null
 
-    private var pictures = ArrayList<Bitmap>()
+    private var pictures = ArrayList<String>()
     private var newUri : Uri? = null
     private var isAskingForPermissions = false
 
@@ -80,11 +80,21 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                 if (it.data != null && it.data!!.data != null) {
                     val uri = (it.data!!.data as Uri).toString()
                     if (uri.isNotEmpty()) {
-                        val bitmap = Utils.getBitmapFromUri(requireContext(), uri)
-                        if (picturesAdapter?.addNewItem(bitmap) == true)
-                            notifyEstateCreationActivity()
-                        else
-                            showBitmapAlreadyInListError()
+                        val contentResolver = requireContext().contentResolver
+                        val mimeType = MimeTypeMap.getSingleton()
+                        val type = mimeType.getExtensionFromMimeType(contentResolver.getType(Uri.parse(uri)))
+                        if (ALLOWED_MIMETYPES.contains(type)) {
+                            pictures.add(uri)
+                            setFlagsOnUri(it.data, uri)
+                            val bitmap = Utils.getBitmapFromUri(requireContext(), uri)
+                            if (picturesAdapter?.addNewItem(bitmap) == true)
+                                notifyEstateCreationActivity()
+                            else
+                                showBitmapAlreadyInListError()
+                        } else {
+                            Toast.makeText(requireContext(), getString(R.string.wrong_type_error),
+                                Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
@@ -95,6 +105,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
             ActivityResultContracts.TakePicture(),
         ) {
             if (it && newUri != null && newUri != Uri.EMPTY) {
+                pictures.add(newUri.toString())
                 val bitmap = Utils.getBitmapFromUri(requireContext(), newUri.toString())
                 picturesAdapter?.addNewItem(bitmap)
                 newUri = null
@@ -119,7 +130,9 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         picturesRv = binding.picturesRv
 
         picturesAdapter = PicturesListAdapter(this) {
-            picturesAdapter?.removeItem(it)
+            val index = picturesAdapter?.removeItem(it)
+            if (index != null && index != -1)
+                pictures.removeAt(index)
             notifyEstateCreationActivity()
         }
 
@@ -132,7 +145,10 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
 
         if (picturesList != null && picturesList!!.isNotEmpty()) {
             pictures.addAll(picturesList!!)
-            picturesRv?.post { picturesAdapter?.addItems(pictures) }
+            pictures.forEach {
+                val bitmap = Utils.getBitmapFromUri(requireContext(), it)
+                picturesRv?.post { picturesAdapter?.addNewItem(bitmap) }
+            }
         } else if (editingEstateId != null) {
             DatabaseManager(requireContext()).getImagesForEstate(
                 editingEstateId,
@@ -161,8 +177,6 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
     }
 
     private fun notifyEstateCreationActivity() {
-        if (picturesAdapter != null)
-            pictures = picturesAdapter!!.getItems()
         picturesListChanged.invoke(pictures)
     }
 
@@ -211,9 +225,13 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
                     cameraRequestLauncher?.launch(newUri)
                 }
                 optionsMenu[which] == getString(R.string.pick_from_gallery) -> {
-                    galleryRequestLauncher?.launch(
-                        Intent(Intent.ACTION_PICK, EXTERNAL_CONTENT_URI)
-                    )
+                    val mimeTypes = ArrayList<String>()
+                    mimeTypes.add("image/*")
+                    val galleryIntent = Intent(Intent.ACTION_OPEN_DOCUMENT, EXTERNAL_CONTENT_URI)
+                    galleryIntent.type = mimeTypes[0]
+                    galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                    galleryIntent.addCategory(Intent.CATEGORY_OPENABLE)
+                    galleryRequestLauncher?.launch(galleryIntent)
                 }
                 else -> {
                     dialog.dismiss()
@@ -232,6 +250,21 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         ).show()
     }
 
+    /**
+     *  On API >= 19, we only have temporal access to pictures in the gallery. To prevent a
+     *  SecurityException to happen when retrieving this picture in another [Activity] or process,
+     *  we need to change flags on the uri.
+     *  @see <a href="https://stackoverflow.com/a/40403137/8286029">StackOverflow answer</a>
+     *  @see <a href="https://stackoverflow.com/a/34665204/8286029">StackOverflow answer</a>
+     *  @see <a href="https://developer.android.com/guide/topics/providers/document-provider#permissions">Google Android Documentation</a>
+     */
+    private fun setFlagsOnUri(intent : Intent?, uri : String) {
+        val originalFlags = intent?.flags
+        val takeFlags: Int = originalFlags?.and(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            ?: Intent.FLAG_GRANT_READ_URI_PERMISSION
+        requireContext().contentResolver.takePersistableUriPermission(Uri.parse(uri), takeFlags)
+    }
+
     override fun onResume() {
         super.onResume()
         if (isAskingForPermissions) {
@@ -245,8 +278,10 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         @Suppress("unused")
         private const val TAG = "AddImagesFragment"
 
-        fun newInstance(picturesUri : ArrayList<Bitmap>?, editingEstateId : Int?,
-                        callback : (ArrayList<Bitmap>) -> Unit)
+        private val ALLOWED_MIMETYPES = listOf("jpeg", "jpg", "png")
+
+        fun newInstance(picturesUri : ArrayList<String>?, editingEstateId : Int?,
+                        callback : (ArrayList<String>) -> Unit)
         : AddPicturesFragment {
             return AddPicturesFragment(picturesUri, editingEstateId, callback)
         }

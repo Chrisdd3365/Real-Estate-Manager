@@ -3,23 +3,23 @@ package com.openclassrooms.realestatemanager.utils
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
-import android.provider.MediaStore
+import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import java.io.File
+import java.io.FileDescriptor
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -84,14 +84,10 @@ object Utils {
     }
 
     fun getBitmapFromUri(context : Context, uri : String) : Bitmap {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            ImageDecoder.decodeBitmap(
-                ImageDecoder.createSource(
-                context.contentResolver,
-                Uri.parse(uri))
-            )
-        else
-            MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
+        val parcelFileDescriptor : ParcelFileDescriptor? = context.contentResolver
+            .openFileDescriptor(Uri.parse(uri), "r")
+        val fileDescriptor : FileDescriptor? = parcelFileDescriptor?.fileDescriptor
+        return BitmapFactory.decodeFileDescriptor(fileDescriptor)
     }
 
     fun getTmpFileUri(context: Context): Uri {
