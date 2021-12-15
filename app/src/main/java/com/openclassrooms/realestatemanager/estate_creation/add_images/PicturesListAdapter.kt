@@ -42,12 +42,13 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
         return true
     }
 
-    fun removeItem(toRemove : Bitmap) {
+    fun removeItem(toRemove : Bitmap) : Int {
         val index = items.indexOf(toRemove)
         if (index != -1) {
             items.removeAt(index)
             notifyItemRemoved(index)
         }
+        return index
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PictureViewHolder {

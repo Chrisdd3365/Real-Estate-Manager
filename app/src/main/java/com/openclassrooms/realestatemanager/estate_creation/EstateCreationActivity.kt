@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -55,7 +54,7 @@ class EstateCreationActivity : BaseActivity() {
     private var optionalDetailsFragmentPosition = -1
     private var isEditing = false
     private var isNewEstate = false
-    private var picturesList = ArrayList<Bitmap>()
+    private var picturesUris = ArrayList<String>()
     private var managingAgents = ArrayList<Agent>()
     private var estatePosition : LatLng? = null
 
@@ -307,8 +306,8 @@ class EstateCreationActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_root,
-                AddPicturesFragment.newInstance(picturesList, estate?.id) {
-                    picturesList = it
+                AddPicturesFragment.newInstance(picturesUris, estate?.id) {
+                    picturesUris = it
                 }
             )
             .commit()
@@ -346,9 +345,9 @@ class EstateCreationActivity : BaseActivity() {
             .replace(
                 R.id.fragment_root,
                 ShowEstateFragment.newInstance(estate, type, Configuration.ORIENTATION_UNDEFINED,
-                    picturesList, managingAgents,
+                    picturesUris, managingAgents,
                     picturesRetrievedCallback = {
-                        picturesList = it
+                        picturesUris = it
                     },
                     managingAgentsRetrievedCallback = {
                         managingAgents = it
@@ -439,13 +438,13 @@ class EstateCreationActivity : BaseActivity() {
         DatabaseManager(this).saveEstate(
             estateToSave,
             onSuccess = { insertedId ->
-                if (picturesList.isEmpty() && managingAgents.isEmpty())
+                if (picturesUris.isEmpty() && managingAgents.isEmpty())
                     finishWithResult(insertedId, estateToSave)
                 else {
                     saveManagingAgents(
                         insertedId,
                         success = {
-                            if (picturesList.isNotEmpty())
+                            if (picturesUris.isNotEmpty())
                                 saveImages(insertedId, estateToSave)
                             else
                                 finishWithResult(insertedId, estateToSave)
@@ -494,15 +493,15 @@ class EstateCreationActivity : BaseActivity() {
             newEstateId,
             onSuccess = {
                 var savedPictures = 0
-                for (picture : Bitmap in picturesList) {
+                for (pictureUri : String in picturesUris) {
                     databaseManager.saveEstateImage(
                         newEstateId,
-                        picture,
+                        pictureUri,
                         onSuccess = { savedPictures++ },
                         onFailure = { }
                     )
                 }
-                if (savedPictures == picturesList.size)
+                if (savedPictures == picturesUris.size)
                     finishWithResult(newEstateId, estateToSave)
                 else {
                     Toast.makeText(this, R.string.dumb_error, Toast.LENGTH_LONG).show()

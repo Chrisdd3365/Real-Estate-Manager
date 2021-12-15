@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.properties_list
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.databinding.PropertiesListItemBinding
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.utils.Singleton
+import com.openclassrooms.realestatemanager.utils.Utils
 
 class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -124,7 +124,10 @@ class PropertiesListAdapter(val clicked : (Estate) -> Unit) : RecyclerView.Adapt
             }
         }
 
-        private fun setImage(bitmap : Bitmap) {
+        private fun setImage(bitmapUri : String) {
+            if (context == null)
+                return
+            val bitmap = Utils.getBitmapFromUri(context!!, bitmapUri)
             binding.imageView.setImageBitmap(bitmap)
             binding.imageView.scaleType = ImageView.ScaleType.FIT_XY
             viewModel.setImage()

@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import com.openclassrooms.realestatemanager.model.Agent
 import com.openclassrooms.realestatemanager.model.Estate
@@ -111,15 +110,12 @@ class DatabaseManager(context : Context)
         }
     }
 
-    fun saveEstateImage(estateId : Int, image : Bitmap, onFailure: (() -> Any)?,
+    fun saveEstateImage(estateId : Int, image : String, onFailure: (() -> Any)?,
                         onSuccess: (() -> Any)?) {
         val database = this.writableDatabase
 
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-
         val contentValues = ContentValues().apply {
-            put(COLUMN_IMAGE, byteArrayOutputStream.toByteArray())
+            put(COLUMN_IMAGE, image)
             put(COLUMN_ESTATE_ID, estateId)
         }
 
@@ -132,10 +128,9 @@ class DatabaseManager(context : Context)
             onSuccess?.invoke()
     }
 
-    fun getImagesForEstate(estateId: Int, success: (ArrayList<Bitmap>) -> Unit, failure: () -> Unit) {
-        Log.d(TAG, "getImageForEstate() id $estateId")
+    fun getImagesForEstate(estateId: Int, success: (ArrayList<String>) -> Unit, failure: () -> Unit) {
         val database = this.readableDatabase
-        val images = ArrayList<Bitmap>()
+        val imagesUri = ArrayList<String>()
 
         try {
 
@@ -151,15 +146,12 @@ class DatabaseManager(context : Context)
 
             with(cursor) {
                 while (cursor.moveToNext()) {
-                    val byteArray = getBlob(getColumnIndex(COLUMN_IMAGE))
-                    images.add(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size))
+                    imagesUri.add(getString(getColumnIndex(COLUMN_IMAGE)))
                 }
             }
             cursor.close()
 
-            Log.d(TAG, "getImageForEstate() ; found ${images.size} images")
-
-            success.invoke(images)
+            success.invoke(imagesUri)
 
         } catch (exception : Exception) {
             Log.e(TAG, "Error while querying database : $exception")
@@ -412,7 +404,7 @@ class DatabaseManager(context : Context)
         private const val SQL_CREATE_IMAGES_TABLE = """
             CREATE TABLE IF NOT EXISTS $IMAGE_TABLE (
                 $COLUMN_ID INTEGER PRIMARY KEY,
-                $COLUMN_IMAGE BLOB NOT NULL,
+                $COLUMN_IMAGE TEXT NOT NULL,
                 $COLUMN_ESTATE_ID INTEGER NOT NULL,
                 FOREIGN KEY ($COLUMN_ESTATE_ID)
                     REFERENCES $ESTATE_TABLE ($COLUMN_ID)
