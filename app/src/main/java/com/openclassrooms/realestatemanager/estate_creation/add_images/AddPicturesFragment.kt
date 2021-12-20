@@ -130,10 +130,6 @@ class AddPicturesFragment(private var picturesList: ArrayList<String>?,
         picturesRv = binding.picturesRv
 
         picturesAdapter = PicturesListAdapter(this, {
-            val index = picturesAdapter?.removeItem(it)
-            if (index != null && index != -1)
-                pictures.removeAt(index)
-            notifyEstateCreationActivity()
         }, { from : Int, to : Int ->
             val itemToMove = pictures[from]
             pictures.removeAt(from)
