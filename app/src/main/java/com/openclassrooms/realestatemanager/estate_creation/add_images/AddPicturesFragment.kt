@@ -118,10 +118,13 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
         addPictureButton = binding.addPictureButton
         picturesRv = binding.picturesRv
 
-        picturesAdapter = PicturesListAdapter(this) {
-            picturesAdapter?.removeItem(it)
+        picturesAdapter = PicturesListAdapter(this, {
+        }, { from : Int, to : Int ->
+            val itemToMove = pictures[from]
+            pictures.removeAt(from)
+            pictures.add(to, itemToMove)
             notifyEstateCreationActivity()
-        }
+        })
 
         picturesRv?.layoutManager = LinearLayoutManager(context)
         picturesRv?.adapter = picturesAdapter
@@ -247,7 +250,7 @@ class AddPicturesFragment(private var picturesList: ArrayList<Bitmap>?,
 
         fun newInstance(picturesUri : ArrayList<Bitmap>?, editingEstateId : Int?,
                         callback : (ArrayList<Bitmap>) -> Unit)
-        : AddPicturesFragment {
+                : AddPicturesFragment {
             return AddPicturesFragment(picturesUri, editingEstateId, callback)
         }
     }

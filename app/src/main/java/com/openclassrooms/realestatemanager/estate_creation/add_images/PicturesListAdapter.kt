@@ -17,7 +17,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
-                          val removePicture : (Bitmap) -> Unit)
+                          val removePicture : (Bitmap) -> Unit,
+                          val changeOrder : (Int, Int) -> Unit)
     : RecyclerView.Adapter<PicturesListAdapter.PictureViewHolder>(), ItemTouchHelperAdapter {
 
     private var items = ArrayList<Bitmap>()
@@ -71,6 +72,7 @@ class PicturesListAdapter(private val dragStartListener: OnStartDragListener,
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
         Collections.swap(items, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
+        changeOrder(fromPosition, toPosition)
         return true
     }
 
