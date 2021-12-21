@@ -323,7 +323,18 @@ class DatabaseManager(context : Context)
             Log.e(TAG, "Error : ${exception.message}")
             onFailure.invoke()
         }
+    }
 
+    fun getCursor(): Cursor {
+        return this.readableDatabase.query(
+            ESTATE_TABLE,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "$COLUMN_ON_MARKET_SINCE DESC"
+        )
     }
 
     companion object {
@@ -333,7 +344,7 @@ class DatabaseManager(context : Context)
         private const val DATABASE_NAME = "${BuildConfig.APPLICATION_ID}-database"
         private const val DATABASE_VERSION = 1
 
-        private const val ESTATE_TABLE = "estates"
+        const val ESTATE_TABLE = "estates"
         private const val IMAGE_TABLE = "images"
         private const val AGENTS_TABLE = "agents"
         private const val MANAGING_TABLE = "managing"
@@ -374,7 +385,6 @@ class DatabaseManager(context : Context)
 
         // Managing table columns
         private const val COLUMN_AGENT_ID = "agent_id"
-//        private const val COLUMN_ESTATE_ID = "estate_id"
 
         private const val SQL_CREATE_ESTATE_TABLE = """
             CREATE TABLE IF NOT EXISTS $ESTATE_TABLE (

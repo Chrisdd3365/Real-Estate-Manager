@@ -72,8 +72,7 @@ class MapViewFragment : Fragment() {
             addMarkers()
 
             if (markers.isNotEmpty()) {
-                val cameraUpdate =
-                    CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), PADDING)
+                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBoundsBuilder.build(), PADDING)
                 googleMap?.animateCamera(cameraUpdate)
             }
             mapView?.onResume()

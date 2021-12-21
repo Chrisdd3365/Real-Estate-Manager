@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.model
 
+import android.content.ClipData
 import android.content.ContentValues
 import android.database.Cursor
 import com.openclassrooms.realestatemanager.DatabaseManager
@@ -9,6 +10,10 @@ import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
+import android.content.ClipData.Item
+
+
+
 
 class Estate : Serializable {
 
@@ -195,5 +200,29 @@ class Estate : Serializable {
 
         @Suppress("unused")
         private const val TAG = "Estate"
+
+        fun fromContentValues(values: ContentValues): Estate {
+            val estate = Estate()
+
+            if (values.containsKey("typeIndex")) estate.typeIndex = values.getAsInteger("typeIndex")
+            if (values.containsKey("description")) estate.description = values.getAsString("description")
+            if (values.containsKey("address")) estate.address = values.getAsString("address")
+            if (values.containsKey("price")) estate.setPrice(values.getAsDouble("price"))
+            if (values.containsKey("surface")) estate.setSurface(values.getAsDouble("surface"))
+            if (values.containsKey("roomCount")) estate.roomCount = values.getAsInteger("roomCount")
+            if (values.containsKey("bathroomsCount")) estate.bathroomsCount = values.getAsInteger("bathroomsCount")
+            if (values.containsKey("bedroomsCount")) estate.bedroomsCount = values.getAsInteger("bedroomsCount")
+            if (values.containsKey("school")) estate.school = values.getAsBoolean("school")
+            if (values.containsKey("playground")) estate.playground = values.getAsBoolean("playground")
+            if (values.containsKey("shop")) estate.shop = values.getAsBoolean("shop")
+            if (values.containsKey("buses")) estate.buses = values.getAsBoolean("buses")
+            if (values.containsKey("subway")) estate.subway = values.getAsBoolean("subway")
+            if (values.containsKey("park")) estate.park = values.getAsBoolean("park")
+            if (values.containsKey("latitude")) estate.latitude = values.getAsDouble("latitude")
+            if (values.containsKey("longitude")) estate.longitude = values.getAsDouble("longitude")
+            if (values.containsKey("sold")) estate.sold = values.getAsBoolean("sold")
+
+            return estate
+        }
     }
 }
