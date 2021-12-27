@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.model
 
-import android.content.ClipData
 import android.content.ContentValues
 import android.database.Cursor
 import com.openclassrooms.realestatemanager.DatabaseManager
@@ -10,9 +9,6 @@ import com.openclassrooms.realestatemanager.utils.Singleton
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
-import android.content.ClipData.Item
-
-
 
 
 class Estate : Serializable {

@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.provider.Settings
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.openclassrooms.realestatemanager.BuildConfig
@@ -69,11 +67,10 @@ object Utils {
      * @return
      */
     @Suppress("unused")
-    val todayDate: String
-        get() {
-            val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd")
-            return dateFormat.format(Date())
-        }
+    fun getTodayDate(date: Date): String? {
+        val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+        return dateFormat.format(date)
+    }
 
     /**
      * Vérification de la connexion réseau
