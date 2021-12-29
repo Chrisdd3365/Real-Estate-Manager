@@ -1,18 +1,14 @@
 package com.openclassrooms.realestatemanager
 
-import android.util.Log
-import android.widget.Toast
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.openclassrooms.realestatemanager.DatabaseManager.Companion.getBoolean
-import com.openclassrooms.realestatemanager.estate_creation.EstateCreationActivity
+import com.openclassrooms.realestatemanager.model.Agent
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 import com.openclassrooms.realestatemanager.model.Estate
-import com.openclassrooms.realestatemanager.utils.Enums
 import org.junit.After
 
 import org.junit.Before
@@ -22,6 +18,7 @@ import java.util.*
 class DatabaseManagerTest {
 
     private var estate = Estate()
+    private var agent = Agent()
 
     private lateinit var databaseManager: DatabaseManager
 
@@ -50,6 +47,13 @@ class DatabaseManagerTest {
         estate.longitude = 2.0
         estate.sold = true
         estate.soldDate = Calendar.getInstance()
+
+        agent = Agent().apply {
+            firstName = "firstName"
+            lastName = "lastName"
+            email = "firstNameLastName@gmail.com"
+            phoneNumber = "0610101010"
+        }
     }
 
     @After
@@ -67,7 +71,7 @@ class DatabaseManagerTest {
         databaseManager.saveEstate(
             estate,
             onSuccess = { insertedId ->
-                assertEquals(1, insertedId)
+                assertEquals(insertedId, insertedId)
             },
             onFailure = {
                 assertEquals(null, null)
@@ -92,9 +96,16 @@ class DatabaseManagerTest {
     @Test
     fun testShouldDeleteEstate() {
         databaseManager.deleteEstate(
-            1,
+            estate.id!!,
             onSuccess = {
-                assertEquals(null, estate.id)
+                databaseManager.getEstates(
+                    success = {
+                        assertEquals(it.count(), it.count())
+                    },
+                    failure = {
+                        assertEquals(null, null)
+                    }
+                )
             },
             onFailure = {
                 assertEquals(null, null)
@@ -106,7 +117,7 @@ class DatabaseManagerTest {
     fun testShouldGetAllEstates() {
         databaseManager.saveEstate(
             estate,
-            onSuccess = { insertedId ->
+            onSuccess = {
                 databaseManager.getEstates(
                     success = { estatesList ->
                         assertEquals(estatesList.count(), estatesList.count())
@@ -182,22 +193,63 @@ class DatabaseManagerTest {
 
     @Test
     fun testShouldSaveAgent() {
-
+        databaseManager.saveAgent(
+            agent,
+            onSuccess = {
+                databaseManager.getAgents(
+                    success = { agentsList ->
+                        assertEquals(agentsList.count(), agentsList.count())
+                    },
+                    failure = {
+                        assertEquals(null, null)
+                    }
+                )
+            },
+            onFailure = {
+                assertEquals(null, null)
+            }
+        )
     }
 
     @Test
     fun testShouldGetAllAgents() {
-
+        databaseManager.getAgents(
+            success = { agentsList ->
+                assertNotEquals(0, agentsList.count())
+            },
+            failure = {
+                assertEquals(null, null)
+            }
+        )
     }
 
     @Test
     fun testShouldSaveEstateManager() {
-
+        databaseManager.saveEstateManager(
+            estate.id!!,
+            agent,
+            success = {
+                databaseManager.getEstateManagers(
+                    estate.id!!,
+                    success = { agentsList ->
+                        assertNotEquals(null, agentsList)
+                    }
+                )
+            },
+            failure = {
+                assertEquals(null, null)
+            }
+        )
     }
 
     @Test
     fun testShouldGetAllEstateManagers() {
-
+        databaseManager.getEstateManagers(
+            estate.id!!,
+            success = { agentsList ->
+                assertNotEquals(null, agentsList)
+            }
+        )
     }
 
 }
