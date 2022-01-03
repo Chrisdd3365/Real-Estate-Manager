@@ -13,7 +13,7 @@ import java.lang.IllegalArgumentException
 class EstateContentProvider : ContentProvider() {
 
     companion object {
-        private const val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
+        private const val AUTHORITY = "com.openclassrooms.realestatemanager.estateProvider"
         val URI_ESTATE: Uri = Uri.parse("content://$AUTHORITY/${DatabaseManager.ESTATE_TABLE}")
     }
 
@@ -40,18 +40,21 @@ class EstateContentProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
+        var uriNotSafe: Uri? = null
         if (context != null && values != null) {
             val estate = Estate.fromContentValues(values)
             DatabaseManager(context!!).saveEstate(
                 estate,
-                onSuccess = { insertedId ->
-                    "$uri/${insertedId}".toUri()
+                onSuccess = fun(insertedId: Int): Any {
+                    uriNotSafe = "$uri/${insertedId}".toUri()
+                    context?.contentResolver?.notifyChange(uriNotSafe!!, null)
+                    return uriNotSafe!!
                 },
                 onFailure = {
-                    throw Exception("Save estate failed")
+                    throw Exception("Failed to insert row into $uri")
                 }
             )
-            context?.contentResolver?.notifyChange(uri, null)
+            return uriNotSafe!!
         }
         throw Exception("Failed to insert row into $uri")
     }

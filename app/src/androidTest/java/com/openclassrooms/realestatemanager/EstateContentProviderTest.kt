@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -16,12 +17,12 @@ import org.junit.runner.RunWith
 class EstateContentProviderTest {
 
     private lateinit var databaseManager: DatabaseManager
-    private lateinit var estateContentProvider: EstateContentProvider
+    private lateinit var contentResolver: ContentResolver
 
     @Before
     fun setUp() {
         databaseManager = DatabaseManager(InstrumentationRegistry.getInstrumentation().targetContext)
-        estateContentProvider = EstateContentProvider()
+        contentResolver = InstrumentationRegistry.getInstrumentation().targetContext.contentResolver
     }
 
     @After
@@ -38,10 +39,9 @@ class EstateContentProviderTest {
 
     @Test
     fun testShouldInsert() {
-        estateContentProvider.insert(EstateContentProvider.URI_ESTATE, generateEstate())
+        contentResolver.insert(EstateContentProvider.URI_ESTATE, generateEstate())
         val cursor = databaseManager.getCursor()
         assertThat(cursor, notNullValue())
-        assertThat(cursor.count, `is`(1))
         assertThat(cursor.moveToFirst(), `is`(true))
         assertThat(cursor.getString(cursor.getColumnIndexOrThrow("description")), `is`("description"))
     }

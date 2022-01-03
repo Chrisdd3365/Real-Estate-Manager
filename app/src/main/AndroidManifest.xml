@@ -57,7 +57,7 @@
 
         <provider
             android:name=".provider.EstateContentProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="${applicationId}.estateProvider"
             android:exported="true"/>
 
     </application>
